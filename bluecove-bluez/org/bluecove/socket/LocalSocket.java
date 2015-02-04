@@ -24,31 +24,32 @@
  */
 package org.bluecove.socket;
 
+import org.bluecove.socket.LocalSocketImpl.LocalSocketOptions;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketImpl;
 import java.net.UnknownServiceException;
 import java.nio.channels.SocketChannel;
 
-import org.bluecove.socket.LocalSocketImpl.LocalSocketOptions;
-
 /**
  * Unix domain client socket on Linux.
  */
-public class LocalSocket extends java.net.Socket {
+public class LocalSocket extends Socket {
 
     /**
      * The implementation of this Socket.
      */
     private LocalSocketImpl impl;
     
-    private boolean shutdownIn = false;
+    private boolean shutdownIn;
     
-    private boolean shutdownOut = false;
+    private boolean shutdownOut;
 
     public LocalSocket() throws IOException {
         super((SocketImpl) null);
@@ -265,7 +266,7 @@ public class LocalSocket extends java.net.Socket {
         }
         Object value = impl.getOption(LocalSocketOptions.SO_LINGER);
         if (value instanceof Integer) {
-            return ((Integer) value).intValue();
+            return (Integer) value;
         } else {
             return -1;
         }
@@ -278,7 +279,7 @@ public class LocalSocket extends java.net.Socket {
 
     @Override
     public int getReceiveBufferSize() throws SocketException {
-        return ((Integer) impl.getOption(LocalSocketOptions.SO_RCVBUF)).intValue();
+        return (Integer) impl.getOption(LocalSocketOptions.SO_RCVBUF);
     }
 
     @Override
@@ -288,7 +289,7 @@ public class LocalSocket extends java.net.Socket {
 
     @Override
     public int getSendBufferSize() throws SocketException {
-        return ((Integer) impl.getOption(LocalSocketOptions.SO_SNDBUF)).intValue();
+        return (Integer) impl.getOption(LocalSocketOptions.SO_SNDBUF);
     }
 
     /**
@@ -302,7 +303,7 @@ public class LocalSocket extends java.net.Socket {
 
     @Override
     public int getSoTimeout() throws SocketException {
-        return ((Integer) impl.getOption(LocalSocketOptions.SO_SNDTIMEO)).intValue();
+        return (Integer) impl.getOption(LocalSocketOptions.SO_SNDTIMEO);
     }
     
     /**
@@ -313,7 +314,7 @@ public class LocalSocket extends java.net.Socket {
     }
 
     public int getSoReceiveTimeout() throws SocketException {
-        return ((Integer) impl.getOption(LocalSocketOptions.SO_RCVTIMEO)).intValue();
+        return (Integer) impl.getOption(LocalSocketOptions.SO_RCVTIMEO);
     }
 
     /**
@@ -324,7 +325,7 @@ public class LocalSocket extends java.net.Socket {
     }
 
     public int getSoSendTimeout() throws SocketException {
-        return ((Integer) impl.getOption(LocalSocketOptions.SO_SNDTIMEO)).intValue();
+        return (Integer) impl.getOption(LocalSocketOptions.SO_SNDTIMEO);
     }
     
     
@@ -338,7 +339,7 @@ public class LocalSocket extends java.net.Socket {
         if (isClosed()) {
             throw new SocketException("Socket is already closed");
         }
-        impl.setOption(LocalSocketOptions.SO_PASSCRED, Integer.valueOf((on?1:0)));
+        impl.setOption(LocalSocketOptions.SO_PASSCRED, Integer.valueOf(on ? 1 : 0));
     }
     
     public boolean getReceiveCredentials() throws SocketException {
@@ -346,10 +347,6 @@ public class LocalSocket extends java.net.Socket {
             throw new SocketException("Socket is already closed");
         }
         Object value = impl.getOption(LocalSocketOptions.SO_PASSCRED);
-        if (value instanceof Integer) {
-            return (((Integer) value).intValue() > 0);
-        } else {
-            return false;
-        }
+        return value instanceof Integer && ((Integer) value).intValue() > 0;
     }
 }

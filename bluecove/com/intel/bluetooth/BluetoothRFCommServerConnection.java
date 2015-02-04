@@ -54,7 +54,7 @@ class BluetoothRFCommServerConnection extends BluetoothRFCommConnection implemen
 
 	void closeConnectionHandle(long handle) throws IOException {
 		RemoteDeviceHelper.disconnected(this);
-		bluetoothStack.connectionRfCloseServerConnection(handle);
+        bluetoothStack.connectionRfCloseServerConnection(handle);
 	}
 
 }

@@ -36,9 +36,8 @@ class RemoteObject
       
       if (null == this.iface && null != them.iface) return false;
       if (null != this.iface && null == them.iface) return false;
-      if (null != them.iface && !them.iface.equals(this.iface)) return false;
-      
-      return true;
+       return !(null != them.iface && !them.iface.equals(this.iface));
+
    }
    public int hashCode()
    {
@@ -51,6 +50,6 @@ class RemoteObject
    public Class<? extends DBusInterface>  getInterface() { return iface; }
    public String toString()
    {
-      return busname+":"+objectpath+":"+iface;
+      return busname +":"+ objectpath +":"+ iface;
    }
 }

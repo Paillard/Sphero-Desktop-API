@@ -14,7 +14,7 @@ import java.util.Date;
 public class CommandMessage
 {
     /* Static values */
-    private static int nSeq = 0;
+    private static int nSeq;
 
     /* Static indicies */
     private static final byte COMMAND_PREFIX = -1;
@@ -28,13 +28,13 @@ public class CommandMessage
 
     /* Internal storage */
     private Date timestamp;
-    private boolean seqSet = false;
+    private boolean seqSet;
     private int seqNum;
-    private COMMAND_MESSAGE_TYPE command;
+    private CommandMessage.COMMAND_MESSAGE_TYPE command;
     private byte[] packet;
 
 
-    public CommandMessage( COMMAND_MESSAGE_TYPE _command )
+    public CommandMessage( CommandMessage.COMMAND_MESSAGE_TYPE _command )
     {
         this.command = _command;
     }
@@ -48,9 +48,9 @@ public class CommandMessage
      */
     public int getSequenceNumber()
     {
-        if ( !this.seqSet )
+        if ( !this.seqSet)
         {
-            this.seqNum = CommandMessage.nSeq++;
+            this.seqNum = nSeq++;
             this.seqSet = true;
         }
 
@@ -63,7 +63,7 @@ public class CommandMessage
      *
      * @return The command type
      */
-    public COMMAND_MESSAGE_TYPE getCommand()
+    public CommandMessage.COMMAND_MESSAGE_TYPE getCommand()
     {
         return this.command;
     }
@@ -77,7 +77,7 @@ public class CommandMessage
      */
     public byte[] getPacket()
     {
-        if ( this.packet == null )
+        if (this.packet == null )
             this.packet = packetize();
         return this.packet;
     }
@@ -114,7 +114,7 @@ public class CommandMessage
      */
     public int getPacketLength()
     {
-        return (this.getPacket().length);
+        return this.getPacket().length;
     }
 
 
@@ -133,24 +133,24 @@ public class CommandMessage
         byte[] buffer = new byte[ packet_length ];
         byte checksum = 0;
 
-        buffer[ INDEX_START_1] = COMMAND_PREFIX;
-        buffer[ INDEX_START_2] = COMMAND_PREFIX;
+        buffer[INDEX_START_1] = COMMAND_PREFIX;
+        buffer[INDEX_START_2] = COMMAND_PREFIX;
 
         byte device_id = this.command.getDeviceId();
         checksum = ( byte ) (checksum + device_id);
-        buffer[ INDEX_DEVICE_ID] = device_id;
+        buffer[INDEX_DEVICE_ID] = device_id;
 
         byte cmd = this.command.getCommandId();
         checksum = ( byte ) (checksum + cmd);
-        buffer[ INDEX_COMMAND] = cmd;
+        buffer[INDEX_COMMAND] = cmd;
 
         int sequenceNumber = this.getSequenceNumber();
         checksum = ( byte ) (checksum + sequenceNumber);
-        buffer[ INDEX_COMMAND_SEQUENCE_NO] = ( byte ) (sequenceNumber);
+        buffer[INDEX_COMMAND_SEQUENCE_NO] = ( byte ) sequenceNumber;
 
         byte response_length = getCommandLength( data_length );
         checksum = ( byte ) (checksum + response_length);
-        buffer[ INDEX_COMMAND_DATA_LENGTH] = response_length;
+        buffer[INDEX_COMMAND_DATA_LENGTH] = response_length;
 
         // Check if we need to calculate the checksum for the data we have added
         if ( data != null )
@@ -158,12 +158,12 @@ public class CommandMessage
             // Calculate the checksum for the data (also add the data to the array)
             for ( int i = 0; i < data_length; i++ )
             {
-                buffer[(i + COMMAND_HEADER_LENGTH)] = data[i];
+                buffer[i + COMMAND_HEADER_LENGTH] = data[i];
                 checksum = ( byte ) (checksum + data[i]);
             }
         }
 
-        buffer[(packet_length - CHECKSUM_LENGTH)] = ( byte ) (checksum ^ 0xFFFFFFFF);
+        buffer[packet_length - CHECKSUM_LENGTH] = (byte)~checksum;
 
         return buffer;
     }
@@ -185,7 +185,7 @@ public class CommandMessage
     /**
      * Different command types
      */
-    public static enum COMMAND_MESSAGE_TYPE
+    public enum COMMAND_MESSAGE_TYPE
     {
         /* Core commands */
         PING( 0, 0 ),
@@ -212,12 +212,12 @@ public class CommandMessage
         SAVE_MACRO( 82, 2 ),
         ABORT_MACRO( 85, 2 ),
         SET_DATA_STREAMING( 17, 2 ),
-        SPIN_LEFT( RAW_MOTOR.getCommandId(), RAW_MOTOR.getDeviceId() ),
-        SPIN_RIGHT( RAW_MOTOR.getCommandId(), RAW_MOTOR.getDeviceId() ),
-        CUSTOM_PING( FRONT_LED_OUTPUT.getCommandId(), FRONT_LED_OUTPUT.getDeviceId() );
+        SPIN_LEFT(RAW_MOTOR.getCommandId(), RAW_MOTOR.getDeviceId() ),
+        SPIN_RIGHT(RAW_MOTOR.getCommandId(), RAW_MOTOR.getDeviceId() ),
+        CUSTOM_PING(FRONT_LED_OUTPUT.getCommandId(), FRONT_LED_OUTPUT.getDeviceId() );
 
         /* Internal storage */
-        private static int idCount = 0;
+        private static int idCount;
         private byte commandId;
         private byte deviceId;
         private int id;
@@ -229,7 +229,7 @@ public class CommandMessage
          * @param commandId The command id
          * @param deviceId  The device id
          */
-        private COMMAND_MESSAGE_TYPE( int commandId, int deviceId )
+        COMMAND_MESSAGE_TYPE(int commandId, int deviceId)
         {
             this.commandId = ( byte ) commandId;
             this.deviceId = ( byte ) deviceId;
@@ -243,7 +243,7 @@ public class CommandMessage
          */
         private void setId()
         {
-            this.id = COMMAND_MESSAGE_TYPE.idCount++;
+            this.id = idCount++;
         }
 
 
@@ -288,10 +288,10 @@ public class CommandMessage
          *
          * @return The device command or null if no command could be represented
          */
-        public static COMMAND_MESSAGE_TYPE valueOf( int uniqueId ) // int commandId, int deviceId )
+        public static CommandMessage.COMMAND_MESSAGE_TYPE valueOf( int uniqueId ) // int commandId, int deviceId )
         {
-            COMMAND_MESSAGE_TYPE[] cmds = COMMAND_MESSAGE_TYPE.values();
-            for ( COMMAND_MESSAGE_TYPE dc : cmds )
+            CommandMessage.COMMAND_MESSAGE_TYPE[] cmds = CommandMessage.COMMAND_MESSAGE_TYPE.values();
+            for ( CommandMessage.COMMAND_MESSAGE_TYPE dc : cmds )
                 if ( dc.getId() == uniqueId )
                     return dc;
             return null;

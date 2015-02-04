@@ -61,17 +61,17 @@ public abstract class NativeLibLoader {
 
 	static final int OS_ANDROID_2_X = 6;
 
-	private static int os = 0;
+	private static int os;
 
 	private static Hashtable libsState = new Hashtable();
 
-	private static Object bluecoveDllDir = null;
+	private static Object bluecoveDllDir;
 
 	private static class LibState {
 
-		boolean triedToLoadAlredy = false;
+		boolean triedToLoadAlredy;
 
-		boolean libraryAvailable = false;
+		boolean libraryAvailable;
 
 		StringBuffer loadErrors = new StringBuffer();
 	}
@@ -87,20 +87,20 @@ public abstract class NativeLibLoader {
 		String sysName = System.getProperty("os.name");
 		if (sysName == null) {
 			DebugLog.fatal("Native Library not available on unknown platform");
-			os = OS_UNSUPPORTED;
+            os = OS_UNSUPPORTED;
 		} else {
 			sysName = sysName.toLowerCase();
-			if (sysName.indexOf("windows") != -1) {
-				if (sysName.indexOf("ce") != -1) {
-					os = OS_WINDOWS_CE;
+			if (sysName.contains("windows")) {
+				if (sysName.contains("ce")) {
+                    os = OS_WINDOWS_CE;
 				} else {
-					os = OS_WINDOWS;
+                    os = OS_WINDOWS;
 				}
-			} else if (sysName.indexOf("mac os x") != -1) {
-				os = OS_MAC_OS_X;
-			} else if (sysName.indexOf("linux") != -1) {
+			} else if (sysName.contains("mac os x")) {
+                os = OS_MAC_OS_X;
+			} else if (sysName.contains("linux")) {
 				String javaRuntimeName = System.getProperty("java.runtime.name");
-				if ((javaRuntimeName != null) && (javaRuntimeName.toLowerCase().indexOf("android runtime") != -1)) {
+				if (javaRuntimeName != null && javaRuntimeName.toLowerCase().contains("android runtime")) {
 					try {
 						int androidApiLevel = Class.forName("android.os.Build$VERSION").getField("SDK_INT").getInt(null);
 						// android 2.0 has code 5
@@ -111,9 +111,9 @@ public abstract class NativeLibLoader {
 							// In this case, user just has not to include 
 							// bluecove-android2.jar in classpath.
 							Class.forName("com.intel.bluetooth.BluetoothStackAndroid");
-							os = OS_ANDROID_2_X;
+                            os = OS_ANDROID_2_X;
 						} else {
-							os = OS_ANDROID_1_X;
+                            os = OS_ANDROID_1_X;
 						}
 					} catch (Exception ex) {
 						// if field android.os.Build.VERSION.SDK_INT doesn't exist,
@@ -123,14 +123,14 @@ public abstract class NativeLibLoader {
 						// also if com.intel.bluetooth.BluetoothStackAndroid class
 						// doesn't exist in classpath, we will use native
 						// bluez implementation
-						os = OS_ANDROID_1_X;
+                        os = OS_ANDROID_1_X;
 					}
 				} else {
-					os = OS_LINUX;
+                    os = OS_LINUX;
 				}
 			} else {
 				DebugLog.fatal("Native Library not available on platform " + sysName);
-				os = OS_UNSUPPORTED;
+                os = OS_UNSUPPORTED;
 			}
 		}
 		return os;
@@ -142,7 +142,7 @@ public abstract class NativeLibLoader {
 
 	static String getLoadErrors(String name) {
 		LibState state = (LibState) libsState.get(name);
-		if ((state == null) || (state.loadErrors == null)) {
+		if (state == null || state.loadErrors == null) {
 			return "";
 		} else {
 			return state.loadErrors.toString();
@@ -154,10 +154,10 @@ public abstract class NativeLibLoader {
 	}
 	
 	static boolean isAvailable(String name, Class stackClass, boolean requiredLibrary) {
-		LibState state = (LibState) libsState.get(name);
+		LibState state = (LibState) libsState.get("bluecovez");
 		if (state == null) {
 			state = new LibState();
-			libsState.put(name, state);
+            libsState.put(name, state);
 		}
 		if (state.triedToLoadAlredy) {
 			return state.libraryAvailable;
@@ -166,11 +166,11 @@ public abstract class NativeLibLoader {
 		String libName = name;
 		String libFileName = libName;
 
-		// DebugLog.debug("OS:" + System.getProperty("os.name") + "|" +
-		// System.getProperty("os.version") + "|" +
-		// System.getProperty("os.arch"));
-		// DebugLog.debug("Java:" + System.getProperty("java.vendor") + " " +
-		// System.getProperty("java.version"));
+		 DebugLog.debug("OS:" + System.getProperty("os.name") + "|" +
+		 System.getProperty("os.version") + "|" +
+		 System.getProperty("os.arch"));
+		 DebugLog.debug("Java:" + System.getProperty("java.vendor") + " " +
+		 System.getProperty("java.version"));
 
 		String sysName = System.getProperty("os.name");
 
@@ -183,7 +183,7 @@ public abstract class NativeLibLoader {
 
 		switch (getOS()) {
 		case OS_UNSUPPORTED:
-			state.loadErrors.append("Native Library " + name + " not available on [" + sysName + "] platform");
+			state.loadErrors.append("Native Library ").append(name).append(" not available on [").append(sysName).append("] platform");
 			DebugLog.fatal("Native Library " + name + " not available on [" + sysName + "] platform");
 			state.triedToLoadAlredy = true;
 			state.libraryAvailable = false;
@@ -194,7 +194,7 @@ public abstract class NativeLibLoader {
 			libFileName = libFileName + ".dll";
 			break;
 		case OS_WINDOWS:
-			if ((sysArch.indexOf("amd64") != -1) || (sysArch.indexOf("x86_64") != -1)) {
+			if (sysArch.contains("amd64") || sysArch.contains("x86_64")) {
 				libName += "_x64";
 				libFileName = libName;
 			}
@@ -204,11 +204,12 @@ public abstract class NativeLibLoader {
 			libFileName = "lib" + libFileName + ".jnilib";
 			break;
 		case OS_LINUX:
-			if ((sysArch.indexOf("i386") != -1) || (sysArch.length() == 0)) {
+
+			if (sysArch.contains("i386") || sysArch.isEmpty()) {
 				// regular Intel
-			} else if ((sysArch.indexOf("amd64") != -1) || (sysArch.indexOf("x86_64") != -1)) {
+			} else if (sysArch.contains("amd64") || sysArch.contains("x86_64")) {
 				libName += "_x64";
-			} else if ((sysArch.indexOf("x86") != -1)) {
+			} else if (sysArch.contains("x86")) {
 				// regular Intel under IBM J9
 			} else {
 				// Any other system
@@ -225,7 +226,7 @@ public abstract class NativeLibLoader {
 			state.libraryAvailable = true;
 			break;
 		default:
-			state.loadErrors.append("Native Library " + name + " not available on [" + sysName + "] platform");
+			state.loadErrors.append("Native Library ").append(name).append(" not available on [").append(sysName).append("] platform");
 			DebugLog.fatal("Native Library " + name + " not available on platform " + sysName);
 			state.triedToLoadAlredy = true;
 			state.libraryAvailable = false;
@@ -244,16 +245,16 @@ public abstract class NativeLibLoader {
 		}
 		boolean useResource = true;
 		String d = System.getProperty(BlueCoveConfigProperties.PROPERTY_NATIVE_RESOURCE);
-		if (((d != null) && (d.equalsIgnoreCase("false"))) || (getOS() == OS_ANDROID_1_X || getOS() == OS_ANDROID_2_X)) {
+		if (d != null && d.equalsIgnoreCase("false") || getOS() == OS_ANDROID_1_X || getOS() == OS_ANDROID_2_X) {
 			useResource = false;
 		}
 
-		if ((!state.libraryAvailable) && (useResource) && (!UtilsJavaSE.ibmJ9midp)) {
+		if (!state.libraryAvailable && useResource && !UtilsJavaSE.ibmJ9midp) {
 			state.libraryAvailable = loadAsSystemResource(libFileName, stackClass, state.loadErrors);
 		}
 
 		// Try load bluecove from package private location installed on the system
-		if ((!state.libraryAvailable) && (getOS() == OS_LINUX) && (!UtilsJavaSE.ibmJ9midp)) {
+		if (!state.libraryAvailable && getOS() == OS_LINUX && !UtilsJavaSE.ibmJ9midp) {
 			state.libraryAvailable = tryloadPath(createLinuxPackagePath(sysArch), libFileName, state.loadErrors);
 		}
 
@@ -276,16 +277,16 @@ public abstract class NativeLibLoader {
 	}
 
 	private static String createLinuxPackagePath(String sysArch) {
-		if (sysArch.indexOf("64") != -1) {
-			return "/usr/lib64/bluecove/" + BlueCoveImpl.version;
-		} else {
-			return "/usr/lib/bluecove/" + BlueCoveImpl.version;
-		}
+	//	if (sysArch.contains("64")) {
+			return "/home/paill/dev/java/Sphero-Desktop-API/lib/" + BlueCoveImpl.version;
+	//	} else {
+	//		return "/home/paill/dev/java/Sphero-Desktop-API/lib/" + BlueCoveImpl.version;
+	//	}
 	}
 
 	private static boolean tryload(String name, StringBuffer loadErrors) {
 		try {
-			System.loadLibrary(name);
+			System.load(String.format("/home/paill/dev/java/Sphero-Desktop-API/natives/%s", System.mapLibraryName("unix-java")));
 			DebugLog.debug("Library loaded", name);
 		} catch (Throwable e) {
 			DebugLog.error("Library " + name + " not loaded ", e);
@@ -438,12 +439,12 @@ public abstract class NativeLibLoader {
 
 	private static File makeTempName(String libFileName) {
 		if (bluecoveDllDir != null) {
-			File f = new File((File)bluecoveDllDir, libFileName);
+			File f = new File((File) bluecoveDllDir, libFileName);
 			DebugLog.debug("tmp file", f.getAbsolutePath());
 			return f;
 		}
 		String tmpDir = System.getProperty("java.io.tmpdir");
-		if ((tmpDir == null) || (tmpDir.length() == 0)) {
+		if (tmpDir == null || tmpDir.isEmpty()) {
 		    // CrEme 3.29
 		    tmpDir = "temp";
 		}
@@ -456,7 +457,7 @@ public abstract class NativeLibLoader {
 				DebugLog.debug("Can't create temporary dir " + dir.getAbsolutePath());
 				return new File(tmpDir, libFileName);
 			}
-			dir = new File(tmpDir, "bluecove_" + uname + "_" + (count++));
+			dir = new File(tmpDir, "bluecove_" + uname + "_" + count++);
 			if (dir.exists()) {
 				if (!dir.isDirectory()) {
 					continue selectDirectory;
@@ -464,16 +465,16 @@ public abstract class NativeLibLoader {
 				// Remove all files.
 				try {
 					File[] files = dir.listFiles();
-					for (int i = 0; i < files.length; i++) {
-						if (!files[i].delete()) {
-							continue selectDirectory;
-						}
-					}
+                    for (File file : files) {
+                        if (!file.delete()) {
+                            continue selectDirectory;
+                        }
+                    }
 				} catch (Throwable e) {
 					// Java 1.1 or J9
 				}
 			}
-			if ((!dir.exists()) && (!dir.mkdirs())) {
+			if (!dir.exists() && !dir.mkdirs()) {
 				DebugLog.debug("Can't create temporary dir ", dir.getAbsolutePath());
 				continue selectDirectory;
 			}
@@ -483,7 +484,7 @@ public abstract class NativeLibLoader {
 				// Java 1.1 or J9
 			}
 			fd = new File(dir, libFileName);
-			if ((fd.exists()) && (!fd.delete())) {
+			if (fd.exists() && !fd.delete()) {
 				continue;
 			}
 			try {
@@ -497,7 +498,7 @@ public abstract class NativeLibLoader {
 			} catch (Throwable e) {
 				// Java 1.1 or J9
 			}
-			bluecoveDllDir = dir;
+            bluecoveDllDir = dir;
 			DebugLog.debug("set dll dir", dir.getAbsolutePath());
 			break;
 		}

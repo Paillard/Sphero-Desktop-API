@@ -34,12 +34,12 @@ public class HiddenField extends Field
    public HiddenField(String name, String value)
    {
       this.name = name;
-      this.label = "";
+       this.label = "";
       this.value = value;
    }
    protected String print()
    {
-      return "<input type=\"hidden\" name=\""+name+"\" value=\""+CGITools.escapeChar(value, '"')+"\" />";
+      return "<input type=\"hidden\" name=\""+ name +"\" value=\""+CGITools.escapeChar(value, '"')+"\" />";
    }
 }
 

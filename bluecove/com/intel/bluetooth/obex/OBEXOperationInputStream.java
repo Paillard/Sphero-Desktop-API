@@ -31,20 +31,20 @@ class OBEXOperationInputStream extends InputStream {
 	private final OBEXOperation operation;
 
 	OBEXOperationInputStream(OBEXOperation op) {
-		this.operation = op;
+        this.operation = op;
 	}
 
 	private byte[] buffer = new byte[0x100];
 
-	private int readPos = 0;
+	private int readPos;
 
-	private int appendPos = 0;
+	private int appendPos;
 
 	private Object lock = new Object();
 
-	private boolean isClosed = false;
+	private boolean isClosed;
 
-	private boolean eofReceived = false;
+	private boolean eofReceived;
 
 	/*
 	 * (non-Javadoc)
@@ -55,12 +55,12 @@ class OBEXOperationInputStream extends InputStream {
 		if (isClosed) {
 			throw new IOException("Stream closed");
 		}
-		if (this.operation.isClosed() && (appendPos == readPos)) {
+		if (this.operation.isClosed() && appendPos == readPos) {
 			return -1;
 		}
 		synchronized (lock) {
-			while (!eofReceived && (this.operation instanceof OBEXOperationReceive) && !isClosed
-					&& (!this.operation.isClosed()) && (appendPos == readPos)) {
+			while (!eofReceived && this.operation instanceof OBEXOperationReceive && !isClosed
+					&& !this.operation.isClosed() && appendPos == readPos) {
 				((OBEXOperationReceive) this.operation).receiveData(this);
 			}
 			if (appendPos == readPos) {
@@ -77,7 +77,7 @@ class OBEXOperationInputStream extends InputStream {
 	 */
 	public int available() throws IOException {
 		synchronized (lock) {
-			return (appendPos - readPos);
+			return appendPos - readPos;
 		}
 	}
 
@@ -87,9 +87,9 @@ class OBEXOperationInputStream extends InputStream {
 	 * @see java.io.InputStream#close()
 	 */
 	public void close() throws IOException {
-		isClosed = true;
+        isClosed = true;
 		synchronized (lock) {
-			lock.notifyAll();
+            lock.notifyAll();
 		}
 	}
 
@@ -99,24 +99,24 @@ class OBEXOperationInputStream extends InputStream {
 		}
 		synchronized (lock) {
 			if (eof) {
-				eofReceived = true;
+                eofReceived = true;
 			}
-			if ((b != null) && (b.length != 0)) {
+			if (b != null && b.length != 0) {
 				if (appendPos + b.length > buffer.length) {
-					int newSize = (b.length + (appendPos - readPos)) * 2;
+					int newSize = (b.length + appendPos - readPos) * 2;
 					if (newSize < buffer.length) {
 						newSize = buffer.length;
 					}
 					byte[] newBuffer = new byte[newSize];
 					System.arraycopy(buffer, readPos, newBuffer, 0, appendPos - readPos);
-					buffer = newBuffer;
-					appendPos -= readPos;
-					readPos = 0;
+                    buffer = newBuffer;
+                    appendPos -= readPos;
+                    readPos = 0;
 				}
 				System.arraycopy(b, 0, buffer, appendPos, b.length);
-				appendPos += b.length;
+                appendPos += b.length;
 			}
-			lock.notifyAll();
+            lock.notifyAll();
 		}
 	}
 }

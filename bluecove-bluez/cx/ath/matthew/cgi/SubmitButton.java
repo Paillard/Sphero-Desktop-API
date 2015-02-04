@@ -48,7 +48,7 @@ public class SubmitButton extends Field {
 	 * @see cx.ath.matthew.cgi.Field#print()
 	 */
 	protected String print() {
-		return "<input type='submit' name='"+name+"' value='"+CGITools.escapeChar(label,'\'')+"' />";
+		return "<input type='submit' name='"+ name +"' value='"+CGITools.escapeChar(label,'\'')+"' />";
 	}
 
 }

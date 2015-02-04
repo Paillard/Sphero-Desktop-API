@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus.viewer;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
@@ -58,49 +58,44 @@ import org.xml.sax.SAXException;
  */
 public class DBusViewer
 {
-	private static final Map<String, Integer> CONNECTION_TYPES = new HashMap<String, Integer>();
+	private static final Map<String, Integer> CONNECTION_TYPES = new HashMap<>();
 
 	static
 	{
-		CONNECTION_TYPES.put("System", DBusConnection.SYSTEM);
-		CONNECTION_TYPES.put("Session", DBusConnection.SESSION);
+        CONNECTION_TYPES.put("System", DBusConnection.SYSTEM);
+        CONNECTION_TYPES.put("Session", DBusConnection.SESSION);
 	}
 
 	/** Create the DBusViewer
 	 * 
 	 * @param connectionTypes The map of connection types
 	 */
-	public DBusViewer(final Map<String, Integer> connectionTypes)
+	public DBusViewer(Map<String, Integer> connectionTypes)
 	{
-		connections = new ArrayList<DBusConnection>(connectionTypes.size());
+        connections = new ArrayList<>(connectionTypes.size());
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@SuppressWarnings("synthetic-access")
-			public void run()
-			{
+		SwingUtilities.invokeLater(() -> {
 
-				final JTabbedPane tabbedPane = new JTabbedPane();
-				addTabs(tabbedPane, connectionTypes);
-				final JFrame frame = new JFrame("Dbus Viewer");
-				frame.setContentPane(tabbedPane);
-				frame.setSize(600, 400);
-				frame.addWindowListener(new WindowAdapter()
-				{
-					@Override
-					public void windowClosing(WindowEvent e)
-					{
-						frame.dispose();
-						for (DBusConnection connection : connections)
-						{
-							connection.disconnect();
-						}
-						System.exit(0);
-					}
-				});
-				frame.setVisible(true);
-			}
-		});
+            JTabbedPane tabbedPane = new JTabbedPane();
+            addTabs(tabbedPane, connectionTypes);
+            JFrame frame = new JFrame("Dbus Viewer");
+            frame.setContentPane(tabbedPane);
+            frame.setSize(600, 400);
+            frame.addWindowListener(new WindowAdapter()
+            {
+                @Override
+                public void windowClosing(WindowEvent e)
+                {
+                    frame.dispose();
+                    for (DBusConnection connection : connections)
+                    {
+                        connection.disconnect();
+                    }
+                    System.exit(0);
+                }
+            });
+            frame.setVisible(true);
+        });
 	}
 
 	private List<DBusConnection> connections;
@@ -117,93 +112,88 @@ public class DBusViewer
 	 * @param tabbedPane The tabbed pane
 	 * @param connectionTypes The connection
 	 */
-	private void addTabs(final JTabbedPane tabbedPane,
-			final Map<String, Integer> connectionTypes)
+	private void addTabs(JTabbedPane tabbedPane,
+			Map<String, Integer> connectionTypes)
 	{
-		for (final String key : connectionTypes.keySet())
+		for (String key : connectionTypes.keySet())
 		{
-			final JLabel label = new JLabel(_("Processing DBus for ") + key);
+			JLabel label = new JLabel(getResource("Processing DBus for ") + key);
 			tabbedPane.addTab(key, label);
 		}
-		Runnable loader = new Runnable()
-		{
-			@SuppressWarnings("synthetic-access")
-			public void run()
-			{
-				boolean users = true, owners = true;
-				for (final String key : connectionTypes.keySet())
-				{
-					try
-					{
-						DBusConnection conn = DBusConnection
-								.getConnection(connectionTypes.get(key));
-						connections.add(conn);
+		Runnable loader = () -> {
+            boolean users = true, owners = true;
+            for (String key : connectionTypes.keySet())
+            {
+                try
+                {
+                    DBusConnection conn = DBusConnection
+                            .getConnection(connectionTypes.get(key));
+                    connections.add(conn);
 
-						final TableModel tableModel = listDBusConnection(users,
-								owners, conn);
+                    TableModel tableModel = listDBusConnection(users,
+                            owners, conn);
 
-						SwingUtilities.invokeLater(new Runnable()
-						{
-							public void run()
-							{
-								int index = tabbedPane.indexOfTab(key);
-								final JTable table = new JTable(tableModel);
-								
+                    SwingUtilities.invokeLater(new Runnable()
+                    {
+                        public void run()
+                        {
+                            int index = tabbedPane.indexOfTab(key);
+                            JTable table = new JTable(tableModel);
 
 
-								JScrollPane scrollPane = new JScrollPane(table);
-								
-								JPanel tab = new JPanel(new BorderLayout());
-								tab.add(scrollPane, BorderLayout.CENTER);
-								
-								JPanel southPanel = new JPanel();
-								final JButton button = new JButton(new IntrospectAction(table));
-								southPanel.add(button);
-								
-								tab.add(southPanel, BorderLayout.SOUTH);
-								
-								tabbedPane.setComponentAt(index,
-										tab);
-								
-							}
-						});
-					}
-					catch (final DBusException e)
-					{
-						e.printStackTrace();
-						SwingUtilities.invokeLater(new Runnable()
-						{
-							public void run()
-							{
-								int index = tabbedPane.indexOfTab(key);
-								JLabel label = (JLabel) tabbedPane
-										.getComponentAt(index);
-								label
-										.setText(_("Could not load Dbus information for ")
-												+ key + ":" + e.getMessage());
-							}
-						});
-					}
-					catch (final DBusExecutionException e)
-					{
-						e.printStackTrace();
-						SwingUtilities.invokeLater(new Runnable()
-						{
-							public void run()
-							{
-								int index = tabbedPane.indexOfTab(key);
-								JLabel label = (JLabel) tabbedPane
-										.getComponentAt(index);
-								label
-										.setText(_("Could not load Dbus information for ")
-												+ key + ":" + e.getMessage());
-							}
-						});
-					}
-				}
-			}
-		};
-		final Thread thread = new Thread(loader);
+
+                            JScrollPane scrollPane = new JScrollPane(table);
+
+                            JPanel tab = new JPanel(new BorderLayout());
+                            tab.add(scrollPane, BorderLayout.CENTER);
+
+                            JPanel southPanel = new JPanel();
+                            JButton button = new JButton(new IntrospectAction(table));
+                            southPanel.add(button);
+
+                            tab.add(southPanel, BorderLayout.SOUTH);
+
+                            tabbedPane.setComponentAt(index,
+                                    tab);
+
+                        }
+                    });
+                }
+                catch (DBusException e)
+                {
+                    e.printStackTrace();
+                    SwingUtilities.invokeLater(new Runnable()
+                    {
+                        public void run()
+                        {
+                            int index = tabbedPane.indexOfTab(key);
+                            JLabel label = (JLabel) tabbedPane
+                                    .getComponentAt(index);
+                            label
+                                    .setText(getResource("Could not load Dbus information for ")
+                                            + key + ":" + e.getMessage());
+                        }
+                    });
+                }
+                catch (DBusExecutionException e)
+                {
+                    e.printStackTrace();
+                    SwingUtilities.invokeLater(new Runnable()
+                    {
+                        public void run()
+                        {
+                            int index = tabbedPane.indexOfTab(key);
+                            JLabel label = (JLabel) tabbedPane
+                                    .getComponentAt(index);
+                            label
+                                    .setText(getResource("Could not load Dbus information for ")
+                                            + key + ":" + e.getMessage());
+                        }
+                    });
+                }
+            }
+        };
+		Thread thread = new Thread(loader);
 		thread.setName("DBus Loader");
 		thread.start();
 	}
@@ -222,7 +212,7 @@ public class DBusViewer
 		
 		for (String name : names)
 		{
-			List<DBusEntry> results  = new ArrayList<DBusEntry>();
+			List<DBusEntry> results  = new ArrayList<>();
 			try
 			{
 				//String objectpath = '/' + name.replace('.', '/');
@@ -230,27 +220,17 @@ public class DBusViewer
 
 				p.visitNode(name,"/");
 			}
-			catch (DBusException e)
+			catch (DBusException | IOException | SAXException | DBusExecutionException e)
 			{
 				e.printStackTrace();
 			}
-			catch (DBusExecutionException e)
-			{
-				e.printStackTrace();
-			} catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			results = p.getResult();
+            results = p.getResult();
 			p.reset();
 
-			if (results.size()>0) {
+			if (!results.isEmpty()) {
 				if (users) try
 				{
-					final UInt32 user = dbus.GetConnectionUnixUser(name);
+					UInt32 user = dbus.GetConnectionUnixUser(name);
 					for (DBusEntry entry : results) {
 						entry.setUser(user);
 					}
@@ -262,7 +242,7 @@ public class DBusViewer
 				{
 					try
 					{
-						final String owner = dbus.GetNameOwner(name);
+						String owner = dbus.GetNameOwner(name);
 						for (DBusEntry entry : results) {
 							entry.setOwner(owner);
 						}
@@ -271,14 +251,12 @@ public class DBusViewer
 					{
 					}
 				}
-				for (DBusEntry entry : results) {
-					model.add(entry);
-				}
+                results.forEach(model::add);
 			}
 		}
 		return model;
 	}
-	private final static String DOC_TYPE = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">";
+	private static final String DOC_TYPE = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">";
 
 	class ParsingContext {
 		private DBusConnection conn;
@@ -289,12 +267,12 @@ public class DBusViewer
 			this.conn = conn;
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			try {
-				builder = factory.newDocumentBuilder();
+                builder = factory.newDocumentBuilder();
 			} catch (ParserConfigurationException e1) {
 				// TODO Auto-generated catch block
-				throw new RuntimeException(_("Error during parser init: ")+e1.getMessage(),e1);
+				throw new RuntimeException(getResource("Error during parser init: ")+e1.getMessage(),e1);
 			}
-			reset();
+            reset();
 			
 		}
 
@@ -305,7 +283,7 @@ public class DBusViewer
 			Introspectable introspectable = conn.getRemoteObject(name, path, Introspectable.class);
 			entry.setIntrospectable(introspectable);
 
-			result.add(entry);
+            result.add(entry);
 			
 			return entry;
 		}
@@ -334,9 +312,9 @@ public class DBusViewer
 			        if (nameNode!=null) {
 			        	try {
 				        	if (path.endsWith("/")) {
-				        		visitNode(name, path + nameNode.getNodeValue());
+                                visitNode(name, path + nameNode.getNodeValue());
 				        	} else {
-				        		visitNode(name, path + '/' + nameNode.getNodeValue());
+                                visitNode(name, path + '/' + nameNode.getNodeValue());
 				        	}
 			        	} catch (DBusException ex) {
 			        		ex.printStackTrace();
@@ -353,7 +331,7 @@ public class DBusViewer
 		}
 		
 		void reset() {
-			result = new ArrayList<DBusEntry>();
+            result = new ArrayList<>();
 		}
 		
 		

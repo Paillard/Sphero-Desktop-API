@@ -34,9 +34,20 @@ package org.bluez.v4;
 
 import java.util.Map;
 
+import org.bluez.Error.DoesNotExist;
+import org.bluez.Error.Failed;
+import org.bluez.Error.InProgress;
+import org.bluez.Error.InvalidArguments;
+import org.bluez.Error.NotAuthorized;
+import org.bluez.Error.NotConnected;
+import org.bluez.Error.NotReady;
+import org.bluez.Error.NotSupported;
+import org.bluez.Error.OutOfMemory;
 import org.bluez.dbus.DBusProperties;
 import org.bluez.dbus.DBusProperties.DBusProperty;
 import org.bluez.dbus.DBusProperties.DBusPropertyAccessType;
+import org.bluez.dbus.DBusProperties.PropertiesAccess;
+import org.bluez.dbus.DBusProperties.PropertyEnum;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
 import org.freedesktop.dbus.DBusSignal;
@@ -61,9 +72,9 @@ import org.freedesktop.dbus.exceptions.DBusException;
  * bluez-4.32/doc/device-api.txt, Updated to v 4.46
  */
 @DBusInterfaceName("org.bluez.Device")
-public interface Device extends DBusInterface, DBusProperties.PropertiesAccess {
+public interface Device extends PropertiesAccess {
 
-    public static enum Properties implements DBusProperties.PropertyEnum {
+    enum Properties implements PropertyEnum {
         /**
          * The Bluetooth device address of the remote device.
          */
@@ -163,12 +174,12 @@ public interface Device extends DBusInterface, DBusProperties.PropertiesAccess {
      * service record in XML format as values. The key is uint32 and the value a
      * string for this dictionary.
      */
-    Map<UInt32, String> DiscoverServices(String pattern) throws org.bluez.Error.NotReady, org.bluez.Error.Failed, org.bluez.Error.InProgress;
+    Map<UInt32, String> DiscoverServices(String pattern) throws NotReady, Failed, InProgress;
 
     /**
      * This method will cancel any previous DiscoverServices transaction.
      */
-    void CancelDiscovery() throws org.bluez.Error.NotReady, org.bluez.Error.Failed, org.bluez.Error.NotAuthorized;
+    void CancelDiscovery() throws NotReady, Failed, NotAuthorized;
 
     /**
      * This method disconnects a specific remote device by terminating the
@@ -180,12 +191,12 @@ public interface Device extends DBusInterface, DBusProperties.PropertiesAccess {
      * to terminate their connections gracefully before the ACL connection is
      * terminated.
      */
-    void Disconnect() throws org.bluez.Error.NotConnected;
+    void Disconnect() throws NotConnected;
 
     /**
      * Returns list of device node object paths.
      */
-    Object[] ListNodes() throws org.bluez.Error.InvalidArguments, org.bluez.Error.Failed, org.bluez.Error.OutOfMemory;
+    Object[] ListNodes() throws InvalidArguments, Failed, OutOfMemory;
 
     /**
      * Creates a persistent device node binding with a remote device. The actual
@@ -193,18 +204,18 @@ public interface Device extends DBusInterface, DBusProperties.PropertiesAccess {
      * for persistent binding. At the moment only RFCOMM TTY nodes are
      * supported.
      */
-    Object CreateNode(String uuid) throws org.bluez.Error.InvalidArguments, org.bluez.Error.NotSupported;
+    Object CreateNode(String uuid) throws InvalidArguments, NotSupported;
 
     /**
      * Removes a persistent device node binding.
      */
-    void RemoveNode(Object node) throws org.bluez.Error.InvalidArguments, org.bluez.Error.DoesNotExist;
+    void RemoveNode(Object node) throws InvalidArguments, DoesNotExist;
 
     /**
      * This signal indicates a changed value of the given property.
      */
     @DBusInterfaceName("org.bluez.Device.PropertyChanged")
-    public class PropertyChanged extends DBusSignal {
+    class PropertyChanged extends DBusSignal {
         public PropertyChanged(String path, String name, Variant<Object> value) throws DBusException {
             super(path);
         }
@@ -215,7 +226,7 @@ public interface Device extends DBusInterface, DBusProperties.PropertiesAccess {
      * device has been requested. The actual disconnection will happen 2 seconds
      * later.
      */
-    public class DisconnectRequested extends DBusSignal {
+    class DisconnectRequested extends DBusSignal {
         public DisconnectRequested(String path) throws DBusException {
             super(path);
         }
@@ -224,7 +235,7 @@ public interface Device extends DBusInterface, DBusProperties.PropertiesAccess {
     /**
      * Parameter is object path of created device node.
      */
-    public class NodeCreated extends DBusSignal {
+    class NodeCreated extends DBusSignal {
         public NodeCreated(String path, Path node) throws DBusException {
             super(path, node);
         }
@@ -233,7 +244,7 @@ public interface Device extends DBusInterface, DBusProperties.PropertiesAccess {
     /**
      * Parameter is object path of removed device node.
      */
-    public class NodeRemoved extends DBusSignal {
+    class NodeRemoved extends DBusSignal {
         public NodeRemoved(String path, Path node) throws DBusException {
             super(path, node);
         }

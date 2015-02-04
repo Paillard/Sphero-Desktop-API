@@ -32,6 +32,8 @@
  */
 package org.bluez.v3;
 
+import org.bluez.Error.Canceled;
+import org.bluez.Error.Rejected;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
 
@@ -55,18 +57,18 @@ public interface PasskeyAgent extends DBusInterface {
 	 * 
 	 * NOTE BlueZ 3.8 - 3.32 used to have extra argument (boolean numeric).
 	 */
-	public String Request(String path, String address) throws org.bluez.Error.Rejected, org.bluez.Error.Canceled;
+    String Request(String path, String address) throws Rejected, Canceled;
 
 	/**
 	 * This method gets called to indicate that the authentication request failed before a reply was returned by the
 	 * Request method.
 	 */
-	public void Cancel(String path, String address);
+    void Cancel(String path, String address);
 
 	/**
 	 * This method gets called when the service daemon unregisters a passkey agent. An agent can use it to do cleanup
 	 * tasks. There is no need to unregister the agent, because when this method gets called it has already been
 	 * unregistered.
 	 */
-	public void Release();
+    void Release();
 }

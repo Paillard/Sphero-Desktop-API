@@ -15,10 +15,10 @@ public interface RobotListener
 	/**
 	 * Event codes for the Robot
 	 */
-	public enum EVENT_CODE
+    enum EVENT_CODE
 	{
-		CONNECTION_ESTABLISHED, DISCONNECTED, CONNECTION_FAILED, CONNECTION_CLOSED_UNEXPECTED, NO_CONNECTION_EXISTS, MACRO_DONE;
-	}
+		CONNECTION_ESTABLISHED, DISCONNECTED, CONNECTION_FAILED, CONNECTION_CLOSED_UNEXPECTED, NO_CONNECTION_EXISTS, MACRO_DONE
+    }
 
 	/**
 	 * Called when a response is received for the robot the
@@ -28,7 +28,7 @@ public interface RobotListener
 	 * @param response The response received
 	 * @param dc The command the response is for
 	 */
-	public void responseReceived( Robot r, ResponseMessage response, CommandMessage dc );
+    void responseReceived(Robot r, ResponseMessage response, CommandMessage dc);
 
 	/**
 	 * Called when a specific event has occurred, the code
@@ -37,7 +37,7 @@ public interface RobotListener
 	 * @param r The robot that is connected to the event
 	 * @param code The EVENT_CODE that occurred (RobotListener.EVENT_CODE)
 	 */
-	public void event( Robot r, EVENT_CODE code );
+    void event(Robot r, EVENT_CODE code);
 
 	/**
 	 * Called when an information response is received (streaming event or similar)
@@ -45,5 +45,5 @@ public interface RobotListener
 	 * @param r The robot the message was received for
 	 * @param response The response itself
 	 */
-	public void informationResponseReceived( Robot r, InformationResponseMessage response );
+    void informationResponseReceived(Robot r, InformationResponseMessage response);
 }

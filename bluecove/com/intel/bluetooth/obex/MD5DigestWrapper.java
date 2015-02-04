@@ -37,14 +37,14 @@ class MD5DigestWrapper {
 
 	MD5DigestWrapper() {
 		try {
-			md5impl = MessageDigest.getInstance("MD5");
+            md5impl = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
 
 	void update(byte[] input) {
-		md5impl.update(input);
+        md5impl.update(input);
 	}
 
 	byte[] digest() {

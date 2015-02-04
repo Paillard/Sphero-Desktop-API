@@ -12,8 +12,7 @@ public class RobotBluetoothException extends Exception
 
 	public RobotBluetoothException()
 	{
-		super();
-	}
+    }
 
 	public RobotBluetoothException( String s )
 	{

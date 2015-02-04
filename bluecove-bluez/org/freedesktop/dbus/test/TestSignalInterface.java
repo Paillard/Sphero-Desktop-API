@@ -10,6 +10,7 @@
 */
 package org.freedesktop.dbus.test;
 
+import org.freedesktop.DBus;
 import org.freedesktop.DBus.Description;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusMemberName;
@@ -28,7 +29,7 @@ import java.util.Map;
 public interface TestSignalInterface extends DBusInterface
 {
    @Description("Test basic signal")
-   public static class TestSignal extends DBusSignal
+   class TestSignal extends DBusSignal
    {
       public final String value;
       public final UInt32 number;
@@ -42,7 +43,7 @@ public interface TestSignalInterface extends DBusInterface
          this.number = number;
       }
    }
-	public static class StringSignal extends DBusSignal
+	class StringSignal extends DBusSignal
 	{
 		public final String aoeu;
 		public StringSignal(String path, String aoeu) throws DBusException
@@ -51,7 +52,7 @@ public interface TestSignalInterface extends DBusInterface
 			this.aoeu = aoeu;
 		}
 	}
-	public static class EmptySignal extends DBusSignal
+	class EmptySignal extends DBusSignal
 	{
 		public EmptySignal(String path) throws DBusException
 		{
@@ -59,7 +60,7 @@ public interface TestSignalInterface extends DBusInterface
 		}
 	}
    @Description("Test signal with arrays")
-   public static class TestArraySignal extends DBusSignal
+   class TestArraySignal extends DBusSignal
    {
       public final List<TestStruct2> v;
       public final Map<UInt32, TestStruct2> m;
@@ -72,7 +73,7 @@ public interface TestSignalInterface extends DBusInterface
    }
    @Description("Test signal sending an object path")
    @DBusMemberName("TestSignalObject")
-   public static class TestObjectSignal extends DBusSignal
+   class TestObjectSignal extends DBusSignal
    {
       public final DBusInterface otherpath;
       public TestObjectSignal(String path, DBusInterface otherpath) throws DBusException
@@ -81,7 +82,7 @@ public interface TestSignalInterface extends DBusInterface
          this.otherpath = otherpath;
       }
    }
-   public static class TestPathSignal extends DBusSignal
+   class TestPathSignal extends DBusSignal
    {
       public final Path otherpath;
       public final List<Path> pathlist;

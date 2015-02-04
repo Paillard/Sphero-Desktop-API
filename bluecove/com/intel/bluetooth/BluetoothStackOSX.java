@@ -24,31 +24,21 @@
  */
 package com.intel.bluetooth;
 
+import javax.bluetooth.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.bluetooth.BluetoothConnectionException;
-import javax.bluetooth.BluetoothStateException;
-import javax.bluetooth.DataElement;
-import javax.bluetooth.DeviceClass;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.DiscoveryListener;
-import javax.bluetooth.RemoteDevice;
-import javax.bluetooth.ServiceRecord;
-import javax.bluetooth.ServiceRegistrationException;
-import javax.bluetooth.UUID;
-
 class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
 
     public static final boolean debug = false;
 
-    private static BluetoothStackOSX singleInstance = null;
+    private static BluetoothStackOSX singleInstance;
 
     // TODO what is the real number for Attributes retrivable ?
-    private final static int ATTR_RETRIEVABLE_MAX = 256;
+    private static final int ATTR_RETRIEVABLE_MAX = 256;
 
     private final Vector deviceDiscoveryListeners = new Vector/* <DiscoveryListener> */();
 
@@ -58,11 +48,11 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
 
     private int localDeviceSupportedSoftwareVersion;
 
-    private long lastDeviceDiscoveryTime = 0;
+    private long lastDeviceDiscoveryTime;
 
-    private int localDeviceServiceClasses = 0;
+    private int localDeviceServiceClasses;
 
-    private Thread localDeviceServiceClassMaintainer = null;
+    private Thread localDeviceServiceClassMaintainer;
 
     private static final int BLUETOOTH_SOFTWARE_VERSION_2_0_0 = 20000;
 
@@ -84,8 +74,8 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
      * 
      * @see com.intel.bluetooth.BluetoothStack#requireNativeLibraries()
      */
-    public LibraryInformation[] requireNativeLibraries() {
-        return LibraryInformation.library(BlueCoveImpl.NATIVE_LIB_OSX);
+    public BluetoothStack.LibraryInformation[] requireNativeLibraries() {
+        return BluetoothStack.LibraryInformation.library(BlueCoveImpl.NATIVE_LIB_OSX);
     }
 
     public String getStackID() {
@@ -103,9 +93,9 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
      */
     public int getFeatureSet() {
         if (localDeviceSupportedSoftwareVersion >= BLUETOOTH_SOFTWARE_VERSION_2_0_0) {
-            return FEATURE_L2CAP | FEATURE_SERVICE_ATTRIBUTES | FEATURE_SET_DEVICE_SERVICE_CLASSES | (isLocalDeviceFeatureRSSI() ? FEATURE_RSSI : 0);
+            return BluetoothStack.FEATURE_L2CAP | BluetoothStack.FEATURE_SERVICE_ATTRIBUTES | BluetoothStack.FEATURE_SET_DEVICE_SERVICE_CLASSES | (isLocalDeviceFeatureRSSI() ? BluetoothStack.FEATURE_RSSI : 0);
         } else {
-            return FEATURE_L2CAP | FEATURE_SERVICE_ATTRIBUTES;
+            return BluetoothStack.FEATURE_L2CAP | BluetoothStack.FEATURE_SERVICE_ATTRIBUTES;
         }
     }
 
@@ -122,7 +112,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
 
         String sysVersion = System.getProperty("os.version");
         String jreDataModel = System.getProperty("sun.arch.data.model");
-        boolean osIsLeopard = (sysVersion != null) && sysVersion.startsWith("10.5");
+        boolean osIsLeopard = sysVersion != null && sysVersion.startsWith("10.5");
         boolean jreIs64Bit = "64".equals(jreDataModel);
         if (osIsLeopard && jreIs64Bit) {
             throw new BluetoothStateException("Mac OS X 10.5 not supported with a 64 bit JRE");
@@ -208,7 +198,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
             setLocalDeviceServiceClassesImpl(classOfDevice);
         }
         localDeviceServiceClasses = classOfDevice;
-        if ((classOfDevice != 0) && (localDeviceServiceClassMaintainer == null)) {
+        if (classOfDevice != 0 && this.localDeviceServiceClassMaintainer == null) {
             localDeviceServiceClassMaintainer = new MaintainDeviceServiceClassesThread();
             UtilsJavaSE.threadSetDaemon(localDeviceServiceClassMaintainer);
             localDeviceServiceClassMaintainer.start();
@@ -298,10 +288,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
      * There are no functions to set OS X stack Discoverable status.
      */
     public boolean setLocalDeviceDiscoverable(int mode) throws BluetoothStateException {
-        if (getLocalDeviceDiscoverable() == mode) {
-            return true;
-        }
-        return false;
+        return getLocalDeviceDiscoverable() == mode;
     }
 
     private void verifyDeviceReady() throws BluetoothStateException {
@@ -313,14 +300,12 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
     private native boolean retrieveDevicesImpl(int option, RetrieveDevicesCallback retrieveDevicesCallback);
 
     public RemoteDevice[] retrieveDevices(int option) {
-        final Vector devices = new Vector();
-        RetrieveDevicesCallback retrieveDevicesCallback = new RetrieveDevicesCallback() {
-            public void deviceFoundCallback(long deviceAddr, int deviceClass, String deviceName, boolean paired) {
-                DebugLog.debug("device found", deviceAddr);
-                RemoteDevice remoteDevice = RemoteDeviceHelper.createRemoteDevice(BluetoothStackOSX.this, deviceAddr, deviceName, paired);
-                if (!devices.contains(remoteDevice)) {
-                    devices.add(remoteDevice);
-                }
+        Vector devices = new Vector();
+        RetrieveDevicesCallback retrieveDevicesCallback = (deviceAddr, deviceClass, deviceName, paired) -> {
+            DebugLog.debug("device found", deviceAddr);
+            RemoteDevice remoteDevice = RemoteDeviceHelper.createRemoteDevice(this, deviceAddr, deviceName, paired);
+            if (!devices.contains(remoteDevice)) {
+                devices.add(remoteDevice);
             }
         };
         if (retrieveDevicesImpl(option, retrieveDevicesCallback)) {
@@ -333,13 +318,13 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
     private native boolean isRemoteDeviceTrustedImpl(long address);
 
     public Boolean isRemoteDeviceTrusted(long address) {
-        return new Boolean(isRemoteDeviceTrustedImpl(address));
+        return isRemoteDeviceTrustedImpl(address);
     }
 
     private native boolean isRemoteDeviceAuthenticatedImpl(long address);
 
     public Boolean isRemoteDeviceAuthenticated(long address) {
-        return new Boolean(isRemoteDeviceAuthenticatedImpl(address));
+        return isRemoteDeviceAuthenticatedImpl(address);
     }
 
     private native int readRemoteDeviceRSSIImpl(long address) throws IOException;
@@ -421,7 +406,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
                 // Update name if name retrieved
                 RemoteDevice remoteDevice = RemoteDeviceHelper.createRemoteDevice(BluetoothStackOSX.this, deviceAddr, deviceName, paired);
                 Vector reported = (Vector) deviceDiscoveryListenerReportedDevices.get(listener);
-                if (reported == null || (reported.contains(remoteDevice))) {
+                if (reported == null || reported.contains(remoteDevice)) {
                     return;
                 }
                 reported.addElement(remoteDevice);
@@ -438,10 +423,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
 
     public boolean cancelInquiry(DiscoveryListener listener) {
         // no further deviceDiscovered() events will occur for this inquiry
-        if (!deviceDiscoveryListeners.removeElement(listener)) {
-            return false;
-        }
-        return deviceInquiryCancelImpl();
+        return deviceDiscoveryListeners.removeElement(listener) && deviceInquiryCancelImpl();
     }
 
     // ---------------------- Service search
@@ -450,72 +432,67 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
 
     public int searchServices(int[] attrSet, UUID[] uuidSet, RemoteDevice device, DiscoveryListener listener) throws BluetoothStateException {
 
-        SearchServicesRunnable searchRunnable = new SearchServicesRunnable() {
-
-            public int runSearchServices(SearchServicesThread sst, int[] attrSet, UUID[] uuidSet, RemoteDevice device, DiscoveryListener listener)
-                    throws BluetoothStateException {
-                // OS X will retrieve all Records, we filter here in Java
-                sst.searchServicesStartedCallback();
-                int recordsSize;
+        SearchServicesRunnable searchRunnable = (sst, attrSet1, uuidSet1, device1, listener1) -> {
+            // OS X will retrieve all Records, we filter here in Java
+            sst.searchServicesStartedCallback();
+            int recordsSize;
+            try {
+                recordsSize = runSearchServicesImpl(RemoteDeviceHelper.getAddress(device1), sst.getTransID());
+            } catch (SearchServicesDeviceNotReachableException e) {
+                return DiscoveryListener.SERVICE_SEARCH_DEVICE_NOT_REACHABLE;
+            } catch (SearchServicesTerminatedException e) {
+                return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
+            } catch (SearchServicesException e) {
+                return DiscoveryListener.SERVICE_SEARCH_ERROR;
+            }
+            if (sst.isTerminated()) {
+                return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
+            }
+            if (recordsSize == 0) {
+                return DiscoveryListener.SERVICE_SEARCH_NO_RECORDS;
+            }
+            Vector records = new Vector();
+            int[] uuidFilerAttrIDs = { BluetoothConsts.ServiceClassIDList, BluetoothConsts.ProtocolDescriptorList };
+            int[] requiredAttrIDs = { BluetoothConsts.ServiceRecordHandle, BluetoothConsts.ServiceRecordState, BluetoothConsts.ServiceID };
+            nextRecord: for (int i = 0; i < recordsSize; i++) {
+                ServiceRecordImpl sr = new ServiceRecordImpl(this, device1, i);
                 try {
-                    recordsSize = runSearchServicesImpl(RemoteDeviceHelper.getAddress(device), sst.getTransID());
-                } catch (SearchServicesDeviceNotReachableException e) {
-                    return DiscoveryListener.SERVICE_SEARCH_DEVICE_NOT_REACHABLE;
-                } catch (SearchServicesTerminatedException e) {
-                    return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
-                } catch (SearchServicesException e) {
-                    return DiscoveryListener.SERVICE_SEARCH_ERROR;
-                }
-                if (sst.isTerminated()) {
-                    return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
-                }
-                if (recordsSize == 0) {
-                    return DiscoveryListener.SERVICE_SEARCH_NO_RECORDS;
-                }
-                Vector records = new Vector();
-                int[] uuidFilerAttrIDs = new int[] { BluetoothConsts.ServiceClassIDList, BluetoothConsts.ProtocolDescriptorList };
-                int[] requiredAttrIDs = new int[] { BluetoothConsts.ServiceRecordHandle, BluetoothConsts.ServiceRecordState, BluetoothConsts.ServiceID };
-                nextRecord: for (int i = 0; i < recordsSize; i++) {
-                    ServiceRecordImpl sr = new ServiceRecordImpl(BluetoothStackOSX.this, device, i);
-                    try {
-                        sr.populateRecord(uuidFilerAttrIDs);
-                        // Apply JSR-82 filter, all UUID should be present
-                        for (int u = 0; u < uuidSet.length; u++) {
-                            if (!((sr.hasServiceClassUUID(uuidSet[u]) || sr.hasProtocolClassUUID(uuidSet[u])))) {
-                                if (debug) {
-                                    DebugLog.debug("filtered ServiceRecord (" + i + ")", sr);
-                                }
-                                continue nextRecord;
+                    sr.populateRecord(uuidFilerAttrIDs);
+                    // Apply JSR-82 filter, all UUID should be present
+                    for (int u = 0; u < uuidSet1.length; u++) {
+                        if (!(sr.hasServiceClassUUID(uuidSet1[u]) || sr.hasProtocolClassUUID(uuidSet1[u]))) {
+                            if (debug) {
+                                DebugLog.debug("filtered ServiceRecord (" + i + ")", sr);
                             }
+                            continue nextRecord;
                         }
-                        if (debug) {
-                            DebugLog.debug("accepted ServiceRecord (" + i + ")", sr);
-                        }
-                        records.addElement(sr);
-                        sr.populateRecord(requiredAttrIDs);
-                        if (attrSet != null) {
-                            sr.populateRecord(attrSet);
-                        }
-                        DebugLog.debug("ServiceRecord (" + i + ")", sr);
-                    } catch (Exception e) {
-                        DebugLog.debug("populateRecord error", e);
                     }
-
-                    if (sst.isTerminated()) {
-                        DebugLog.debug("SERVICE_SEARCH_TERMINATED " + sst.getTransID());
-                        return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
+                    if (debug) {
+                        DebugLog.debug("accepted ServiceRecord (" + i + ")", sr);
                     }
+                    records.addElement(sr);
+                    sr.populateRecord(requiredAttrIDs);
+                    if (attrSet1 != null) {
+                        sr.populateRecord(attrSet1);
+                    }
+                    DebugLog.debug("ServiceRecord (" + i + ")", sr);
+                } catch (Exception e) {
+                    DebugLog.debug("populateRecord error", e);
                 }
-                if (records.size() != 0) {
-                    DebugLog.debug("SERVICE_SEARCH_COMPLETED " + sst.getTransID());
-                    ServiceRecord[] fileteredRecords = (ServiceRecord[]) Utils.vector2toArray(records, new ServiceRecord[records.size()]);
-                    listener.servicesDiscovered(sst.getTransID(), fileteredRecords);
-                    return DiscoveryListener.SERVICE_SEARCH_COMPLETED;
-                } else {
-                    return DiscoveryListener.SERVICE_SEARCH_NO_RECORDS;
+
+                if (sst.isTerminated()) {
+                    DebugLog.debug("SERVICE_SEARCH_TERMINATED " + sst.getTransID());
+                    return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
                 }
             }
-
+            if (!records.isEmpty()) {
+                DebugLog.debug("SERVICE_SEARCH_COMPLETED " + sst.getTransID());
+                ServiceRecord[] fileteredRecords = (ServiceRecord[]) Utils.vector2toArray(records, new ServiceRecord[records.size()]);
+                listener1.servicesDiscovered(sst.getTransID(), fileteredRecords);
+                return DiscoveryListener.SERVICE_SEARCH_COMPLETED;
+            } else {
+                return DiscoveryListener.SERVICE_SEARCH_NO_RECORDS;
+            }
         };
         return SearchServicesThread.startSearchServices(this, searchRunnable, attrSet, uuidSet, device, listener);
     }
@@ -544,12 +521,11 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
         }
         boolean anyRetrived = false;
         long address = RemoteDeviceHelper.getAddress(serviceRecord.getHostDevice());
-        for (int i = 0; i < attrIDs.length; i++) {
-            int id = attrIDs[i];
+        for (int id : attrIDs) {
             try {
                 byte[] blob = getServiceAttributeImpl(address, serviceRecord.getHandle(), id);
                 if (blob != null) {
-                    DataElement element = (new SDPInputStream(new ByteArrayInputStream(blob))).readElement();
+                    DataElement element = new SDPInputStream(new ByteArrayInputStream(blob)).readElement();
                     serviceRecord.populateAttributeValue(id, element);
                     anyRetrived = true;
                     if (debug) {
@@ -697,17 +673,16 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
 
     private void sdpServiceUpdateServiceRecord(long handle, char handleType, ServiceRecordImpl serviceRecord) throws ServiceRegistrationException {
         int[] ids = serviceRecord.getAttributeIDs();
-        if ((ids == null) || (ids.length == 0)) {
+        if (ids == null || ids.length == 0) {
             return;
         }
-        for (int i = 0; i < ids.length; i++) {
-            int attrID = ids[i];
+        for (int attrID : ids) {
             switch (attrID) {
-            case BluetoothConsts.ServiceRecordHandle:
-                continue;
-            case BluetoothConsts.ProtocolDescriptorList:
-            case BluetoothConsts.AttributeIDServiceName:
-                continue;
+                case BluetoothConsts.ServiceRecordHandle:
+                    continue;
+                case BluetoothConsts.ProtocolDescriptorList:
+                case BluetoothConsts.AttributeIDServiceName:
+                    continue;
             }
             sdpServiceAddAttribute(handle, handleType, attrID, serviceRecord.getAttributeValue(attrID));
         }

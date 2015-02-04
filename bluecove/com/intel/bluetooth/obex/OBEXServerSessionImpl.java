@@ -43,9 +43,9 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 
 	private OBEXServerOperation operation;
 
-	private boolean closeRequested = false;
+	private boolean closeRequested;
 
-	private volatile boolean delayClose = false;
+	private volatile boolean delayClose;
 
 	private Object canCloseEvent = new Object();
 
@@ -59,21 +59,21 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		return threadNumber++;
 	}
 
-	static int errorCount = 0;
+	static int errorCount;
 
 	OBEXServerSessionImpl(StreamConnection connection, ServerRequestHandler handler, Authenticator authenticator,
 			OBEXConnectionParams obexConnectionParams) throws IOException {
 		super(connection, obexConnectionParams);
-		this.requestSent = true;
+        this.requestSent = true;
 		this.handler = handler;
 		this.authenticator = authenticator;
-		stackID = BlueCoveImpl.getCurrentThreadBluetoothStackID();
-		handlerThread = new Thread(this, "OBEXServerSessionThread-" + nextThreadNum());
+        stackID = BlueCoveImpl.getCurrentThreadBluetoothStackID();
+        handlerThread = new Thread(this, "OBEXServerSessionThread-" + nextThreadNum());
 		UtilsJavaSE.threadSetDaemon(handlerThread);
 	}
 
 	void startSessionHandlerThread() {
-		handlerThread.start();
+        handlerThread.start();
 	}
 
 	public void run() {
@@ -90,7 +90,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 			}
 		} catch (Throwable e) {
 			synchronized (OBEXServerSessionImpl.class) {
-				errorCount++;
+                errorCount++;
 			}
 			if (this.isConnected) {
 				DebugLog.error("OBEXServerSession error", e);
@@ -108,24 +108,24 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 	}
 
 	public void close() throws IOException {
-		closeRequested = true;
+        closeRequested = true;
 		while (delayClose) {
 			synchronized (canCloseEvent) {
 				try {
 					if (delayClose) {
-						canCloseEvent.wait(700);
+                        canCloseEvent.wait(700);
 					}
 				} catch (InterruptedException e) {
 				}
-				delayClose = false;
+                delayClose = false;
 			}
 		}
 		if (!isClosed()) {
 			DebugLog.debug("OBEXServerSession close");
 			// (new Throwable()).printStackTrace();
 			if (operation != null) {
-				operation.close();
-				operation = null;
+                operation.close();
+                operation = null;
 			}
 		}
 		super.close();
@@ -133,7 +133,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 
 	private boolean handleRequest() throws IOException {
 		DebugLog.debug("OBEXServerSession handleRequest");
-		delayClose = false;
+        delayClose = false;
 		byte[] b;
 		try {
 			b = readPacket();
@@ -142,46 +142,46 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 				throw e;
 			}
 			DebugLog.debug("OBEXServerSession got EOF");
-			close();
+            close();
 			return false;
 		}
-		delayClose = true;
+        delayClose = true;
 		try {
 			int opcode = b[0] & 0xFF;
-			boolean finalPacket = ((opcode & OBEXOperationCodes.FINAL_BIT) != 0);
+			boolean finalPacket = (opcode & OBEXOperationCodes.FINAL_BIT) != 0;
 			if (finalPacket) {
 				DebugLog.debug("OBEXServerSession got operation finalPacket");
 			}
 			switch (opcode) {
 			case OBEXOperationCodes.CONNECT:
-				processConnect(b);
+                processConnect(b);
 				break;
 			case OBEXOperationCodes.DISCONNECT:
-				processDisconnect(b);
+                processDisconnect(b);
 				break;
 			case OBEXOperationCodes.PUT_FINAL:
 			case OBEXOperationCodes.PUT:
-				processPut(b, finalPacket);
+                processPut(b, finalPacket);
 				break;
 			case OBEXOperationCodes.SETPATH | OBEXOperationCodes.FINAL_BIT:
 			case OBEXOperationCodes.SETPATH:
-				processSetPath(b, finalPacket);
+                processSetPath(b, finalPacket);
 				break;
 			case OBEXOperationCodes.ABORT:
-				processAbort();
+                processAbort();
 				break;
 			case OBEXOperationCodes.GET_FINAL:
 			case OBEXOperationCodes.GET:
-				processGet(b, finalPacket);
+                processGet(b, finalPacket);
 				break;
 			default:
-				writePacket(ResponseCodes.OBEX_HTTP_NOT_IMPLEMENTED, null);
+                writePacket(ResponseCodes.OBEX_HTTP_NOT_IMPLEMENTED, null);
 			}
 		} finally {
-			delayClose = false;
+            delayClose = false;
 		}
 		synchronized (canCloseEvent) {
-			canCloseEvent.notifyAll();
+            canCloseEvent.notifyAll();
 		}
 		return true;
 	}
@@ -198,16 +198,16 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		if (requestedMTU < OBEXOperationCodes.OBEX_MINIMUM_MTU) {
 			throw new IOException("Invalid MTU " + requestedMTU);
 		}
-		this.mtu = requestedMTU;
+        this.mtu = requestedMTU;
 		DebugLog.debug("mtu selected", this.mtu);
 
 		int rc;
-		OBEXHeaderSetImpl replyHeaders = createOBEXHeaderSetImpl();
+		OBEXHeaderSetImpl replyHeaders = OBEXSessionBase.createOBEXHeaderSetImpl();
 		OBEXHeaderSetImpl requestHeaders = OBEXHeaderSetImpl.readHeaders(b, 7);
 		if (!handleAuthenticationResponse(requestHeaders)) {
 			rc = ResponseCodes.OBEX_HTTP_UNAUTHORIZED;
 		} else {
-			handleAuthenticationChallenge(requestHeaders, (OBEXHeaderSetImpl) replyHeaders);
+            handleAuthenticationChallenge(requestHeaders, replyHeaders);
 			rc = ResponseCodes.OBEX_HTTP_INTERNAL_ERROR;
 			try {
 				rc = handler.onConnect(requestHeaders, replyHeaders);
@@ -220,9 +220,9 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		connectResponse[1] = 0; /* Flags */
 		connectResponse[2] = OBEXUtils.hiByte(obexConnectionParams.mtu);
 		connectResponse[3] = OBEXUtils.loByte(obexConnectionParams.mtu);
-		writePacketWithFlags(rc, connectResponse, replyHeaders);
+        writePacketWithFlags(rc, connectResponse, replyHeaders);
 		if (rc == ResponseCodes.OBEX_HTTP_OK) {
-			this.isConnected = true;
+            this.isConnected = true;
 		}
 	}
 
@@ -234,7 +234,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		if (this.isConnected) {
 			return true;
 		}
-		writePacket(ResponseCodes.OBEX_HTTP_BAD_REQUEST, null);
+        writePacket(ResponseCodes.OBEX_HTTP_BAD_REQUEST, null);
 		return false;
 	}
 
@@ -244,22 +244,22 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 			return;
 		}
 		OBEXHeaderSetImpl requestHeaders = OBEXHeaderSetImpl.readHeaders(b, 3);
-		OBEXHeaderSetImpl replyHeaders = createOBEXHeaderSetImpl();
+		OBEXHeaderSetImpl replyHeaders = OBEXSessionBase.createOBEXHeaderSetImpl();
 		int rc = ResponseCodes.OBEX_HTTP_OK;
 		try {
-			handler.onDisconnect(requestHeaders, replyHeaders);
+            handler.onDisconnect(requestHeaders, replyHeaders);
 		} catch (Throwable e) {
 			rc = ResponseCodes.OBEX_HTTP_UNAVAILABLE;
 			DebugLog.error("onDisconnect", e);
 		}
-		this.isConnected = false;
-		writePacket(rc, replyHeaders);
+        this.isConnected = false;
+        writePacket(rc, replyHeaders);
 	}
 
 	private void processDelete(OBEXHeaderSetImpl requestHeaders) throws IOException {
 		DebugLog.debug("Delete operation");
-		OBEXHeaderSetImpl replyHeaders = createOBEXHeaderSetImpl();
-		handleAuthenticationChallenge(requestHeaders, replyHeaders);
+		OBEXHeaderSetImpl replyHeaders = OBEXSessionBase.createOBEXHeaderSetImpl();
+        handleAuthenticationChallenge(requestHeaders, replyHeaders);
 		int rc = ResponseCodes.OBEX_HTTP_OK;
 		try {
 			rc = handler.onDelete(requestHeaders, replyHeaders);
@@ -267,7 +267,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 			rc = ResponseCodes.OBEX_HTTP_UNAVAILABLE;
 			DebugLog.error("onDelete", e);
 		}
-		writePacket(rc, replyHeaders);
+        writePacket(rc, replyHeaders);
 	}
 
 	private void processPut(byte[] b, boolean finalPacket) throws IOException {
@@ -286,17 +286,17 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 
 		// If Client re-send the command packet with an Authenticate Response
 		if (!handleAuthenticationResponse(requestHeaders, handler)) {
-			writePacket(ResponseCodes.OBEX_HTTP_UNAUTHORIZED, null);
+            writePacket(ResponseCodes.OBEX_HTTP_UNAUTHORIZED, null);
 			return;
 		}
 		// A PUT operation with NO Body or End-of-Body headers whatsoever should
 		// be treated as a delete request.
-		if (finalPacket && (!requestHeaders.hasIncommingData())) {
-			processDelete(requestHeaders);
+		if (finalPacket && !requestHeaders.hasIncommingData()) {
+            processDelete(requestHeaders);
 			return;
 		}
 		DebugLog.debug("Put operation");
-		operation = new OBEXServerOperationPut(this, requestHeaders, finalPacket);
+        operation = new OBEXServerOperationPut(this, requestHeaders, finalPacket);
 		try {
 			int rc = ResponseCodes.OBEX_HTTP_OK;
 			try {
@@ -306,11 +306,11 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 				DebugLog.error("onPut", e);
 			}
 			if (!operation.isAborted) {
-				operation.writeResponse(rc);
+                operation.writeResponse(rc);
 			}
 		} finally {
-			operation.close();
-			operation = null;
+            operation.close();
+            operation = null;
 		}
 	}
 
@@ -322,11 +322,11 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		OBEXHeaderSetImpl requestHeaders = OBEXHeaderSetImpl.readHeaders(b, 3);
 		// If Client re-send the command packet with an Authenticate Response
 		if (!handleAuthenticationResponse(requestHeaders, handler)) {
-			writePacket(ResponseCodes.OBEX_HTTP_UNAUTHORIZED, null);
+            writePacket(ResponseCodes.OBEX_HTTP_UNAUTHORIZED, null);
 			return;
 		}
 
-		operation = new OBEXServerOperationGet(this, requestHeaders, finalPacket);
+        operation = new OBEXServerOperationGet(this, requestHeaders, finalPacket);
 
 		// OFF; Not tested in TCK
 		// while ((!finalPacket) && (!operation.isIncommingDataReceived())) {
@@ -344,11 +344,11 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 				DebugLog.error("onGet", e);
 			}
 			if (!operation.isAborted) {
-				operation.writeResponse(rc);
+                operation.writeResponse(rc);
 			}
 		} finally {
-			operation.close();
-			operation = null;
+            operation.close();
+            operation = null;
 		}
 	}
 
@@ -358,12 +358,12 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 			return;
 		}
 		if (operation != null) {
-			operation.isAborted = true;
-			operation.close();
-			operation = null;
-			writePacket(OBEXOperationCodes.OBEX_RESPONSE_SUCCESS, null);
+            operation.isAborted = true;
+            operation.close();
+            operation = null;
+            writePacket(OBEXOperationCodes.OBEX_RESPONSE_SUCCESS, null);
 		} else {
-			writePacket(ResponseCodes.OBEX_HTTP_BAD_REQUEST, null);
+            writePacket(ResponseCodes.OBEX_HTTP_BAD_REQUEST, null);
 		}
 	}
 
@@ -378,18 +378,18 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		OBEXHeaderSetImpl requestHeaders = OBEXHeaderSetImpl.readHeaders(b, 5);
 		// DebugLog.debug("setPath b[3]", b[3]);
 		// b[4] = (byte) ((backup?1:0) | (create?0:2));
-		boolean backup = ((b[3] & 1) != 0);
-		boolean create = ((b[3] & 2) == 0);
+		boolean backup = (b[3] & 1) != 0;
+		boolean create = (b[3] & 2) == 0;
 		DebugLog.debug("setPath backup", backup);
 		DebugLog.debug("setPath create", create);
 
 		if (!handleAuthenticationResponse(requestHeaders, handler)) {
-			writePacket(ResponseCodes.OBEX_HTTP_UNAUTHORIZED, null);
+            writePacket(ResponseCodes.OBEX_HTTP_UNAUTHORIZED, null);
 			return;
 		}
 
-		OBEXHeaderSetImpl replyHeaders = createOBEXHeaderSetImpl();
-		handleAuthenticationChallenge(requestHeaders, replyHeaders);
+		OBEXHeaderSetImpl replyHeaders = OBEXSessionBase.createOBEXHeaderSetImpl();
+        handleAuthenticationChallenge(requestHeaders, replyHeaders);
 		int rc = ResponseCodes.OBEX_HTTP_OK;
 		try {
 			rc = handler.onSetPath(requestHeaders, replyHeaders, backup, create);
@@ -397,7 +397,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 			rc = ResponseCodes.OBEX_HTTP_UNAVAILABLE;
 			DebugLog.error("onSetPath", e);
 		}
-		writePacket(rc, replyHeaders);
+        writePacket(rc, replyHeaders);
 	}
 
 }

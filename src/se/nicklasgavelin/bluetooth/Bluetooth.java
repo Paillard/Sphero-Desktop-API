@@ -1,11 +1,13 @@
 package se.nicklasgavelin.bluetooth;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import se.nicklasgavelin.bluetooth.Bluetooth.EVENT.EVENT_CODE;
+import se.nicklasgavelin.log.Logging;
+
 import javax.bluetooth.*;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnectionNotifier;
-import se.nicklasgavelin.log.Logging;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Gives the possibility to find and connect to remote Bluetooth
@@ -34,18 +36,14 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	// Listeners
 	private Collection<BluetoothDiscoveryListener> listeners;
 
-	// Thread
-	private Thread deviceDiscoveryThread = null;
-
-	// UUID
+    // UUID
 	private UUID uuid;
 	// private String UUID_DEFAULT = "102030405060708090A0B0C0D0E0F010";
 
 	// Temporary stuff
 	private Collection<BluetoothDevice> devices;
-	private StreamConnectionNotifier server;
 
-	/**
+    /**
 	 * Describes an error for the Bluetooth
 	 * 
 	 * @author Nicklas Gavelin
@@ -67,11 +65,11 @@ public class Bluetooth implements DiscoveryListener, Runnable
 			/**
 			 * Event code for when Bluetooth exception occurs
 			 */
-			ERROR_BLUETOOTH_EXCEPTION;
-		}
+			ERROR_BLUETOOTH_EXCEPTION
+        }
 
 		// The error code for the message
-		private EVENT_CODE errorCode;
+		private Bluetooth.EVENT.EVENT_CODE errorCode;
 
 		/**
 		 * Create an error message
@@ -79,7 +77,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 		 * @param message The message for the error
 		 * @param errorCode The error code of the message
 		 */
-		protected EVENT( String message, EVENT_CODE errorCode )
+		protected EVENT( String message, Bluetooth.EVENT.EVENT_CODE errorCode )
 		{
 			this.message = message;
 			this.errorCode = errorCode;
@@ -90,7 +88,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 		 * 
 		 * @return The error code
 		 */
-		public EVENT_CODE getErrorCode()
+		public Bluetooth.EVENT.EVENT_CODE getErrorCode()
 		{
 			return this.errorCode;
 		}
@@ -190,23 +188,23 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	private Bluetooth( BluetoothDiscoveryListener listener )
 	{
-		this.listeners = new ArrayList<BluetoothDiscoveryListener>();
+        this.listeners = new ArrayList<>();
 
 		// Add the listener
 		if( listener != null )
-			this.listeners.add( listener );
+            this.listeners.add(listener);
 
 		try
 		{
 			// Try to get everything that we need regarding the local
 			// bluetooth device
-			this.local = LocalDevice.getLocalDevice();
-			this.dAgent = this.local.getDiscoveryAgent();
+            this.local = LocalDevice.getLocalDevice();
+            this.dAgent = this.local.getDiscoveryAgent();
 		}
 		catch( BluetoothStateException e )
 		{
 			// throw new RuntimeException( e.getMessage() );
-			this.notifyListeners( new EVENT( e.getMessage(), EVENT.EVENT_CODE.ERROR_BLUETOOTH_EXCEPTION ) );
+            this.notifyListeners( new Bluetooth.EVENT( e.getMessage(), EVENT_CODE.ERROR_BLUETOOTH_EXCEPTION ) );
 		}
 	}
 
@@ -225,8 +223,8 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	public void addListener( BluetoothDiscoveryListener listener )
 	{
-		if( !this.listeners.contains( listener ) )
-			this.listeners.add( listener );
+		if( !this.listeners.contains(listener) )
+            this.listeners.add(listener);
 	}
 
 	/**
@@ -236,8 +234,8 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	public void removeListener( BluetoothDiscoveryListener listener )
 	{
-		if( this.listeners.contains( listener ) )
-			this.listeners.remove( listener );
+		if(this.listeners.contains(listener) )
+            this.listeners.remove(listener);
 	}
 
 	/**
@@ -245,9 +243,9 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 * 
 	 * @param ERROR_CODE The error code
 	 */
-	private void notifyListeners( EVENT error )
+	private void notifyListeners( Bluetooth.EVENT error )
 	{
-		for( BluetoothDiscoveryListener l : this.listeners )
+		for( BluetoothDiscoveryListener l : this.listeners)
 			l.deviceSearchFailed( error );
 	}
 
@@ -258,7 +256,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	private void notifyListeners( Collection<BluetoothDevice> devices )
 	{
-		for( BluetoothDiscoveryListener l : this.listeners )
+		for( BluetoothDiscoveryListener l : this.listeners)
 			l.deviceSearchCompleted( devices );
 	}
 
@@ -269,7 +267,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	private void notifyListeners( BluetoothDevice device )
 	{
-		for( BluetoothDiscoveryListener l : this.listeners )
+		for( BluetoothDiscoveryListener l : this.listeners)
 			l.deviceDiscovered( device );
 	}
 
@@ -278,8 +276,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	private void notifyListenersDiscoveryStarted()
 	{
-		for( BluetoothDiscoveryListener l : this.listeners )
-			l.deviceSearchStarted();
+        this.listeners.forEach(BluetoothDiscoveryListener::deviceSearchStarted);
 	}
 
 	/*
@@ -297,10 +294,10 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	public void discover()
 	{
-		log( "Creating discovery thread" );
+        log( "Creating discovery thread" );
 
-		this.deviceDiscoveryThread = new Thread( this );
-		this.deviceDiscoveryThread.start();
+        Thread deviceDiscoveryThread = new Thread(this);
+        deviceDiscoveryThread.start();
 	}
 
 	/**
@@ -309,9 +306,9 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	public void cancelDiscovery()
 	{
 		// TODO: Should this really be an error?
-		dAgent.cancelInquiry( this );
-		log( "Device discovery canceled" );
-		this.notifyListeners( new EVENT( "Device discovery canceled by user", EVENT.EVENT_CODE.ERROR_DISCOVERY_CANCELED ) );
+        dAgent.cancelInquiry(this);
+        log( "Device discovery canceled" );
+        this.notifyListeners( new Bluetooth.EVENT( "Device discovery canceled by user", EVENT_CODE.ERROR_DISCOVERY_CANCELED ) );
 	}
 
 	/**
@@ -320,28 +317,33 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	private void performDiscovery()
 	{
-		log( "Starting discovery" );
-		this.notifyListenersDiscoveryStarted();
+        log( "Starting discovery" );
+        this.notifyListenersDiscoveryStarted();
 
 		// Clear the previous device list if there is one
-		if( this.devices == null )
-			this.devices = new ArrayList<BluetoothDevice>();
+		if(this.devices == null )
+            this.devices = new ArrayList<>();
 		else
-			this.devices.clear();
+            this.devices.clear();
 
 		// Start searching for devices
-		synchronized( this.local )
+        if (this.local == null) try {
+            this.local = LocalDevice.getLocalDevice();
+        } catch (BluetoothStateException e) {
+            e.printStackTrace();
+        }
+        synchronized(this.local)
 		{
 			try
 			{
-				log( "Starting inquiry" );
-				this.dAgent.startInquiry( DiscoveryAgent.GIAC, this );
-				local.wait();
+                log( "Starting inquiry" );
+                this.dAgent.startInquiry(DiscoveryAgent.GIAC, this);
+                local.wait();
 			}
 			catch( BluetoothStateException e )
 			{
-				error( "Failed to perform discovery, maybe interrupted" );
-				this.notifyListeners( new EVENT( "Failed to perform discovery due to exception", EVENT.EVENT_CODE.ERROR_BLUETOOTH_EXCEPTION ) );
+                error( "Failed to perform discovery, maybe interrupted" );
+                this.notifyListeners( new Bluetooth.EVENT( "Failed to perform discovery due to exception", EVENT_CODE.ERROR_BLUETOOTH_EXCEPTION ) );
 				// throw new RuntimeException( e.getMessage() );
 			}
 			catch( InterruptedException e )
@@ -366,7 +368,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 		 */
 
 		// Notify observers
-		this.notifyListeners( devices );
+        this.notifyListeners(devices);
 	}
 
 	/**
@@ -378,12 +380,12 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	@Override
 	public void deviceDiscovered( RemoteDevice device, DeviceClass deviceClass )
 	{
-		log( "Discovered device " + device );
+        log( "Discovered device " + device );
 		BluetoothDevice btd = new BluetoothDevice( this, device );
-		this.devices.add( btd );
+        this.devices.add(btd);
 
 		// Notify listeners
-		this.notifyListeners( btd );
+        this.notifyListeners( btd );
 	}
 
 	/**
@@ -393,10 +395,10 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	@Override
 	public void inquiryCompleted( int arg0 )
 	{
-		log( "Discovery completed, notifying synchronized lock" );
-		synchronized( this.local )
+        log( "Discovery completed, notifying synchronized lock" );
+		synchronized(this.local)
 		{
-			this.local.notifyAll();
+            this.local.notifyAll();
 		}
 	}
 
@@ -405,7 +407,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	{
 		/*
 		 * log( "Service search completed." );
-		 * 
+		 *
 		 * switch ( respCode )
 		 * {
 		 * case DiscoveryListener.SERVICE_SEARCH_COMPLETED:
@@ -458,7 +460,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	public void run()
 	{
-		this.performDiscovery();
+        this.performDiscovery();
 	}
 
 	/**
@@ -471,12 +473,12 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	{
 		try
 		{
-			log( "Setting up connection listener" );
-			local.setDiscoverable( DiscoveryAgent.GIAC );
+            log( "Setting up connection listener" );
+            local.setDiscoverable(DiscoveryAgent.GIAC);
 
-			String url = "btspp://localhost:" + uuid.toString() + ";name=" + name;
-			server = (StreamConnectionNotifier) Connector.open( url );
-			ServiceRecord record = local.getRecord( server );
+			String url = "btspp://localhost:" + uuid + ";name=" + name;
+            StreamConnectionNotifier server = (StreamConnectionNotifier) Connector.open(url);
+			ServiceRecord record = local.getRecord(server);
 
 			// // set availability to fully available
 			record.setAttributeValue( 0x0008, new DataElement( DataElement.U_INT_1, 0xFF ) );
@@ -490,7 +492,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 		}
 		catch( Exception e )
 		{
-			this.notifyListeners( new EVENT( "Failed to setup bluetooth server socket: " + e.getMessage(), EVENT.EVENT_CODE.ERROR_BLUETOOTH_EXCEPTION ) );
+            this.notifyListeners( new Bluetooth.EVENT( "Failed to setup bluetooth server socket: " + e.getMessage(), EVENT_CODE.ERROR_BLUETOOTH_EXCEPTION ) );
 			// throw new RuntimeException( e.getMessage() );
 		}
 	}

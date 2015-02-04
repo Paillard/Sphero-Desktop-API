@@ -32,6 +32,8 @@
  */
 package org.bluez.v3;
 
+import org.bluez.Error.Canceled;
+import org.bluez.Error.Rejected;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
 
@@ -55,7 +57,7 @@ public interface AuthorizationAgent extends DBusInterface {
 	 * parameters correspond to the remote device address, the object path of the service and the uuid of the profile.
 	 */
 	void Authorize(String adapter_path, String address, String service_path, String uuid)
-			throws org.bluez.Error.Rejected, org.bluez.Error.Canceled;
+			throws Rejected, Canceled;
 
 	/**
 	 * This method cancels a previous authorization request. The adapter_path, address, service_path and uuid parameters

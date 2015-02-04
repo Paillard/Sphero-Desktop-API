@@ -10,10 +10,11 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.lang.reflect.Constructor;
 import java.util.Vector;
+
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import org.freedesktop.dbus.exceptions.MessageFormatException;
@@ -33,41 +34,41 @@ public class Error extends Message
    }
    public Error(String source, String dest, String errorName, long replyserial, String sig, Object... args) throws DBusException
    {
-      super(Message.Endian.BIG, Message.MessageType.ERROR, (byte) 0);
+      super(Endian.BIG, MessageType.ERROR, (byte) 0);
 
       if (null == errorName)
-         throw new MessageFormatException(_("Must specify error name to Errors."));
-      headers.put(Message.HeaderField.REPLY_SERIAL,replyserial);
-      headers.put(Message.HeaderField.ERROR_NAME,errorName);
+         throw new MessageFormatException(getResource("Must specify error name to Errors."));
+       headers.put(HeaderField.REPLY_SERIAL, replyserial);
+       headers.put(HeaderField.ERROR_NAME, errorName);
       
-      Vector<Object> hargs = new Vector<Object>();
-      hargs.add(new Object[] { Message.HeaderField.ERROR_NAME, new Object[] { ArgumentType.STRING_STRING, errorName } });
-      hargs.add(new Object[] { Message.HeaderField.REPLY_SERIAL, new Object[] { ArgumentType.UINT32_STRING, replyserial } });
+      Vector<Object> hargs = new Vector<>();
+      hargs.add(new Object[] { HeaderField.ERROR_NAME, new Object[] { ArgumentType.STRING_STRING, errorName } });
+      hargs.add(new Object[] { HeaderField.REPLY_SERIAL, new Object[] { ArgumentType.UINT32_STRING, replyserial } });
             
       if (null != source) {
-         headers.put(Message.HeaderField.SENDER,source);
-         hargs.add(new Object[] { Message.HeaderField.SENDER, new Object[] { ArgumentType.STRING_STRING, source } });
+          headers.put(HeaderField.SENDER, source);
+         hargs.add(new Object[] { HeaderField.SENDER, new Object[] { ArgumentType.STRING_STRING, source } });
       }
  
       if (null != dest) {
-         headers.put(Message.HeaderField.DESTINATION,dest);
-         hargs.add(new Object[] { Message.HeaderField.DESTINATION, new Object[] { ArgumentType.STRING_STRING, dest } });
+          headers.put(HeaderField.DESTINATION, dest);
+         hargs.add(new Object[] { HeaderField.DESTINATION, new Object[] { ArgumentType.STRING_STRING, dest } });
       }
 
       if (null != sig) {
-         hargs.add(new Object[] { Message.HeaderField.SIGNATURE, new Object[] { ArgumentType.SIGNATURE_STRING, sig } });
-         headers.put(Message.HeaderField.SIGNATURE,sig);
-         setArgs(args);
+         hargs.add(new Object[] { HeaderField.SIGNATURE, new Object[] { ArgumentType.SIGNATURE_STRING, sig } });
+          headers.put(HeaderField.SIGNATURE, sig);
+          setArgs(args);
       }
       
       byte[] blen = new byte[4];
-      appendBytes(blen);
-      append("ua(yv)", serial, hargs.toArray());
-      pad((byte)8);
+       appendBytes(blen);
+       append("ua(yv)", serial, hargs.toArray());
+       pad((byte)8);
 
       long c = bytecounter;
       if (null != sig) append(sig, args);
-      marshallint(bytecounter-c, blen, 0, 4);
+       marshallint(bytecounter -c, blen, 0, 4);
    }
    public Error(String source, Message m, Throwable e)  throws DBusException
    {
@@ -84,7 +85,7 @@ public class Error extends Message
       Class<? extends DBusExecutionException> c = null;
       do {
          try {
-            c = (Class<? extends org.freedesktop.dbus.exceptions.DBusExecutionException>) Class.forName(name);
+            c = (Class<? extends DBusExecutionException>) Class.forName(name);
          } catch (ClassNotFoundException CNFe) {}
          name = name.replaceAll("\\.([^\\.]*)$", "\\$$1");
       } while (null == c && name.matches(".*\\..*"));

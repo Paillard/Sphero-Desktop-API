@@ -24,11 +24,13 @@
  */
 package com.intel.bluetooth;
 
+import com.intel.bluetooth.UtilsJavaSE.JavaSE5Features;
+
 /**
  * Optional Java 5 compatibility module.
  *
  */
-public class UtilsJavaSE5 implements UtilsJavaSE.JavaSE5Features {
+public class UtilsJavaSE5 implements JavaSE5Features {
 
 	public void clearProperty(String propertyName) {
 		System.clearProperty(propertyName);

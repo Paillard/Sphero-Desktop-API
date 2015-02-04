@@ -39,7 +39,7 @@ public class Password extends Field
    }
    protected String print()
    {
-      return "<input type='password' name='"+name+"' value='"+CGITools.escapeChar(defval, '\'')+"' />";
+      return "<input type='password' name='"+ name +"' value='"+CGITools.escapeChar(defval, '\'')+"' />";
    }
 }
 

@@ -47,8 +47,7 @@ public class ServiceRegistrationException extends IOException {
 	 *
 	 */
 	public ServiceRegistrationException() {
-		super();
-	}
+    }
 
 	/**
 	 * Creates a {@code ServiceRegistrationException} with a detailed message.

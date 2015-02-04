@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 
 /**
@@ -22,7 +23,7 @@ import se.nicklasgavelin.util.ByteArrayBuffer;
  */
 public class Delay extends MacroCommand
 {
-	private Integer delay = Integer.valueOf( 1000 );
+	private Integer delay = 1000;
 	public static final int MAX_DELAY = 65534, MIN_DELAY = 0;
 
 	// public Delay( byte[] data )
@@ -37,7 +38,7 @@ public class Delay extends MacroCommand
 	public Delay( Integer _delay )
 	{
 		super( MACRO_COMMAND.MAC_DELAY );
-		this.setDelay( _delay );
+        this.setDelay( _delay );
 	}
 
 	public Integer getDelay()
@@ -47,17 +48,17 @@ public class Delay extends MacroCommand
 
 	public final void setDelay( Integer _delay )
 	{
-		if( ( _delay.intValue() >= MIN_DELAY ) && ( _delay.intValue() <= MAX_DELAY ) )
-			this.delay = _delay;
+		if( _delay >= MIN_DELAY && _delay <= MAX_DELAY)
+            this.delay = _delay;
 	}
 
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		ByteArrayBuffer bytes = new ByteArrayBuffer( getLength() );
-		bytes.append( getCommandID() );
-		bytes.append( this.delay.intValue() >> 8 );
-		bytes.append( this.delay.intValue() & 0xFF );
+		ByteArrayBuffer bytes = new ByteArrayBuffer(getLength() );
+		bytes.append(getCommandID() );
+		bytes.append(this.delay >> 8 );
+		bytes.append(this.delay & 0xFF );
 		return bytes.toByteArray();
 	}
 }

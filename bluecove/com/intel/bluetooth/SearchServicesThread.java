@@ -42,7 +42,7 @@ import javax.bluetooth.UUID;
  */
 class SearchServicesThread extends Thread {
 
-	private static int transIDGenerator = 0;
+	private static int transIDGenerator;
 
 	private static Hashtable threads = new Hashtable();
 
@@ -64,11 +64,11 @@ class SearchServicesThread extends Thread {
 
 	private BluetoothStateException startException;
 
-	private boolean started = false;
+	private boolean started;
 
-	private boolean finished = false;
+	private boolean finished;
 
-	private boolean terminated = false;
+	private boolean terminated;
 
 	private Object serviceSearchStartedEvent = new Object();
 
@@ -97,12 +97,12 @@ class SearchServicesThread extends Thread {
 		SearchServicesThread t;
 		synchronized (threads) {
 			int runningCount = countRunningSearchServicesThreads(stack);
-			int concurrentAllow = Integer.valueOf(stack.getLocalDeviceProperty(BluetoothConsts.PROPERTY_BLUETOOTH_SD_TRANS_MAX)).intValue();
+			int concurrentAllow = Integer.valueOf(stack.getLocalDeviceProperty(BluetoothConsts.PROPERTY_BLUETOOTH_SD_TRANS_MAX));
 			if (runningCount >= concurrentAllow) {
 				throw new BluetoothStateException("Already running " + runningCount + " service discovery transactions");
 			}
-			t = (new SearchServicesThread(nextThreadNum(), stack, searchRunnable, attrSet, uuidSet, device, listener));
-			threads.put(new Integer(t.getTransID()), t);
+			t = new SearchServicesThread(nextThreadNum(), stack, searchRunnable, attrSet, uuidSet, device, listener);
+            threads.put(t.getTransID(), t);
 		}
 		// In case the BTStack hangs, exit JVM anyway
 		UtilsJavaSE.threadSetDaemon(t);
@@ -148,33 +148,33 @@ class SearchServicesThread extends Thread {
 			BlueCoveImpl.setThreadBluetoothStack(stack);
 			respCode = serachRunnable.runSearchServices(this, attrSet, uuidSet, device, listener);
 		} catch (BluetoothStateException e) {
-			startException = e;
+            startException = e;
 			return;
 		} finally {
-			finished = true;
-			unregisterThread();
+            finished = true;
+            unregisterThread();
 			synchronized (serviceSearchStartedEvent) {
-				serviceSearchStartedEvent.notifyAll();
+                serviceSearchStartedEvent.notifyAll();
 			}
 			DebugLog.debug("runSearchServices ends", getTransID());
 			if (started) {
 				Utils.j2meUsagePatternDellay();
-				listener.serviceSearchCompleted(getTransID(), respCode);
+                listener.serviceSearchCompleted(getTransID(), respCode);
 			}
 		}
 	}
 
 	private void unregisterThread() {
 		synchronized (threads) {
-			threads.remove(new Integer(getTransID()));
+            threads.remove(new Integer(getTransID()));
 		}
 	}
 
 	public void searchServicesStartedCallback() {
 		DebugLog.debug("searchServicesStartedCallback", getTransID());
-		started = true;
+        started = true;
 		synchronized (serviceSearchStartedEvent) {
-			serviceSearchStartedEvent.notifyAll();
+            serviceSearchStartedEvent.notifyAll();
 		}
 	}
 
@@ -186,8 +186,8 @@ class SearchServicesThread extends Thread {
 		if (isTerminated()) {
 			return false;
 		}
-		terminated = true;
-		unregisterThread();
+        terminated = true;
+        unregisterThread();
 		return true;
 	}
 
@@ -204,7 +204,7 @@ class SearchServicesThread extends Thread {
 	}
 
 	void addServicesRecords(ServiceRecord servRecord) {
-		this.servicesRecords.addElement(servRecord);
+        this.servicesRecords.addElement(servRecord);
 	}
 
 	Vector getServicesRecords() {
@@ -212,7 +212,7 @@ class SearchServicesThread extends Thread {
 	}
 
 	public int[] getAttrSet() {
-		final int[] requiredAttrIDs = new int[] { BluetoothConsts.ServiceRecordHandle,
+		int[] requiredAttrIDs = { BluetoothConsts.ServiceRecordHandle,
 				BluetoothConsts.ServiceClassIDList, BluetoothConsts.ServiceRecordState, BluetoothConsts.ServiceID,
 				BluetoothConsts.ProtocolDescriptorList };
 		if (this.attrSet == null) {
@@ -220,27 +220,28 @@ class SearchServicesThread extends Thread {
 		}
 		// Append unique attributes from attrSet
 		int len = requiredAttrIDs.length + this.attrSet.length;
-		for (int i = 0; i < this.attrSet.length; i++) {
-			for (int k = 0; k < requiredAttrIDs.length; k++) {
-				if (requiredAttrIDs[k] == this.attrSet[i]) {
-					len--;
-					break;
-				}
-			}
-		}
+        for (int anAttrSet1 : this.attrSet) {
+            for (int k = 0; k < requiredAttrIDs.length; k++) {
+                if (requiredAttrIDs[k] == anAttrSet1) {
+                    len--;
+                    break;
+                }
+            }
+        }
 
 		int[] allIDs = new int[len];
 		System.arraycopy(requiredAttrIDs, 0, allIDs, 0, requiredAttrIDs.length);
 		int appendPosition = requiredAttrIDs.length;
-		nextAttribute: for (int i = 0; i < this.attrSet.length; i++) {
-			for (int k = 0; k < requiredAttrIDs.length; k++) {
-				if (requiredAttrIDs[k] == this.attrSet[i]) {
-					continue nextAttribute;
-				}
-			}
-			allIDs[appendPosition] = this.attrSet[i];
-			appendPosition++;
-		}
+		nextAttribute:
+        for (int anAttrSet : this.attrSet) {
+            for (int k = 0; k < requiredAttrIDs.length; k++) {
+                if (requiredAttrIDs[k] == anAttrSet) {
+                    continue nextAttribute;
+                }
+            }
+            allIDs[appendPosition] = anAttrSet;
+            appendPosition++;
+        }
 		return allIDs;
 	}
 

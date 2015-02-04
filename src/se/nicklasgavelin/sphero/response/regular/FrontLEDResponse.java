@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.response.regular;
 
 import se.nicklasgavelin.sphero.response.ResponseMessage;
+import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader;
 
 /**
  * A front led response that is for the FrontLEDCommand that must

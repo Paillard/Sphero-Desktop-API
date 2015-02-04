@@ -39,7 +39,7 @@ class ObjectTree
    private TreeNode root;
    public ObjectTree()
    {
-      root = new TreeNode("");
+       root = new TreeNode("");
    }
    public static final Pattern slashpattern = Pattern.compile("/");
 
@@ -111,7 +111,7 @@ class ObjectTree
    public void add(String path, ExportedObject object, String data)
    {
       if (Debug.debug) Debug.print(Debug.DEBUG, "Adding "+path+" to object tree");
-      root = recursiveAdd(root, path, object, data);
+       root = recursiveAdd(root, path, object, data);
    }
    public void remove(String path)
    {
@@ -149,9 +149,9 @@ class ObjectTree
          if (null != current.object)
             s += "*";
          if (null != current.down) 
-            s += "/{"+recursivePrint(current.down)+"}";
+            s += "/{"+ recursivePrint(current.down)+"}";
          if (null != current.right)
-            s += ", "+recursivePrint(current.right);
+            s += ", "+ recursivePrint(current.right);
       }
       return s;
    }

@@ -1,5 +1,7 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
+
 /**
  * Command to make the Sphero go to sleep for a given number
  * of seconds.
@@ -39,8 +41,8 @@ public class SleepCommand extends CommandMessage
 	protected byte[] getPacketData()
 	{
 		byte[] data = new byte[ 3 ];
-		data[0] = (byte) ( this.time >> 8 );
-		data[1] = (byte) ( this.time );
+		data[0] = (byte) (this.time >> 8 );
+		data[1] = (byte) this.time;
 		data[2] = 0; // TODO: Replace with macro id
 
 		return data;

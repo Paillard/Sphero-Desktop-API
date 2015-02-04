@@ -97,7 +97,7 @@ public class ServerRequestHandler {
      *                2<sup>32</sup>-1
      */
     public void setConnectionID(long id) {
-        if ((id != -1) && ((id < 0 || id > 0xffffffffl))) {
+        if (id != -1 && (id < 0 || id > 0xffffffffl)) {
             throw new IllegalArgumentException("Invalid connectionID " + id);
         }
         this.connectionID = id;

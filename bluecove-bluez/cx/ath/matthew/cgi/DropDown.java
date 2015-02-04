@@ -34,7 +34,7 @@ public class DropDown extends Field
 {
    Object[] values;
    Object defval;
-   boolean indexed = false;
+   boolean indexed;
    /**
     * Create a new DropDown list.
     *
@@ -85,7 +85,7 @@ public class DropDown extends Field
    {
       this.name = name;
       this.label = label;
-      this.values = (Object[]) values.toArray(new Object[] {});
+      this.values = values.toArray(new Object[] {});
       this.defval = defval;
       this.indexed = indexed;
    }
@@ -102,7 +102,7 @@ public class DropDown extends Field
    {
       this.name = name;
       this.label = label;
-      this.values = (Object[]) values.toArray(new Object[] {});
+      this.values = values.toArray(new Object[] {});
       if (defval < 0)
          this.defval = null;
       else
@@ -112,16 +112,16 @@ public class DropDown extends Field
    protected String print()
    {
       String s = "";
-      s += "<select name='"+name+"'>\n";
-      for (int i=0; i<values.length; i++) {
+      s += "<select name='"+ name +"'>\n";
+      for (int i=0; i< values.length; i++) {
          if (indexed)
             s += "   <option value='"+i+"'";
          else
             s += "   <option";
          if (values[i].equals(defval))
-            s += " selected='selected'>"+values[i]+"</option>\n";
+            s += " selected='selected'>"+ values[i]+"</option>\n";
          else
-            s += ">"+values[i]+"</option>\n";
+            s += ">"+ values[i]+"</option>\n";
       }
       s += "</select>\n";
       return s;

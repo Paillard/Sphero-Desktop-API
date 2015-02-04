@@ -22,7 +22,7 @@ public class VM {
 	 * @param libname
 	 * @throws IOException
 	 */
-	public static synchronized void loadLibrary(String libname) throws IOException {
+	public static synchronized void loadLibrary(String libname) {
 		throw new Error(message);
 	}
 

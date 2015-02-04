@@ -6,6 +6,7 @@ import se.nicklasgavelin.sphero.response.ResponseMessage;
  * @deprecated Experimental
  * @author Nicklas Gavelin, nicklas.gavelin@gmail.com, Luleå University of Technology
  */
+@Deprecated
 public class BoostResponse extends ResponseMessage
 {
     /**
@@ -13,7 +14,7 @@ public class BoostResponse extends ResponseMessage
      *
      * @param rh The response header containing the data
      */
-    public BoostResponse( ResponseHeader rh )
+    public BoostResponse( ResponseMessage.ResponseHeader rh )
     {
         super( rh );
         //super( DeviceCommand.DEVICE_COMMAND.BOOST, data );

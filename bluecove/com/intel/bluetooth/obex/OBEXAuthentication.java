@@ -40,7 +40,7 @@ class OBEXAuthentication {
 
 	private static byte[] privateKey;
 
-	private static long uniqueTimestamp = 0;
+	private static long uniqueTimestamp;
 
 	private static final byte COLUMN[] = { ':' };
 
@@ -55,7 +55,7 @@ class OBEXAuthentication {
 		byte nonce[];
 
 		Challenge(byte data[]) throws IOException {
-			this.read(data);
+            this.read(data);
 		}
 
 		Challenge(String realm, boolean isUserIdRequired, boolean isFullAccess, byte[] nonce) {
@@ -72,7 +72,7 @@ class OBEXAuthentication {
 			buf.write(0x10); // Len
 			buf.write(nonce, 0, 0x10);
 
-			byte options = (byte) ((isUserIdRequired ? 1 : 0) | ((!isFullAccess) ? 2 : 0));
+			byte options = (byte) ((isUserIdRequired ? 1 : 0) | (!this.isFullAccess ? 2 : 0));
 			buf.write(0x01); // Tag
 			buf.write(0x01); // Len
 			buf.write(options);
@@ -111,31 +111,31 @@ class OBEXAuthentication {
 					if (len != 0x10) {
 						throw new IOException("OBEX Digest Challenge error in tag Nonce");
 					}
-					nonce = new byte[0x10];
+                    nonce = new byte[0x10];
 					System.arraycopy(data, i, nonce, 0, 0x10);
 					break;
 				case 1:
 					byte options = data[i];
 					DebugLog.debug("authChallenge options", options);
-					isUserIdRequired = ((options & 1) != 0);
-					isFullAccess = ((options & 2) == 0);
+                    isUserIdRequired = (options & 1) != 0;
+                    isFullAccess = (options & 2) == 0;
 					break;
 				case 2:
 					int charSetCode = data[i] & 0xFF;
 					byte chars[] = new byte[len - 1];
 					System.arraycopy(data, i + 1, chars, 0, chars.length);
 					if (charSetCode == 0xFF) {
-						realm = OBEXUtils.newStringUTF16(chars);
+                        realm = OBEXUtils.newStringUTF16(chars);
 					} else if (charSetCode == 0) {
-						realm = new String(chars, "ASCII");
+                        realm = new String(chars, "ASCII");
 					} else if (charSetCode <= 9) {
-						realm = new String(chars, "ISO-8859-" + charSetCode);
+                        realm = new String(chars, "ISO-8859-" + charSetCode);
 					} else {
 						DebugLog.error("Unsupported charset code " + charSetCode + " in Challenge");
 						// throw new UnsupportedEncodingException("charset code
 						// " + charSetCode);
 						// BUG on SE K790a
-						realm = new String(chars, 0, len - 1, "ASCII");
+                        realm = new String(chars, 0, len - 1, "ASCII");
 					}
 					break;
 				default:
@@ -197,18 +197,18 @@ class OBEXAuthentication {
 					if (len != 0x10) {
 						throw new IOException("OBEX Digest Response error in tag request-digest");
 					}
-					requestDigest = new byte[0x10];
+                    requestDigest = new byte[0x10];
 					System.arraycopy(data, i, requestDigest, 0, 0x10);
 					break;
 				case 1:
-					userName = new byte[len];
+                    userName = new byte[len];
 					System.arraycopy(data, i, userName, 0, userName.length);
 					break;
 				case 2:
 					if (len != 0x10) {
 						throw new IOException("OBEX Digest Response error in tag Nonce");
 					}
-					nonce = new byte[0x10];
+                    nonce = new byte[0x10];
 					System.arraycopy(data, i, nonce, 0, 0x10);
 					break;
 				}
@@ -323,7 +323,7 @@ class OBEXAuthentication {
 		}
 		MD5DigestWrapper md5 = new MD5DigestWrapper();
 		md5.update(createTimestamp());
-		privateKey = md5.digest();
+        privateKey = md5.digest();
 		return privateKey;
 	}
 
@@ -332,7 +332,7 @@ class OBEXAuthentication {
 		if (t <= uniqueTimestamp) {
 			t = uniqueTimestamp + 1;
 		}
-		uniqueTimestamp = t;
+        uniqueTimestamp = t;
 		byte[] buf = new byte[8];
 		for (int i = 0; i < buf.length; i++) {
 			buf[i] = (byte) (t >> (buf.length - 1 << 3));

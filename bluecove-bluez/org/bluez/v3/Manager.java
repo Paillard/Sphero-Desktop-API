@@ -33,6 +33,11 @@
 package org.bluez.v3;
 
 import org.bluez.Error;
+import org.bluez.Error.Failed;
+import org.bluez.Error.InvalidArguments;
+import org.bluez.Error.NoSuchAdapter;
+import org.bluez.Error.NoSuchService;
+import org.bluez.Error.OutOfMemory;
 import org.freedesktop.dbus.DBusInterfaceName;
 import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.UInt32;
@@ -59,14 +64,14 @@ public interface Manager extends org.bluez.Manager {
 	 * 
 	 * @return the current interface version. At the moment only version 0 is supported.
 	 */
-	public UInt32 InterfaceVersion() throws Error.InvalidArguments;
+    UInt32 InterfaceVersion() throws InvalidArguments;
 
 	/**
 	 * Returns object path for the default adapter.
 	 * 
 	 * @return returns Object in BlueZ 4
 	 */
-	String DefaultAdapter() throws Error.InvalidArguments, Error.NoSuchAdapter;
+	String DefaultAdapter() throws InvalidArguments, NoSuchAdapter;
 
 	/**
 	 * Returns object path for the specified adapter.
@@ -75,14 +80,14 @@ public interface Manager extends org.bluez.Manager {
 	 *            "hci0" or "00:11:22:33:44:55"
 	 * @return returns Object in BlueZ 4
 	 */
-	String FindAdapter(String pattern) throws Error.InvalidArguments, Error.NoSuchAdapter;
+	String FindAdapter(String pattern) throws InvalidArguments, NoSuchAdapter;
 
 	/**
 	 * Returns list of adapter object paths under /org/bluez
 	 * 
 	 * @return returns path list
 	 */
-	String[] ListAdapters() throws Error.InvalidArguments, Error.Failed, Error.OutOfMemory;
+	String[] ListAdapters() throws InvalidArguments, Failed, OutOfMemory;
 
 	/**
 	 * 
@@ -92,16 +97,16 @@ public interface Manager extends org.bluez.Manager {
 	 * @param pattern
 	 * @return
 	 */
-	String FindService(String pattern) throws Error.InvalidArguments, Error.NoSuchService;
+	String FindService(String pattern) throws InvalidArguments, NoSuchService;
 
 	/**
 	 * Returns list of object paths of current services.
 	 * 
 	 * @since BlueZ 3.10
 	 * @return
-	 * @throws Error.InvalidArguments
+	 * @throws InvalidArguments
 	 */
-	String[] ListServices() throws Error.InvalidArguments;
+	String[] ListServices() throws InvalidArguments;
 
 	/**
 	 * Returns the unqiue bus id of the specified service. Valid patterns are the same as for FindService(). If the
@@ -116,7 +121,7 @@ public interface Manager extends org.bluez.Manager {
 	/**
 	 * Parameter is object path of added adapter.
 	 */
-	public class AdapterAdded extends DBusSignal {
+    class AdapterAdded extends DBusSignal {
 
 		private final String adapterPath;
 
@@ -136,7 +141,7 @@ public interface Manager extends org.bluez.Manager {
 	/**
 	 * Parameter is object path of removed adapter.
 	 */
-	public class AdapterRemoved extends DBusSignal {
+    class AdapterRemoved extends DBusSignal {
 
 		private final String adapterPath;
 
@@ -158,7 +163,7 @@ public interface Manager extends org.bluez.Manager {
 	 * 
 	 * @since BlueZ 3.10
 	 */
-	public class DefaultAdapterChanged extends DBusSignal {
+    class DefaultAdapterChanged extends DBusSignal {
 
 		private final String adapterPath;
 
@@ -180,7 +185,7 @@ public interface Manager extends org.bluez.Manager {
 	 * 
 	 * @since BlueZ 3.10
 	 */
-	public class ServiceAdded extends DBusSignal {
+    class ServiceAdded extends DBusSignal {
 
 		private final String serviceAgentPath;
 
@@ -202,7 +207,7 @@ public interface Manager extends org.bluez.Manager {
 	 * 
 	 * @since BlueZ 3.10
 	 */
-	public class ServiceRemoved extends DBusSignal {
+    class ServiceRemoved extends DBusSignal {
 
 		private final String serviceAgentPath;
 

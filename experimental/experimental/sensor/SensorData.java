@@ -64,10 +64,10 @@ public class SensorData
 
         public double[] normalized()
         {
-            double R = Math.sqrt( (Math.pow( x, 2 ) + Math.pow( y, 2 ) + Math.pow( z, 2 )) );
+            double R = Math.sqrt(Math.pow(x, 2 ) + Math.pow(y, 2 ) + Math.pow(z, 2 ));
             return new double[]
                     {
-                        (( double ) x) / R, (( double ) y) / R, (( double ) z) / R
+                        ( double ) x / R, ( double ) y / R, ( double ) z / R
                     };
         }
     }

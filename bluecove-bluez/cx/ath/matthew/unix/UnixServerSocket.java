@@ -37,9 +37,9 @@ public class UnixServerSocket
    private native int native_bind(String address, boolean abs) throws IOException;
    private native void native_close(int sock) throws IOException;
    private native int native_accept(int sock) throws IOException;
-   private UnixSocketAddress address = null;
-   private boolean bound = false;
-   private boolean closed = false;
+   private UnixSocketAddress address;
+   private boolean bound;
+   private boolean closed;
    private int sock;
    /**
     * Create an un-bound server socket.
@@ -53,7 +53,7 @@ public class UnixServerSocket
     */
    public UnixServerSocket(UnixSocketAddress address) throws IOException
    {
-      bind(address);
+       bind(address);
    }
    /**
     * Create a server socket bound to the given address.
@@ -77,10 +77,10 @@ public class UnixServerSocket
     */
    public synchronized void close() throws IOException
    {
-      native_close(sock);
-      sock = 0;
-      closed = true;
-      bound = false;
+       native_close(sock);
+       sock = 0;
+       closed = true;
+       bound = false;
    }
    /**
     * Binds a server socket to the given address.
@@ -89,9 +89,9 @@ public class UnixServerSocket
    public void bind(UnixSocketAddress address) throws IOException
    {
       if (bound) close();
-      sock = native_bind(address.path, address.abs);
-      bound = true;
-      closed = false;
+       sock = native_bind(address.path, address.abs);
+       bound = true;
+       closed = false;
       this.address = address;
    }
    /**
@@ -100,7 +100,7 @@ public class UnixServerSocket
     */
    public void bind(String address) throws IOException
    {
-      bind(new UnixSocketAddress(address));
+       bind(new UnixSocketAddress(address));
    }   
    /**
     * Return the address this socket is bound to.

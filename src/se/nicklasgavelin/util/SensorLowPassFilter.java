@@ -10,7 +10,7 @@ public class SensorLowPassFilter extends SensorFilter
 	{
 		float dt = 1.0F / rate;
 		float RC = 1.0F / cutoffFrequency;
-		this.filterConstant = ( dt / ( dt + RC ) );
+        this.filterConstant = dt / ( dt + RC );
 	}
 
 	@Override
@@ -18,7 +18,7 @@ public class SensorLowPassFilter extends SensorFilter
 	{
 		double alpha = this.filterConstant;
 
-		if( this.adaptive )
+		if(this.adaptive)
 		{
 			float d = (float) Value.clamp( Math.abs( Vector3D.magnitude( this.x, this.y, this.z ) - Vector3D.magnitude( x, y, z ) ) / accelerometerMinStep - 1.0D, 0.0D, 1.0D );
 

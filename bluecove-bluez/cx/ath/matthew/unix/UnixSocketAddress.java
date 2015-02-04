@@ -50,7 +50,7 @@ public class UnixSocketAddress
    public UnixSocketAddress(String path)
    {
       this.path = path;
-      this.abs = false;
+       this.abs = false;
    }
    /**
     * Return the path.
@@ -71,12 +71,10 @@ public class UnixSocketAddress
     */
    public String toString()
    {
-      return "unix"+(abs?":abstract":"")+":path="+path;
+      return "unix"+(abs ?":abstract":"")+":path="+ path;
    }
-   public boolean equals(Object o)
-   {
-      if (!(o instanceof UnixSocketAddress)) return false;
-      return ((UnixSocketAddress) o).path.equals(this.path);
+   public boolean equals(Object o) {
+       return o instanceof UnixSocketAddress && ((UnixSocketAddress) o).path.equals(this.path);
    }
    public int hashCode()
    {

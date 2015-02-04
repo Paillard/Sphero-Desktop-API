@@ -12,8 +12,9 @@ package org.freedesktop.dbus.test;
 
 import org.freedesktop.dbus.DBusConnection;
 import org.freedesktop.dbus.DBusSigHandler;
+import org.freedesktop.dbus.test.TwoPartInterface.TwoPartSignal;
 
-public class two_part_test_server implements TwoPartInterface, DBusSigHandler<TwoPartInterface.TwoPartSignal>
+public class two_part_test_server implements TwoPartInterface, DBusSigHandler<TwoPartSignal>
 {
    public class two_part_test_object implements TwoPartObject
    {
@@ -21,7 +22,7 @@ public class two_part_test_server implements TwoPartInterface, DBusSigHandler<Tw
       public String getName() 
       { 
          System.out.println("give name");
-         return toString(); 
+         return toString();
       }
    }
    private DBusConnection conn;
@@ -34,11 +35,12 @@ public class two_part_test_server implements TwoPartInterface, DBusSigHandler<Tw
    {
       TwoPartObject o = new two_part_test_object();
       System.out.println("export new");
-      try { conn.exportObject("/12345", o); } catch (Exception e) {}
+      try {
+          conn.exportObject("/12345", o); } catch (Exception e) {}
       System.out.println("give new");
       return o;
    }
-   public void handle(TwoPartInterface.TwoPartSignal s)
+   public void handle(TwoPartSignal s)
    {
       System.out.println("Got: "+s.o);
    }
@@ -48,7 +50,7 @@ public class two_part_test_server implements TwoPartInterface, DBusSigHandler<Tw
       conn.requestBusName("org.freedesktop.dbus.test.two_part_server");
       two_part_test_server server = new two_part_test_server(conn);
       conn.exportObject("/", server);
-      conn.addSigHandler(TwoPartInterface.TwoPartSignal.class, server);
+      conn.addSigHandler(TwoPartSignal.class, server);
       while (true) try { Thread.sleep(10000); } catch (InterruptedException Ie) {}
    }
 }

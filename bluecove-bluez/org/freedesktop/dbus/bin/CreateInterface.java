@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus.bin;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 import static org.freedesktop.dbus.bin.IdentifierMangler.mangle;
 
 import java.io.File;
@@ -37,7 +37,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.freedesktop.DBus.Introspectable;
+import org.freedesktop.DBus;
 import org.freedesktop.dbus.DBusConnection;
 import org.freedesktop.dbus.Marshalling;
 import org.freedesktop.dbus.exceptions.DBusException;
@@ -60,7 +60,7 @@ public class CreateInterface
    {
       if (t instanceof ParameterizedType) {
          String s;
-         Class<? extends Object> c = (Class<? extends Object>) ((ParameterizedType) t).getRawType();
+         Class<?> c = (Class<?>) ((ParameterizedType) t).getRawType();
          if (null != structs && t instanceof DBusStructType) {
             int num = 1;
             String name = "Struct";
@@ -79,7 +79,7 @@ public class CreateInterface
          s = s.replaceAll(",$", ">");
          return s;
       } else if (t instanceof Class) {
-         Class<? extends Object> c = (Class<? extends Object>) t;
+         Class<?> c = (Class<?>) t;
          if (c.isArray()) {
             return collapseType(c.getComponentType(), imports, structs, container, fullnames)+"[]";
          } else {
@@ -92,7 +92,7 @@ public class CreateInterface
             } else {
                try {
                   Field f = c.getField("TYPE");
-                  Class<? extends Object> d = (Class<? extends Object>) f.get(c);
+                  Class<?> d = (Class<?>) f.get(c);
                   return d.getSimpleName();
                } catch (Exception e) {
                   return c.getSimpleName();
@@ -104,7 +104,7 @@ public class CreateInterface
    private static String getJavaType(String dbus, Set<String> imports, Map<StructStruct,Type[]> structs, boolean container, boolean fullnames) throws DBusException
    {
       if (null == dbus || "".equals(dbus)) return "";
-      Vector<Type> v = new Vector<Type>();
+      Vector<Type> v = new Vector<>();
       int c = Marshalling.getJavaType(dbus, v, 1);
       Type t = v.get(0);
       return collapseType(t, imports, structs, container, fullnames);
@@ -112,7 +112,7 @@ public class CreateInterface
    public String comment = "";
    boolean builtin;
 
-   public CreateInterface(PrintStreamFactory factory, boolean builtin)
+   public CreateInterface(CreateInterface.PrintStreamFactory factory, boolean builtin)
    {
       this.factory = factory;
       this.builtin = builtin;
@@ -120,7 +120,7 @@ public class CreateInterface
    @SuppressWarnings("fallthrough")
    String parseReturns(Vector<Element> out, Set<String> imports, Map<String,Integer> tuples, Map<StructStruct, Type[]> structs) throws DBusException
    {
-      String[] names = new String[] { "Pair", "Triplet", "Quad", "Quintuple", "Sextuple", "Septuple" };
+      String[] names = { "Pair", "Triplet", "Quad", "Quintuple", "Sextuple", "Septuple" };
       String sig = "";
       String name = null;
       switch (out.size()) {
@@ -152,11 +152,11 @@ public class CreateInterface
    }
    String parseMethod(Element meth, Set<String> imports, Map<String,Integer> tuples, Map<StructStruct, Type[]> structs, Set<String> exceptions, Set<String> anns) throws DBusException
    {
-      Vector<Element> in = new Vector<Element>();
-      Vector<Element> out = new Vector<Element>();
+      Vector<Element> in = new Vector<>();
+      Vector<Element> out = new Vector<>();
       if (null == meth.getAttribute("name") ||
             "".equals(meth.getAttribute("name"))) {
-         System.err.println(_("ERROR: Method name was blank, failed"));
+         System.err.println(getResource("ERROR: Method name was blank, failed"));
          System.exit(1);
       }
       String annotations = "";
@@ -166,7 +166,7 @@ public class CreateInterface
 
          if (Node.ELEMENT_NODE != a.getNodeType()) continue;
 
-         checkNode(a, "arg", "annotation");
+          checkNode(a, "arg", "annotation");
 
          if ("arg".equals(a.getNodeName())) {
             Element arg = (Element) a;
@@ -191,7 +191,7 @@ public class CreateInterface
       }
 
       String sig = "";
-      comment = "";
+       comment = "";
       sig += parseReturns(out, imports, tuples, structs);
 
       sig += mangle(meth.getAttribute("name"))+"(";
@@ -201,7 +201,7 @@ public class CreateInterface
       for (Element arg: in) {
          String type = getJavaType(arg.getAttribute("type"), imports, structs, false, false);
          String name = arg.getAttribute("name");
-         if (null == name || "".equals(name)) name = ""+(defaultname++);
+         if (null == name || "".equals(name)) name = ""+ defaultname++;
          params += type+" "+mangle(name)+", ";         
       }
       return ("".equals(comment) ? "" : "   /**\n" + comment + "   */\n")
@@ -211,8 +211,8 @@ public class CreateInterface
    }
    String parseSignal(Element signal, Set<String> imports, Map<StructStruct, Type[]> structs, Set<String> anns) throws DBusException
    {
-      Map<String, String> params = new HashMap<String, String>();
-      Vector<String> porder = new Vector<String>();
+      Map<String, String> params = new HashMap<>();
+      Vector<String> porder = new Vector<>();
       char defaultname = 'a';
       imports.add("org.freedesktop.dbus.DBusSignal");
       imports.add("org.freedesktop.dbus.exceptions.DBusException");
@@ -221,7 +221,7 @@ public class CreateInterface
 
          if (Node.ELEMENT_NODE != a.getNodeType()) continue;
 
-         checkNode(a, "arg", "annotation");
+          checkNode(a, "arg", "annotation");
 
          if ("annotation".equals(a.getNodeName()))
             annotations += parseAnnotation((Element) a, imports, anns);
@@ -229,7 +229,7 @@ public class CreateInterface
             Element arg = (Element) a;
             String type = getJavaType(arg.getAttribute("type"), imports, structs, false, false);
             String name = arg.getAttribute("name");
-            if (null == name || "".equals(name)) name = ""+(defaultname++);
+            if (null == name || "".equals(name)) name = ""+ defaultname++;
             params.put(mangle(name), type);
             porder.add(mangle(name));
          }
@@ -271,7 +271,7 @@ public class CreateInterface
    {
       if (null == iface.getAttribute("name") ||
             "".equals(iface.getAttribute("name"))) {
-         System.err.println(_("ERROR: Interface name was blank, failed"));
+         System.err.println(getResource("ERROR: Interface name was blank, failed"));
          System.exit(1);
       }
 
@@ -280,13 +280,13 @@ public class CreateInterface
       String methods = "";
       String signals = "";
       String annotations = "";
-      Set<String> imports = new TreeSet<String>();
+      Set<String> imports = new TreeSet<>();
       imports.add("org.freedesktop.dbus.DBusInterface");
       for (Node meth: new IterableNodeList(iface.getChildNodes())) {
 
          if (Node.ELEMENT_NODE != meth.getNodeType()) continue;
 
-         checkNode(meth, "method", "signal", "property", "annotation");
+          checkNode(meth, "method", "signal", "property", "annotation");
 
          if ("method".equals(meth.getNodeName()))
             methods += parseMethod((Element) meth, imports, tuples, structs, exceptions, anns) + "\n";
@@ -298,7 +298,7 @@ public class CreateInterface
             annotations += parseAnnotation((Element) meth, imports, anns);
       }
 
-      if (imports.size() > 0) 
+      if (!imports.isEmpty())
          for (String i: imports)
             out.println("import "+i+";");
 
@@ -338,10 +338,10 @@ public class CreateInterface
    {
       out.println("package "+pack+";");
 
-      Set<String> imports = new TreeSet<String>();
+      Set<String> imports = new TreeSet<>();
       imports.add("org.freedesktop.dbus.Position");
       imports.add("org.freedesktop.dbus.Struct");
-      Map<StructStruct, Type[]> structs = new HashMap<StructStruct, Type[]>(existing);
+      Map<StructStruct, Type[]> structs = new HashMap<>(existing);
       String[] types = new String[type.length];
       for (int i = 0; i < type.length; i++)
          types[i] = collapseType(type[i], imports, structs, false, false);
@@ -368,9 +368,9 @@ public class CreateInterface
       out.println("}");
       
       structs = StructStruct.fillPackages(structs, pack);
-      Map<StructStruct, Type[]> tocreate = new HashMap<StructStruct, Type[]>(structs);
-      for (StructStruct ss: existing.keySet()) tocreate.remove(ss);
-      createStructs(tocreate, structs);
+      Map<StructStruct, Type[]> tocreate = new HashMap<>(structs);
+       existing.keySet().forEach(tocreate::remove);
+       createStructs(tocreate, structs);
    }
    void createTuple(String name, int num, String pack, PrintStream out) throws DBusException
    {
@@ -409,19 +409,19 @@ public class CreateInterface
    }
    void parseRoot(Element root) throws DBusException, IOException
    {
-      Map<StructStruct, Type[]> structs = new HashMap<StructStruct, Type[]>();
-      Set<String> exceptions = new TreeSet<String>();
-      Set<String> annotations = new TreeSet<String>();
+      Map<StructStruct, Type[]> structs = new HashMap<>();
+      Set<String> exceptions = new TreeSet<>();
+      Set<String> annotations = new TreeSet<>();
 
       for (Node iface: new IterableNodeList(root.getChildNodes())) {
 
          if (Node.ELEMENT_NODE != iface.getNodeType()) continue;
 
-         checkNode(iface, "interface", "node");
+          checkNode(iface, "interface", "node");
 
          if ("interface".equals(iface.getNodeName())) {
 
-            Map<String, Integer> tuples = new HashMap<String, Integer>();
+            Map<String, Integer> tuples = new HashMap<>();
             String name = ((Element) iface).getAttribute("name");
             String file = name.replaceAll("\\.","/")+".java";
             String path = file.replaceAll("/[^/]*$", "");
@@ -430,24 +430,24 @@ public class CreateInterface
             // don't create interfaces in org.freedesktop.DBus by default
             if (pack.startsWith("org.freedesktop.DBus") && !builtin) continue;
 
-            factory.init(file, path);
-            parseInterface((Element) iface, 
-                  factory.createPrintStream(file), tuples, structs, exceptions, annotations);
+             factory.init(file, path);
+             parseInterface((Element) iface,
+                     factory.createPrintStream(file), tuples, structs, exceptions, annotations);
 
             structs = StructStruct.fillPackages(structs, pack);
-            createTuples(tuples, pack);
+             createTuples(tuples, pack);
          }
-         else if ("node".equals(iface.getNodeName())) 
-            parseRoot((Element) iface);
+         else if ("node".equals(iface.getNodeName()))
+             parseRoot((Element) iface);
          else {
-            System.err.println(_("ERROR: Unknown node: ")+iface.getNodeName());
+            System.err.println(getResource("ERROR: Unknown node: ")+iface.getNodeName());
             System.exit(1);
          }
       }
 
-      createStructs(structs, structs);
-      createExceptions(exceptions);
-      createAnnotations(annotations);
+       createStructs(structs, structs);
+       createExceptions(exceptions);
+       createAnnotations(annotations);
    }
    private void createAnnotations(Set<String> annotations) throws DBusException, IOException
    {
@@ -459,9 +459,9 @@ public class CreateInterface
             continue;
          String path = pack.replaceAll("\\.", "/");
          String file = name.replaceAll("\\.","/")+".java";
-         factory.init(file, path);
-         createAnnotation(name, pack,
-               factory.createPrintStream(path, name));
+          factory.init(file, path);
+          createAnnotation(name, pack,
+                  factory.createPrintStream(path, name));
       }
    }
    private void createExceptions(Set<String> exceptions) throws DBusException, IOException
@@ -474,9 +474,9 @@ public class CreateInterface
             continue;
          String path = pack.replaceAll("\\.", "/");
          String file = name.replaceAll("\\.","/")+".java";
-         factory.init(file, path);
-         createException(name, pack,
-               factory.createPrintStream(path, name));
+          factory.init(file, path);
+          createException(name, pack,
+                  factory.createPrintStream(path, name));
       }
    }
    private void createStructs(Map<StructStruct, Type[]> structs, Map<StructStruct, Type[]> existing) throws DBusException, IOException
@@ -484,20 +484,20 @@ public class CreateInterface
       for (StructStruct ss: structs.keySet())  {
          String file = ss.name.replaceAll("\\.","/")+".java";
          String path = ss.pack.replaceAll("\\.", "/");
-         factory.init(file, path);
-         createStruct(ss.name, structs.get(ss), ss.pack,
-               factory.createPrintStream(path, ss.name), existing);
+          factory.init(file, path);
+          createStruct(ss.name, structs.get(ss), ss.pack,
+                  factory.createPrintStream(path, ss.name), existing);
       }
    }
 
    private void createTuples(Map<String, Integer> typeMap, String pack) throws DBusException, IOException
    {
-      for (String tname: typeMap.keySet()) 
-         createTuple(tname, typeMap.get(tname), pack,
-               factory.createPrintStream(pack.replaceAll("\\.","/"), tname));
+      for (String tname: typeMap.keySet())
+          createTuple(tname, typeMap.get(tname), pack,
+                  factory.createPrintStream(pack.replaceAll("\\.", "/"), tname));
    }
 
-   public static abstract class PrintStreamFactory
+   public abstract static class PrintStreamFactory
    {
 
       public abstract void init(String file, String path);
@@ -510,7 +510,7 @@ public class CreateInterface
        */
       public PrintStream createPrintStream(String path, String tname) throws IOException
       {
-         final String file = path+"/"+tname+".java";
+         String file = path+"/"+tname+".java";
          return createPrintStream(file);
       }
 
@@ -519,10 +519,10 @@ public class CreateInterface
        * @return PrintStream
        * @throws IOException
        */
-      public abstract PrintStream createPrintStream(final String file) throws IOException;
+      public abstract PrintStream createPrintStream(String file) throws IOException;
 
    }
-   static class ConsoleStreamFactory extends PrintStreamFactory
+   static class ConsoleStreamFactory extends CreateInterface.PrintStreamFactory
    {
 
       @Override
@@ -546,7 +546,7 @@ public class CreateInterface
 
    }
 
-   static class FileStreamFactory extends PrintStreamFactory
+   static class FileStreamFactory extends CreateInterface.PrintStreamFactory
    {
       public void init(String file, String path)
       {
@@ -559,7 +559,7 @@ public class CreateInterface
        * @return
        * @throws IOException
        */
-      public PrintStream createPrintStream(final String file) throws IOException
+      public PrintStream createPrintStream(String file) throws IOException
       {
          return new PrintStream(new FileOutputStream(file));
       }
@@ -573,26 +573,26 @@ public class CreateInterface
          if (name.equals(n.getNodeName())) return;
          expected += name + " or ";
       }
-      System.err.println(MessageFormat.format(_("ERROR: Expected {0}, got {1}, failed."), new Object[] { expected.replaceAll("....$", ""), n.getNodeName() }));
+      System.err.println(MessageFormat.format(getResource("ERROR: Expected {0}, got {1}, failed."), new Object[] { expected.replaceAll("....$", ""), n.getNodeName() }));
       System.exit(1);
    }
 
-   private final PrintStreamFactory factory;
+   private final CreateInterface.PrintStreamFactory factory;
 
    static class Config
    {
       int bus = DBusConnection.SESSION;
-      String busname = null;
-      String object = null;
-      File datafile = null;
-      boolean printtree = false;
-      boolean fileout = false;
-      boolean builtin = false;
+      String busname;
+      String object;
+      File datafile;
+      boolean printtree;
+      boolean fileout;
+      boolean builtin;
    }
 
    static void printSyntax()
    {
-      printSyntax(System.err);
+       printSyntax(System.err);
    }
    static void printSyntax(PrintStream o)
    {
@@ -605,9 +605,9 @@ public class CreateInterface
       System.exit(1);
    }
 
-   static Config parseParams(String[] args)
+   static CreateInterface.Config parseParams(String[] args)
    {
-      Config config = new Config();
+      CreateInterface.Config config = new CreateInterface.Config();
       for (String p: args) {
          if ("--system".equals(p) || "-y".equals(p)) 
             config.bus = DBusConnection.SYSTEM;
@@ -620,27 +620,27 @@ public class CreateInterface
          else if ("--print-tree".equals(p) || "-p".equals(p)) 
             config.printtree = true;
          else if ("--help".equals(p) || "-h".equals(p)) {
-            printSyntax(System.out);
+             printSyntax(System.out);
             System.exit(0);
          } else if ("--version".equals(p) || "-v".equals(p)) {
-            version();
+             version();
             System.exit(0);
          } else if (p.startsWith("-")) {
-            System.err.println(_("ERROR: Unknown option: ")+p);
-            printSyntax();
+            System.err.println(getResource("ERROR: Unknown option: ")+p);
+             printSyntax();
             System.exit(1);
          }
          else {
             if (null == config.busname) config.busname = p;
             else if (null == config.object) config.object = p;
             else {
-               printSyntax();
+                printSyntax();
                System.exit(1);
             }
          }
       }
       if (null == config.busname) {
-         printSyntax();
+          printSyntax();
          System.exit(1);
       }
       else if (null == config.object) {
@@ -652,35 +652,32 @@ public class CreateInterface
 
    public static void main(String[] args) throws Exception
    {
-      Config config = parseParams(args);
+      CreateInterface.Config config = parseParams(args);
 
       Reader introspectdata = null;
 
       if (null != config.busname) try {
          DBusConnection conn = DBusConnection.getConnection(config.bus);
-         Introspectable in = conn.getRemoteObject(config.busname, config.object, Introspectable.class);
+         DBus.Introspectable in = conn.getRemoteObject(config.busname, config.object, DBus.Introspectable.class);
          String id = in.Introspect();
          if (null == id) {
-            System.err.println(_("ERROR: Failed to get introspection data"));
+            System.err.println(getResource("ERROR: Failed to get introspection data"));
             System.exit(1);
          }
          introspectdata = new StringReader(id);
          conn.disconnect();
-      } catch (DBusException DBe) {
-         System.err.println(_("ERROR: Failure in DBus Communications: ")+DBe.getMessage());
+      } catch (DBusException | DBusExecutionException DBe) {
+         System.err.println(getResource("ERROR: Failure in DBus Communications: ")+DBe.getMessage());
          System.exit(1);
-      } catch (DBusExecutionException DEe) {
-         System.err.println(_("ERROR: Failure in DBus Communications: ")+DEe.getMessage());
-         System.exit(1);
-
-      } else if (null != config.datafile) try {
+      }
+      else if (null != config.datafile) try {
          introspectdata = new InputStreamReader(new FileInputStream(config.datafile));
       } catch (FileNotFoundException FNFe) {
-         System.err.println(_("ERROR: Could not find introspection file: ")+FNFe.getMessage());
+         System.err.println(getResource("ERROR: Could not find introspection file: ")+FNFe.getMessage());
          System.exit(1);
       }
       try {
-         PrintStreamFactory factory = config.fileout  ? new FileStreamFactory() : new ConsoleStreamFactory();
+         CreateInterface.PrintStreamFactory factory = config.fileout  ? new CreateInterface.FileStreamFactory() : new CreateInterface.ConsoleStreamFactory();
          CreateInterface createInterface = new CreateInterface(factory, config.builtin);
          createInterface.createInterface(introspectdata);
       } catch (DBusException DBe) {
@@ -702,8 +699,8 @@ public class CreateInterface
       Document document = builder.parse(new InputSource(introspectdata));
 
       Element root = document.getDocumentElement();
-      checkNode(root, "node");
-      parseRoot(root);
+       checkNode(root, "node");
+       parseRoot(root);
 
    }
 }

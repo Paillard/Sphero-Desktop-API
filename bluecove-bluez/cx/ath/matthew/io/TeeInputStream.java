@@ -51,11 +51,10 @@ public class TeeInputStream extends FilterInputStream
     * @param is Reads from this InputStream
     * @param tos Write to this OutputStream
     */
-   public TeeInputStream(InputStream is, OutputStream tos) throws IOException
-   {
+   public TeeInputStream(InputStream is, OutputStream tos) {
       super(is);
-      this.in = is;
-      this.fos = tos;
+       this.in = is;
+       this.fos = tos;
    }
    /**
     * Create a new TeeInputStream on the given InputStream
@@ -67,8 +66,8 @@ public class TeeInputStream extends FilterInputStream
    public TeeInputStream(InputStream is, File f, boolean append) throws IOException
    {
       super(is);
-      this.in = is;
-      this.fos = new FileOutputStream(f, append);
+       this.in = is;
+       this.fos = new FileOutputStream(f, append);
    }
    /**
     * Create a new TeeInputStream on the given InputStream
@@ -79,8 +78,8 @@ public class TeeInputStream extends FilterInputStream
    public TeeInputStream(InputStream is, File f) throws IOException
    {
       super(is);
-      this.in = is;
-      this.fos = new FileOutputStream(f);
+       this.in = is;
+       this.fos = new FileOutputStream(f);
    }
    /**
     * Create a new TeeInputStream on the given InputStream
@@ -105,12 +104,12 @@ public class TeeInputStream extends FilterInputStream
    }
    public void close() throws IOException
    {
-      in.close();
-      fos.close();
+       in.close();
+       fos.close();
    }
    public void flush() throws IOException
    {
-      fos.flush();
+       fos.flush();
    }
    public int	available() throws IOException
    {
@@ -141,12 +140,13 @@ public class TeeInputStream extends FilterInputStream
    public boolean	markSupported()
    { return false; }
    public void	reset() throws IOException
-   { in.reset(); }
+   {
+       in.reset(); }
 
    public void finalize()
    {
       try {
-         close();
+          close();
       } catch (Exception e) {}
    }
 }

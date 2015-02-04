@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.response.regular;
 
 import se.nicklasgavelin.sphero.response.ResponseMessage;
+import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader;
 
 /**
  * @author Nicklas Gavelin, nicklas.gavelin@gmail.com, Luleå University of

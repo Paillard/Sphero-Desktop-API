@@ -73,16 +73,16 @@ abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothC
 	}
 
 	protected BluetoothConnectionNotifierBase(BluetoothStack bluetoothStack, BluetoothConnectionNotifierParams params)
-			throws BluetoothStateException, Error {
+			throws Error {
 		this.bluetoothStack = bluetoothStack;
-		this.closed = false;
+        this.closed = false;
 		if (params.name == null) {
 			throw new NullPointerException("Service name is null");
 		}
 		/*
 		 * create service record to be later updated by BluetoothStack
 		 */
-		this.serviceRecord = new ServiceRecordImpl(this.bluetoothStack, null, 0);
+        this.serviceRecord = new ServiceRecordImpl(this.bluetoothStack, null, 0);
 	}
 
 	protected void connectionCreated() {
@@ -91,7 +91,7 @@ abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothC
 			connections = (Vector) stackConnections.get(this.bluetoothStack);
 			if (connections == null) {
 				connections = new Vector();
-				stackConnections.put(this.bluetoothStack, connections);
+                stackConnections.put(this.bluetoothStack, connections);
 			}
 		}
 		connections.addElement(this);
@@ -116,12 +116,12 @@ abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothC
 	 */
 	public void close() throws IOException {
 		if (!closed) {
-			shutdown();
+            shutdown();
 		}
 	}
 
 	public void shutdown() throws IOException {
-		closed = true;
+        closed = true;
 		if (handle != 0) {
 			DebugLog.debug("closing ConnectionNotifier", handle);
 			Vector connections;
@@ -132,18 +132,18 @@ abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothC
 			long synchronizedHandle;
 			synchronized (this) {
 				synchronizedHandle = handle;
-				handle = 0;
+                handle = 0;
 			}
 			if (synchronizedHandle != 0) {
 
 				ServiceRecordsRegistry.unregister(serviceRecord);
 
-				if ((serviceRecord.deviceServiceClasses != 0)
-						&& ((bluetoothStack.getFeatureSet() & BluetoothStack.FEATURE_SET_DEVICE_SERVICE_CLASSES) != 0)) {
-					bluetoothStack.setLocalDeviceServiceClasses(ServiceRecordsRegistry.getDeviceServiceClasses());
+				if (this.serviceRecord.deviceServiceClasses != 0
+						&& (this.bluetoothStack.getFeatureSet() & BluetoothStack.FEATURE_SET_DEVICE_SERVICE_CLASSES) != 0) {
+                    bluetoothStack.setLocalDeviceServiceClasses(ServiceRecordsRegistry.getDeviceServiceClasses());
 				}
 
-				stackServerClose(synchronizedHandle);
+                stackServerClose(synchronizedHandle);
 			}
 		}
 	}
@@ -163,12 +163,12 @@ abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothC
 
 	protected void validateServiceRecord(ServiceRecord srvRecord) {
 		DataElement protocolDescriptor = srvRecord.getAttributeValue(BluetoothConsts.ProtocolDescriptorList);
-		if ((protocolDescriptor == null) || (protocolDescriptor.getDataType() != DataElement.DATSEQ)) {
+		if (protocolDescriptor == null || protocolDescriptor.getDataType() != DataElement.DATSEQ) {
 			throw new IllegalArgumentException("ProtocolDescriptorList is mandatory");
 		}
 
 		DataElement serviceClassIDList = srvRecord.getAttributeValue(BluetoothConsts.ServiceClassIDList);
-		if ((serviceClassIDList == null) || (serviceClassIDList.getDataType() != DataElement.DATSEQ)
+		if (serviceClassIDList == null || serviceClassIDList.getDataType() != DataElement.DATSEQ
 				|| serviceClassIDList.getSize() == 0) {
 			throw new IllegalArgumentException("ServiceClassIDList is mandatory");
 		}
@@ -181,8 +181,8 @@ abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothC
 				Enumeration elementSeqEnum = (Enumeration) elementSeq.getValue();
 				if (elementSeqEnum.hasMoreElements()) {
 					DataElement protocolElement = (DataElement) elementSeqEnum.nextElement();
-					if ((protocolElement.getDataType() == DataElement.UUID)
-							&& (BluetoothConsts.L2CAP_PROTOCOL_UUID.equals(protocolElement.getValue()))) {
+					if (protocolElement.getDataType() == DataElement.UUID
+							&& BluetoothConsts.L2CAP_PROTOCOL_UUID.equals(protocolElement.getValue())) {
 						isL2CAPpresent = true;
 						break;
 					}
@@ -203,9 +203,9 @@ abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothC
 	 * @see com.intel.bluetooth.BluetoothConnectionNotifierServiceRecordAccess#updateServiceRecord(boolean)
 	 */
 	public void updateServiceRecord(boolean acceptAndOpen) throws ServiceRegistrationException {
-		if (serviceRecord.attributeUpdated || (!acceptAndOpen)) {
+		if (serviceRecord.attributeUpdated || !acceptAndOpen) {
 			try {
-				validateServiceRecord(this.serviceRecord);
+                validateServiceRecord(this.serviceRecord);
 			} catch (IllegalArgumentException e) {
 				if (acceptAndOpen) {
 					throw new ServiceRegistrationException(e.getMessage());
@@ -214,17 +214,17 @@ abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothC
 				}
 			}
 			try {
-				updateStackServiceRecord(serviceRecord, acceptAndOpen);
+                updateStackServiceRecord(serviceRecord, acceptAndOpen);
 			} finally {
-				serviceRecord.attributeUpdated = false;
+                serviceRecord.attributeUpdated = false;
 			}
 		}
-		if ((serviceRecord.deviceServiceClasses != serviceRecord.deviceServiceClassesRegistered)
-				&& ((bluetoothStack.getFeatureSet() & BluetoothStack.FEATURE_SET_DEVICE_SERVICE_CLASSES) != 0)) {
+		if (this.serviceRecord.deviceServiceClasses != this.serviceRecord.deviceServiceClassesRegistered
+				&& (this.bluetoothStack.getFeatureSet() & BluetoothStack.FEATURE_SET_DEVICE_SERVICE_CLASSES) != 0) {
 
-			bluetoothStack.setLocalDeviceServiceClasses(ServiceRecordsRegistry.getDeviceServiceClasses());
+            bluetoothStack.setLocalDeviceServiceClasses(ServiceRecordsRegistry.getDeviceServiceClasses());
 
-			serviceRecord.deviceServiceClassesRegistered = serviceRecord.deviceServiceClasses;
+            serviceRecord.deviceServiceClassesRegistered = serviceRecord.deviceServiceClasses;
 		}
 	}
 }

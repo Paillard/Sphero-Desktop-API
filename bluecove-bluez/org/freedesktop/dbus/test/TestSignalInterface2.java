@@ -10,15 +10,13 @@
 */
 package org.freedesktop.dbus.test;
 
+import org.freedesktop.DBus;
 import org.freedesktop.DBus.Description;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
-import org.freedesktop.dbus.DBusMemberName;
 import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.UInt32;
 import org.freedesktop.dbus.exceptions.DBusException;
-
-import java.util.List;
 
 /**
  * A sample signal with two parameters
@@ -28,7 +26,7 @@ import java.util.List;
 public interface TestSignalInterface2 extends DBusInterface
 {
    @Description("Test basic signal")
-   public static class TestRenamedSignal extends DBusSignal
+   class TestRenamedSignal extends DBusSignal
    {
       public final String value;
       public final UInt32 number;

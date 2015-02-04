@@ -10,6 +10,7 @@
 */
 package org.freedesktop.dbus.viewer;
 
+import org.freedesktop.DBus;
 import org.freedesktop.DBus.Introspectable;
 import org.freedesktop.dbus.UInt32;
 

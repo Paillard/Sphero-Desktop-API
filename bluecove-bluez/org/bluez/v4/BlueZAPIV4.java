@@ -28,17 +28,18 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 import javax.bluetooth.DiscoveryAgent;
 
+import com.intel.bluetooth.BluetoothConsts.DeviceClassConsts;
 import org.bluez.BlueZAPI;
-import org.bluez.Error.Canceled;
-import org.bluez.Error.DoesNotExist;
-import org.bluez.Error.InvalidArguments;
-import org.bluez.Error.NoSuchAdapter;
-import org.bluez.Error.Rejected;
+import org.bluez.Error;
+import org.bluez.Error.Failed;
 import org.bluez.dbus.DBusProperties;
+import org.bluez.v4.Adapter.DeviceFound;
+import org.bluez.v4.Device.Properties;
 import org.freedesktop.dbus.DBusConnection;
 import org.freedesktop.dbus.DBusSigHandler;
 import org.freedesktop.dbus.DBusSignal;
@@ -73,10 +74,10 @@ public class BlueZAPIV4 implements BlueZAPI {
      *
      * @see org.bluez.BlueZAPI#findAdapter(java.lang.String)
      */
-    public Path findAdapter(String pattern) throws InvalidArguments {
+    public Path findAdapter(String pattern) throws Error.InvalidArguments {
         try {
             return dbusManager.FindAdapter(pattern);
-        } catch (NoSuchAdapter e) {
+        } catch (Error.NoSuchAdapter e) {
             return null;
         }
     }
@@ -86,10 +87,10 @@ public class BlueZAPIV4 implements BlueZAPI {
      *
      * @see org.bluez.BlueZAPI#defaultAdapter()
      */
-    public Path defaultAdapter() throws InvalidArguments {
+    public Path defaultAdapter() throws Error.InvalidArguments {
         try {
             return dbusManager.DefaultAdapter();
-        } catch (NoSuchAdapter e) {
+        } catch (Error.NoSuchAdapter e) {
             return null;
         }
     }
@@ -104,14 +105,14 @@ public class BlueZAPIV4 implements BlueZAPI {
         if (adapters == null) {
             throw null;
         }
-        if ((number < 0) || (number >= adapters.length)) {
+        if (number < 0 || number >= adapters.length) {
             throw null;
         }
         return adapters[number];
     }
 
     private String hciID(String adapterPath) {
-        final String bluezPath = "/org/bluez/";
+        String bluezPath = "/org/bluez/";
         String path;
         if (adapterPath.startsWith(bluezPath)) {
             path = adapterPath.substring(bluezPath.length());
@@ -119,7 +120,7 @@ public class BlueZAPIV4 implements BlueZAPI {
             path = adapterPath;
         }
         int lastpart = path.lastIndexOf('/');
-        if ((lastpart != -1) && (lastpart != path.length() -1)) {
+        if (lastpart != -1 && lastpart != path.length() -1) {
             return path.substring(lastpart + 1);
         } else {
             return path;
@@ -132,11 +133,11 @@ public class BlueZAPIV4 implements BlueZAPI {
      * @see org.bluez.BlueZAPI#listAdapters()
      */
     public List<String> listAdapters() {
-        List<String> v = new Vector<String>();
+        List<String> v = new Vector<>();
         Path[] adapters = dbusManager.ListAdapters();
         if (adapters != null) {
-            for (int i = 0; i < adapters.length; i++) {
-                v.add(hciID(adapters[i].getPath()));
+            for (Path adapter1 : adapters) {
+                v.add(hciID(adapter1.getPath()));
             }
         }
         return v;
@@ -180,9 +181,9 @@ public class BlueZAPIV4 implements BlueZAPI {
         // Since BlueZ 4.34
         Integer deviceClass = DBusProperties.getIntValue(adapter, Adapter.Properties.Class);
         if (deviceClass == null) {
-            return BluetoothConsts.DeviceClassConsts.MAJOR_COMPUTER;
+            return DeviceClassConsts.MAJOR_COMPUTER;
         } else {
-            return deviceClass.intValue();
+            return deviceClass;
         }
     }
 
@@ -221,18 +222,18 @@ public class BlueZAPIV4 implements BlueZAPI {
     public boolean setAdapterDiscoverable(int mode) throws DBusException {
         switch (mode) {
         case DiscoveryAgent.NOT_DISCOVERABLE:
-            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.Discoverable), new Variant<Boolean>(Boolean.FALSE));
+            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.Discoverable), new Variant<>(Boolean.FALSE));
             break;
         case DiscoveryAgent.GIAC:
-            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.DiscoverableTimeout), new Variant<UInt32>(new UInt32(0)));
-            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.Discoverable), new Variant<Boolean>(Boolean.TRUE));
+            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.DiscoverableTimeout), new Variant<>(new UInt32(0)));
+            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.Discoverable), new Variant<>(Boolean.TRUE));
             break;
         case DiscoveryAgent.LIAC:
-            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.DiscoverableTimeout), new Variant<UInt32>(new UInt32(180)));
-            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.Discoverable), new Variant<Boolean>(Boolean.TRUE));
+            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.DiscoverableTimeout), new Variant<>(new UInt32(180)));
+            adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.Discoverable), new Variant<>(Boolean.TRUE));
             break;
         default:
-            if ((0x9E8B00 <= mode) && (mode <= 0x9E8B3F)) {
+            if (0x9E8B00 <= mode && mode <= 0x9E8B3F) {
                 // system does not support the access mode specified
                 return false;
             }
@@ -292,36 +293,34 @@ public class BlueZAPIV4 implements BlueZAPI {
      *
      * @see org.bluez.BlueZAPI#deviceInquiry(org.bluez.BlueZAPI.DeviceInquiryListener)
      */
-    public void deviceInquiry(final DeviceInquiryListener listener) throws DBusException, InterruptedException {
-        DBusSigHandler<Adapter.DeviceFound> remoteDeviceFound = new DBusSigHandler<Adapter.DeviceFound>() {
-            public void handle(Adapter.DeviceFound s) {
-                String deviceName = null;
-                int deviceClass = -1;
-                boolean paired = false;
-                Map<String, Variant<?>> properties = s.getDeviceProperties();
-                if (properties != null) {
-                    deviceName = DBusProperties.getStringValue(properties, Device.Properties.Name);
-                    deviceClass = DBusProperties.getIntValue(properties, Device.Properties.Class);
-                    //TODO verify that this ever present
-                    paired = DBusProperties.getBooleanValue(properties, Device.Properties.Paired, false);
-                }
-                listener.deviceDiscovered(s.getDeviceAddress(), deviceName, deviceClass, paired);
+    public void deviceInquiry(BlueZAPI.DeviceInquiryListener listener) throws DBusException, InterruptedException {
+        DBusSigHandler<DeviceFound> remoteDeviceFound = s -> {
+            String deviceName = null;
+            int deviceClass = -1;
+            boolean paired = false;
+            Map<String, Variant<?>> properties = s.getDeviceProperties();
+            if (properties != null) {
+                deviceName = DBusProperties.getStringValue(properties, Properties.Name);
+                deviceClass = DBusProperties.getIntValue(properties, Properties.Class);
+                //TODO verify that this ever present
+                paired = DBusProperties.getBooleanValue(properties, Properties.Paired, false);
             }
+            listener.deviceDiscovered(s.getDeviceAddress(), deviceName, deviceClass, paired);
         };
         try {
-            dbusConn.addSigHandler(Adapter.DeviceFound.class, remoteDeviceFound);
+            dbusConn.addSigHandler(DeviceFound.class, remoteDeviceFound);
 
             adapter.StartDiscovery();
 
             // Verify that discovery actually started to avoid race condition
             int tick = 0;
             boolean discovering = false;
-            while ((tick < 5) && !(discovering = DBusProperties.getBooleanValue(adapter, Adapter.Properties.Discovering))) {
+            while (tick < 5 && !(discovering = DBusProperties.getBooleanValue(adapter, Adapter.Properties.Discovering))) {
                 Thread.sleep(200);
                 tick ++;
             }
             if (!discovering) {
-                throw new org.bluez.Error.Failed("Unable to confirm discovering state");
+                throw new Failed("Unable to confirm discovering state");
             }
             
             listener.deviceInquiryStarted();
@@ -333,7 +332,7 @@ public class BlueZAPIV4 implements BlueZAPI {
             adapter.StopDiscovery();
 
         } finally {
-            quietRemoveSigHandler(Adapter.DeviceFound.class, remoteDeviceFound);
+            quietRemoveSigHandler(DeviceFound.class, remoteDeviceFound);
         }
     }
 
@@ -350,7 +349,7 @@ public class BlueZAPIV4 implements BlueZAPI {
         Path devicePath;
         try {
             devicePath = adapter.FindDevice(deviceAddress);
-        } catch (DoesNotExist e) {
+        } catch (Error.DoesNotExist e) {
             DebugLog.debug("can't get device", e);
             devicePath = adapter.CreateDevice(deviceAddress);
         }
@@ -363,7 +362,7 @@ public class BlueZAPIV4 implements BlueZAPI {
      * @see org.bluez.BlueZAPI#getRemoteDeviceFriendlyName(java.lang.String)
      */
     public String getRemoteDeviceFriendlyName(String deviceAddress) throws DBusException, IOException {
-        return DBusProperties.getStringValue(getDevice(deviceAddress), Device.Properties.Name);
+        return DBusProperties.getStringValue(getDevice(deviceAddress), Properties.Name);
     }
 
     /*
@@ -373,17 +372,17 @@ public class BlueZAPIV4 implements BlueZAPI {
      */
     public List<String> retrieveDevices(boolean preKnown) {
         Path[] devices = adapter.ListDevices();
-        List<String> addresses = new Vector<String>();
+        List<String> addresses = new Vector<>();
         if (devices != null) {
             for (Path devicePath : devices) {
                 try {
                     Device device = dbusConn.getRemoteObject("org.bluez", devicePath.getPath(), Device.class);
                     Map<String, Variant<?>> properties = device.GetProperties();
                     if (properties != null) {
-                        String address = DBusProperties.getStringValue(properties, Device.Properties.Address);
-                        boolean paired = DBusProperties.getBooleanValue(properties, Device.Properties.Paired, false);
-                        boolean trusted = DBusProperties.getBooleanValue(properties, Device.Properties.Trusted, false);
-                        if ((!preKnown) || paired || trusted) {
+                        String address = DBusProperties.getStringValue(properties, Properties.Address);
+                        boolean paired = DBusProperties.getBooleanValue(properties, Properties.Paired, false);
+                        boolean trusted = DBusProperties.getBooleanValue(properties, Properties.Trusted, false);
+                        if (!preKnown || paired || trusted) {
                             addresses.add(address);
                         }
                     }
@@ -401,7 +400,7 @@ public class BlueZAPIV4 implements BlueZAPI {
      * @see org.bluez.BlueZAPI#isRemoteDeviceConnected(java.lang.String)
      */
     public boolean isRemoteDeviceConnected(String deviceAddress) throws DBusException {
-        return DBusProperties.getBooleanValue(getDevice(deviceAddress), Device.Properties.Connected);
+        return DBusProperties.getBooleanValue(getDevice(deviceAddress), Properties.Connected);
     }
 
     /*
@@ -410,7 +409,7 @@ public class BlueZAPIV4 implements BlueZAPI {
      * @see org.bluez.BlueZAPI#isRemoteDeviceTrusted(java.lang.String)
      */
     public Boolean isRemoteDeviceTrusted(String deviceAddress) throws DBusException {
-        return DBusProperties.getBooleanValue(getDevice(deviceAddress), Device.Properties.Paired);
+        return DBusProperties.getBooleanValue(getDevice(deviceAddress), Properties.Paired);
     }
 
     /*
@@ -428,30 +427,30 @@ public class BlueZAPIV4 implements BlueZAPI {
      * @see org.bluez.BlueZAPI#authenticateRemoteDevice(java.lang.String,
      * java.lang.String)
      */
-    public boolean authenticateRemoteDevice(String deviceAddress, final String passkey) throws DBusException {
+    public boolean authenticateRemoteDevice(String deviceAddress, String passkey) throws DBusException {
         if (passkey == null) {
             authenticateRemoteDevice(deviceAddress);
             return true;
         }
         Agent agent = new Agent() {
 
-            public void Authorize(Path device, String uuid) throws Rejected, Canceled {
+            public void Authorize(Path device, String uuid) throws Error.Rejected, Error.Canceled {
             }
 
-            public void ConfirmModeChange(String mode) throws Rejected, Canceled {
+            public void ConfirmModeChange(String mode) throws Error.Rejected, Error.Canceled {
             }
 
             public void DisplayPasskey(Path device, UInt32 passkey, byte entered) {
             }
 
-            public void RequestConfirmation(Path device, UInt32 passkey) throws Rejected, Canceled {
+            public void RequestConfirmation(Path device, UInt32 passkey) throws Error.Rejected, Error.Canceled {
             }
 
-            public UInt32 RequestPasskey(Path device) throws Rejected, Canceled {
+            public UInt32 RequestPasskey(Path device) throws Error.Rejected, Error.Canceled {
                 return null;
             }
 
-            public String RequestPinCode(Path device) throws Rejected, Canceled {
+            public String RequestPinCode(Path device) throws Error.Rejected, Error.Canceled {
                 return passkey;
             }
 
@@ -499,14 +498,14 @@ public class BlueZAPIV4 implements BlueZAPI {
         Path devicePath;
         try {
             devicePath = adapter.FindDevice(deviceAddress);
-        } catch (DoesNotExist e) {
+        } catch (Error.DoesNotExist e) {
             devicePath = adapter.CreateDevice(deviceAddress);
         }
         Device device = dbusConn.getRemoteObject("org.bluez", devicePath.getPath(), Device.class);
 
         Map<UInt32, String> xmlMap = device.DiscoverServices("");
-        Map<Integer, String> xmlRecords = new HashMap<Integer, String>();
-        for (Map.Entry<UInt32, String> record : xmlMap.entrySet()) {
+        Map<Integer, String> xmlRecords = new HashMap<>();
+        for (Entry<UInt32, String> record : xmlMap.entrySet()) {
             xmlRecords.put(record.getKey().intValue(), record.getValue());
         }
         return xmlRecords;

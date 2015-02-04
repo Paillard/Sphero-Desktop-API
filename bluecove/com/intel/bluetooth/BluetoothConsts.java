@@ -95,15 +95,15 @@ public abstract class BluetoothConsts {
 
 	private static void addObex(int uuid) {
 		UUID u = new UUID(uuid);
-		obexUUIDs.put(u, u);
+        obexUUIDs.put(u, u);
 	}
 
 	static {
-		addObex(0x1104);// IR_MC_SYNC
-		addObex(0x1105);// OBEX_OBJECT_PUSH
-		addObex(0x1106);// OBEX_FILE_TRANSFER
-		addObex(0x1107);// IR_MC_SYNC_COMMAND
-		addObex(0x111B);// IMG_RESPONDER
+        addObex(0x1104);// IR_MC_SYNC
+        addObex(0x1105);// OBEX_OBJECT_PUSH
+        addObex(0x1106);// OBEX_FILE_TRANSFER
+        addObex(0x1107);// IR_MC_SYNC_COMMAND
+        addObex(0x111B);// IMG_RESPONDER
 	}
 
 	public static final UUID SERIAL_PORT_UUID = new UUID(0x1101);
@@ -147,7 +147,7 @@ public abstract class BluetoothConsts {
 	public static final int VersionNumberList = 0x0200;
 
 	public static String toString(DeviceClass dc) {
-		return DeviceClassConsts.toString(dc);
+		return BluetoothConsts.DeviceClassConsts.toString(dc);
 	}
 
 	public static class DeviceClassConsts {
@@ -555,31 +555,30 @@ public abstract class BluetoothConsts {
 
 				break;
 			}
-			case MAJOR_IMAGING: {
-				buf.append("Peripheral/(");
+			case MAJOR_IMAGING:
+                buf.append("Peripheral/(");
 
-				int minor = dc.getMinorDeviceClass();
+                int minor = dc.getMinorDeviceClass();
 
-				boolean comma = false;
+                boolean comma = false;
 
-				if ((minor & IMAGING_MINOR_DISPLAY_MASK) != 0) {
-					comma = append(buf, "Display", comma);
-				}
-				if ((minor & IMAGING_MINOR_CAMERA_MASK) != 0) {
-					comma = append(buf, "Camera", comma);
-				}
-				if ((minor & IMAGING_MINOR_SCANNER_MASK) != 0) {
-					comma = append(buf, "Scanner", comma);
-				}
-				if ((minor & IMAGING_MINOR_PRINTER_MASK) != 0) {
-					append(buf, "Printer", comma);
-				}
+                if ((minor & IMAGING_MINOR_DISPLAY_MASK) != 0) {
+                    comma = append(buf, "Display", comma);
+                }
+                if ((minor & IMAGING_MINOR_CAMERA_MASK) != 0) {
+                    comma = append(buf, "Camera", comma);
+                }
+                if ((minor & IMAGING_MINOR_SCANNER_MASK) != 0) {
+                    comma = append(buf, "Scanner", comma);
+                }
+                if ((minor & IMAGING_MINOR_PRINTER_MASK) != 0) {
+append(buf, "Printer", comma);
+                }
 
-				buf.append(')');
+                buf.append(')');
 
-				break;
-			}
-			case MAJOR_UNCLASSIFIED:
+                break;
+                case MAJOR_UNCLASSIFIED:
 				buf.append("Unclassified");
 				break;
 			default:
@@ -618,7 +617,7 @@ public abstract class BluetoothConsts {
 				comma = append(buf, "Telephony", comma);
 			}
 			if ((record & INFORMATION_SERVICE) != 0) {
-				append(buf, "Information", comma);
+                append(buf, "Information", comma);
 			}
 
 			buf.append(')');

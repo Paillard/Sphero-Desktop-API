@@ -39,7 +39,7 @@ public class Radio extends Field
    }
    protected String print()
    {
-      return "<input type='radio' name='"+name+"'"+(checked?" checked='checked'":"")+" />";
+      return "<input type='radio' name='"+ name +"'"+(checked ?" checked='checked'":"")+" />";
    }
 }
 

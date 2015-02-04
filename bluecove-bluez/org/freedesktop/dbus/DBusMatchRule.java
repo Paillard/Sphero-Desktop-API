@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
@@ -26,7 +26,7 @@ public class DBusMatchRule
    private String object;
    private String source;
 	private static HashMap<String, Class<? extends DBusSignal>> signalTypeMap = 
-					new HashMap<String, Class<? extends DBusSignal>>();
+					new HashMap<>();
 	static Class<? extends DBusSignal> getCachedSignalType(String type)
 	{
 		return signalTypeMap.get(type);
@@ -40,98 +40,98 @@ public class DBusMatchRule
    public DBusMatchRule(DBusExecutionException e) throws DBusException
    {
       this(e.getClass());
-      member = null;
-      type = "error";
+       member = null;
+       type = "error";
    }
    public DBusMatchRule(Message m)
    {
-      iface = m.getInterface();
-      member = m.getName();
+       iface = m.getInterface();
+       member = m.getName();
       if (m instanceof DBusSignal)
-         type = "signal";
+          type = "signal";
       else if (m instanceof Error) {
-         type = "error";
-         member = null;
+          type = "error";
+          member = null;
       }
       else if (m instanceof MethodCall)
-         type = "method_call";
+          type = "method_call";
       else if (m instanceof MethodReturn)
-         type = "method_reply";
+          type = "method_reply";
    }
    public DBusMatchRule(Class<? extends DBusInterface> c, String method) throws DBusException
    {
       this(c);
-      member = method;
-      type = "method_call";
+       member = method;
+       type = "method_call";
    }
-   public DBusMatchRule(Class<? extends Object> c, String source, String object) throws DBusException
+   public DBusMatchRule(Class<?> c, String source, String object) throws DBusException
    {
       this(c);
       this.source = source;
       this.object = object;
    }
    @SuppressWarnings("unchecked")
-   public DBusMatchRule(Class<? extends Object> c) throws DBusException
+   public DBusMatchRule(Class<?> c) throws DBusException
    {
       if (DBusInterface.class.isAssignableFrom(c)) {
          if (null != c.getAnnotation(DBusInterfaceName.class))
-            iface = c.getAnnotation(DBusInterfaceName.class).value();
+             iface = c.getAnnotation(DBusInterfaceName.class).value();
          else
-            iface = AbstractConnection.dollar_pattern.matcher(c.getName()).replaceAll(".");
+             iface = AbstractConnection.dollar_pattern.matcher(c.getName()).replaceAll(".");
          if (!iface.matches(".*\\..*"))
-            throw new DBusException(_("DBusInterfaces must be defined in a package."));
-         member = null;
-         type = null;
+            throw new DBusException(getResource("DBusInterfaces must be defined in a package."));
+          member = null;
+          type = null;
       }
       else if (DBusSignal.class.isAssignableFrom(c)) {
          if (null == c.getEnclosingClass())
-            throw new DBusException(_("Signals must be declared as a member of a class implementing DBusInterface which is the member of a package."));
+            throw new DBusException(getResource("Signals must be declared as a member of a class implementing DBusInterface which is the member of a package."));
          else
             if (null != c.getEnclosingClass().getAnnotation(DBusInterfaceName.class))
-               iface = c.getEnclosingClass().getAnnotation(DBusInterfaceName.class).value();
+                iface = c.getEnclosingClass().getAnnotation(DBusInterfaceName.class).value();
             else
-               iface = AbstractConnection.dollar_pattern.matcher(c.getEnclosingClass().getName()).replaceAll(".");
+                iface = AbstractConnection.dollar_pattern.matcher(c.getEnclosingClass().getName()).replaceAll(".");
          // Don't export things which are invalid D-Bus interfaces
          if (!iface.matches(".*\\..*"))
-            throw new DBusException(_("DBusInterfaces must be defined in a package."));
+            throw new DBusException(getResource("DBusInterfaces must be defined in a package."));
          if (c.isAnnotationPresent(DBusMemberName.class))
-            member = c.getAnnotation(DBusMemberName.class).value();
+             member = c.getAnnotation(DBusMemberName.class).value();
          else
-            member = c.getSimpleName();
-			signalTypeMap.put(iface+'$'+member, (Class<? extends DBusSignal>) c);
-         type = "signal";
+             member = c.getSimpleName();
+          signalTypeMap.put(iface + '$' + member, (Class<? extends DBusSignal>) c);
+          type = "signal";
       }
       else if (Error.class.isAssignableFrom(c)) {
          if (null != c.getAnnotation(DBusInterfaceName.class))
-            iface = c.getAnnotation(DBusInterfaceName.class).value();
+             iface = c.getAnnotation(DBusInterfaceName.class).value();
          else
-            iface = AbstractConnection.dollar_pattern.matcher(c.getName()).replaceAll(".");
+             iface = AbstractConnection.dollar_pattern.matcher(c.getName()).replaceAll(".");
          if (!iface.matches(".*\\..*"))
-            throw new DBusException(_("DBusInterfaces must be defined in a package."));
-         member = null;
-         type = "error";
+            throw new DBusException(getResource("DBusInterfaces must be defined in a package."));
+          member = null;
+          type = "error";
       }
       else if (DBusExecutionException.class.isAssignableFrom(c)) {
          if (null != c.getClass().getAnnotation(DBusInterfaceName.class))
-            iface = c.getClass().getAnnotation(DBusInterfaceName.class).value();
+             iface = c.getClass().getAnnotation(DBusInterfaceName.class).value();
          else
-            iface = AbstractConnection.dollar_pattern.matcher(c.getClass().getName()).replaceAll(".");
+             iface = AbstractConnection.dollar_pattern.matcher(c.getClass().getName()).replaceAll(".");
          if (!iface.matches(".*\\..*"))
-            throw new DBusException(_("DBusInterfaces must be defined in a package."));
-         member = null;
-         type = "error";
+            throw new DBusException(getResource("DBusInterfaces must be defined in a package."));
+          member = null;
+          type = "error";
       }
       else
-         throw new DBusException(_("Invalid type for match rule: ")+c);
+         throw new DBusException(getResource("Invalid type for match rule: ")+c);
    }
    public String toString()
    {
       String s = null;
-      if (null != type) s = null == s ? "type='"+type+"'" : s + ",type='"+type+"'";
-      if (null != member) s = null == s ? "member='"+member+"'" : s + ",member='"+member+"'";
-      if (null != iface) s = null == s ? "interface='"+iface+"'" : s + ",interface='"+iface+"'";
-      if (null != source) s = null == s ? "sender='"+source+"'" : s + ",sender='"+source+"'";
-      if (null != object) s = null == s ? "path='"+object+"'" : s + ",path='"+object+"'";
+      if (null != type) s = null == s ? "type='"+ type +"'" : s + ",type='"+ type +"'";
+      if (null != member) s = null == s ? "member='"+ member +"'" : s + ",member='"+ member +"'";
+      if (null != iface) s = null == s ? "interface='"+ iface +"'" : s + ",interface='"+ iface +"'";
+      if (null != source) s = null == s ? "sender='"+ source +"'" : s + ",sender='"+ source +"'";
+      if (null != object) s = null == s ? "path='"+ object +"'" : s + ",path='"+ object +"'";
       return s;
    }
    public String getType() { return type; }

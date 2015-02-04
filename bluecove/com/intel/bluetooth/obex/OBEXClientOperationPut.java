@@ -42,13 +42,13 @@ class OBEXClientOperationPut extends OBEXClientOperation {
 	 * @see javax.microedition.io.InputConnection#openInputStream()
 	 */
 	public InputStream openInputStream() throws IOException {
-		validateOperationIsOpen();
+        validateOperationIsOpen();
 		if (this.inputStreamOpened) {
 			throw new IOException("input stream already open");
 		}
 		DebugLog.debug("openInputStream");
-		this.inputStreamOpened = true;
-		this.operationInProgress = true;
+        this.inputStreamOpened = true;
+        this.operationInProgress = true;
 		return this.inputStream;
 	}
 
@@ -58,13 +58,13 @@ class OBEXClientOperationPut extends OBEXClientOperation {
 	 * @see javax.microedition.io.OutputConnection#openOutputStream()
 	 */
 	public OutputStream openOutputStream() throws IOException {
-		validateOperationIsOpen();
+        validateOperationIsOpen();
 		if (outputStreamOpened) {
 			throw new IOException("output already open");
 		}
-		this.outputStreamOpened = true;
-		this.outputStream = new OBEXOperationOutputStream(session.mtu, this);
-		this.operationInProgress = true;
+        this.outputStreamOpened = true;
+        this.outputStream = new OBEXOperationOutputStream(session.mtu, this);
+        this.operationInProgress = true;
 		return this.outputStream;
 	}
 

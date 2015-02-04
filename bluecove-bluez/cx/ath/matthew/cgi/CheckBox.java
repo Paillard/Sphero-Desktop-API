@@ -39,7 +39,7 @@ public class CheckBox extends Field
    }
    protected String print()
    {
-      return "<input type='checkbox' name='"+name+"'"+(checked?" checked='checked'":"")+" />";
+      return "<input type='checkbox' name='"+ name +"'"+(checked ?" checked='checked'":"")+" />";
    }
 }
 

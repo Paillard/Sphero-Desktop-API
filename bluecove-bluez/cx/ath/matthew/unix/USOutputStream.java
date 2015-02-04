@@ -34,7 +34,7 @@ public class USOutputStream extends OutputStream
    private native int native_send(int sock, byte[] b, int off, int len) throws IOException;
    private native int native_send(int sock, byte[][] b) throws IOException;
    private int sock;
-   boolean closed = false;
+   boolean closed;
    private byte[] onebuf = new byte[1];
    private UnixSocket us;
    public USOutputStream(int sock, UnixSocket us)
@@ -44,25 +44,25 @@ public class USOutputStream extends OutputStream
    }
    public void close() throws IOException
    {
-      closed = true;
-      us.close();
+       closed = true;
+       us.close();
    }
    public void flush() {} // no-op, we do not buffer
    public void write(byte[][] b) throws IOException
    {
       if (closed) throw new NotConnectedException();
-      native_send(sock, b);
+       native_send(sock, b);
    }
    public void write(byte[] b, int off, int len) throws IOException
    {
       if (closed) throw new NotConnectedException();
-      native_send(sock, b, off, len);
+       native_send(sock, b, off, len);
    }
    public void write(int b) throws IOException
    {
-      onebuf[0] = (byte) (b % 0x7F);
-      if (1 == (b % 0x80)) onebuf[0] = (byte) -onebuf[0];
-      write(onebuf);
+       onebuf[0] = (byte) (b % 0x7F);
+      if (1 == b % 0x80) onebuf[0] = (byte) -onebuf[0];
+       write(onebuf);
    }
    public boolean isClosed() { return closed; }
    public UnixSocket getSocket() { return us; }

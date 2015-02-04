@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,10 +44,10 @@ import java.text.SimpleDateFormat;
  *
  * @author Matthew Johnson &lt;src@matthew.ath.cx&gt;
  */
-abstract public class CGI
+public abstract class CGI
 {
    private CGIErrorHandler errorhandler = new DefaultErrorHandler();
-   private boolean headers_sent = false;
+   private boolean headers_sent;
    private HashMap headers = new HashMap();
    private Vector cookies = new Vector();
    private LinkedList pagedata = new LinkedList();
@@ -78,7 +77,7 @@ abstract public class CGI
       if (headers_sent) throw new CGIHeaderSentException();
 
       // buffer the variable (Map so that each header is only set once)
-      headers.put(variable.toLowerCase(), value);
+       headers.put(variable.toLowerCase(), value);
    }
 
    /**
@@ -112,7 +111,7 @@ abstract public class CGI
       if (null != domain) cookie += "; domain="+domain;
       if (null != expires) cookie += "; expires="+df.format(expires);
       if (secure) cookie += "; secure";
-      cookies.add("Set-Cookie: "+ cookie);
+       cookies.add("Set-Cookie: " + cookie);
    }
  
    /**
@@ -133,7 +132,7 @@ abstract public class CGI
 
       //Set-Cookie: NAME=VALUE; expires=DATE;
       //path=PATH; domain=DOMAIN_NAME; secure
-      cookies.add("Set-Cookie: "+ variable+"="+value);
+       cookies.add("Set-Cookie: " + variable + "=" + value);
    }
     
    /**
@@ -147,8 +146,8 @@ abstract public class CGI
     */
    public final void out(byte[] data) throws CGIInvalidContentFormatException
    {
-      if (pagedata.size() > 0) throw new CGIInvalidContentFormatException();
-      rawdata.add(data);
+      if (!this.pagedata.isEmpty()) throw new CGIInvalidContentFormatException();
+       rawdata.add(data);
    }
   
    /**
@@ -162,8 +161,8 @@ abstract public class CGI
     */
    public final void out(String data) throws CGIInvalidContentFormatException
    {
-      if (rawdata.size() > 0) throw new CGIInvalidContentFormatException();
-      pagedata.add(data);
+      if (!this.rawdata.isEmpty()) throw new CGIInvalidContentFormatException();
+       pagedata.add(data);
    }
 
    /**
@@ -178,7 +177,7 @@ abstract public class CGI
     */
    public final OutputStream getOutputStream() throws IOException
    {
-      flush();
+       flush();
       return System.out;
    }
 
@@ -194,7 +193,7 @@ abstract public class CGI
    {
       if (!headers_sent) {
          // don't send headers again
-         headers_sent = true;
+          headers_sent = true;
          // send headers
          Iterator i = headers.keySet().iterator();
          while (i.hasNext()) {
@@ -211,18 +210,16 @@ abstract public class CGI
       }
 
       // send data
-      if (pagedata.size() >0) {
-         Iterator j = pagedata.iterator();
-         while (j.hasNext()) {
-            System.out.println((String) j.next());
-         }
-         pagedata.clear();
-      } else if (rawdata.size() > 0) {
-         Iterator j = rawdata.iterator();
-         while (j.hasNext()) {
-            System.out.write((byte[]) j.next());
-         }
-         pagedata.clear();
+      if (!this.pagedata.isEmpty()) {
+          for (Object aPagedata : pagedata) {
+              System.out.println((String) aPagedata);
+          }
+          pagedata.clear();
+      } else if (!this.rawdata.isEmpty()) {
+          for (Object aRawdata : rawdata) {
+              System.out.write((byte[]) aRawdata);
+          }
+          pagedata.clear();
       }
          System.out.flush();
    }
@@ -237,7 +234,7 @@ abstract public class CGI
     */
    protected final void setErrorHandler(CGIErrorHandler handler)
    {
-      errorhandler = handler;
+       errorhandler = handler;
    }
    
    /**
@@ -251,7 +248,7 @@ abstract public class CGI
     *
     * @throws Exception You can throw anything, it will be caught by the error handler.
     */
-   abstract protected void cgi(Map POST, Map GET, Map ENV, Map COOKIES, String[] params) throws Exception;
+   protected abstract void cgi(Map POST, Map GET, Map ENV, Map COOKIES, String[] params) throws Exception;
 
    /**
     * Reads variables from a String like a=b&amp;c=d to a Map {a =&gt; b, c =&gt; d}.
@@ -348,7 +345,7 @@ abstract public class CGI
                      case '7':
                      case '8':
                      case '9':
-                        ch += (b - '0');
+                        ch += b - '0';
                         break;
                      case 'a':
                      case 'b':
@@ -356,7 +353,7 @@ abstract public class CGI
                      case 'd':
                      case 'e':
                      case 'f':
-                        ch += (b - 'a' + 0xa);
+                        ch += b - 'a' + 0xa;
                         break;
                      case 'A':
                      case 'B':
@@ -364,7 +361,7 @@ abstract public class CGI
                      case 'D':
                      case 'E':
                      case 'F':
-                        ch += (b - 'A' + 0xA);
+                        ch += b - 'A' + 0xA;
                         break;
                   }
                   temp += (char) ch;
@@ -419,7 +416,7 @@ abstract public class CGI
          return (Map) readVariables(s, '&', true);
       } catch (IOException IOe) {
          try {
-         out("ERROR: IOException: "+IOe);
+             out("ERROR: IOException: "+IOe);
          } catch (CGIInvalidContentFormatException CGIICFe) {
             System.err.println("ERROR: IOException: "+IOe);
          }
@@ -458,14 +455,14 @@ abstract public class CGI
    {
       Map m = new HashMap();
       String[] env = (String[]) getfullenv(String.class);
-      for (int i = 0; i < env.length; i++){
-         if (null == env[i]) continue;
-         String[] e = env[i].split("=");
-         if (1 == e.length)
-            m.put(e[0], "");
-         else
-            m.put(e[0], e[1]);
-      }
+       for (String anEnv : env) {
+           if (null == anEnv) continue;
+           String[] e = anEnv.split("=");
+           if (1 == e.length)
+               m.put(e[0], "");
+           else
+               m.put(e[0], e[1]);
+       }
          
 /*
       m.put("SERVER_SOFTWARE", getenv("SERVER_SOFTWARE"));
@@ -533,7 +530,7 @@ abstract public class CGI
          Map GET = getGET();
          Map ENV = getENV();
          Map COOKIE = getCOOKIE();
-         String[] params = new String[] {};
+         String[] params = {};
          if (args.length >= 1)
             params = getParams(args[0]);
 
@@ -542,22 +539,25 @@ abstract public class CGI
          cgiclass = (CGI) c.newInstance();        */ 
 
          // set default headers
-         /*cgiclass.*/header("Content-type", "text/html");
+         /*cgiclass.*/
+          header("Content-type", "text/html");
          
          // execute the CGI
-         /*cgiclass.*/cgi(POST, GET, ENV, COOKIE, params);
+         /*cgiclass.*/
+          cgi(POST, GET, ENV, COOKIE, params);
          
          // send the output / remaining output
-         /*cgiclass.*/flush();
+         /*cgiclass.*/
+          flush();
       } 
       
       // yes, we really want to do this. CGI programs can't send errors. Print nicely to the screen.
       catch (Exception e) {
-         errorhandler.print(/*null == cgiclass ? false : cgiclass.*/headers_sent, e);
+          errorhandler.print(/*null == cgiclass ? false : cgiclass.*/headers_sent, e);
       }
       catch (Throwable t) {
          t.printStackTrace(); // this is bad enough to produce stderr errors
-         errorhandler.print(/*null == cgiclass ? false : cgiclass.*/headers_sent, new Exception(t.toString()));
+          errorhandler.print(/*null == cgiclass ? false : cgiclass.*/headers_sent, new Exception(t.toString()));
       }
    }
 }

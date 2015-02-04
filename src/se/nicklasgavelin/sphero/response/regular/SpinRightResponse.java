@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.response.regular;
 
 import se.nicklasgavelin.sphero.response.ResponseMessage;
+import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader;
 
 /**
  * The response for the SpinRightCommand
@@ -14,7 +15,7 @@ public class SpinRightResponse extends ResponseMessage
 	 * 
 	 * @param rh The response header containing the response data
 	 */
-	public SpinRightResponse( ResponseMessage.ResponseHeader rh )
+	public SpinRightResponse( ResponseHeader rh )
 	{
 		super( rh );
 	}

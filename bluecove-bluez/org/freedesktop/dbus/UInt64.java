@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.math.BigInteger;
 
@@ -42,10 +42,10 @@ public class UInt64 extends Number implements Comparable<UInt64>
    public UInt64(long value)
    {
       if (value < MIN_VALUE || value > MAX_LONG_VALUE)
-         throw new NumberFormatException(MessageFormat.format(_("{0} is not between {1} and {2}."), new Object[] { value, MIN_VALUE, MAX_LONG_VALUE}));
+         throw new NumberFormatException(MessageFormat.format(getResource("{0} is not between {1} and {2}."), value, MIN_VALUE, MAX_LONG_VALUE));
       this.value = new BigInteger(""+value);
-      this.top = this.value.shiftRight(32).and(new BigInteger("4294967295")).longValue();
-      this.bottom = this.value.and(new BigInteger("4294967295")).longValue();
+       this.top = this.value.shiftRight(32).and(new BigInteger("4294967295")).longValue();
+       this.bottom = this.value.and(new BigInteger("4294967295")).longValue();
    }
    /**
     * Create a UInt64 from two longs.
@@ -58,10 +58,10 @@ public class UInt64 extends Number implements Comparable<UInt64>
       a = a.shiftLeft(32);
       a = a.add(new BigInteger(""+bottom));
       if (0 > a.compareTo(BigInteger.ZERO))
-         throw new NumberFormatException(MessageFormat.format(_("{0} is not between {1} and {2}."), new Object[] { a, MIN_VALUE, MAX_BIG_VALUE}));
+         throw new NumberFormatException(MessageFormat.format(getResource("{0} is not between {1} and {2}."), a, MIN_VALUE, MAX_BIG_VALUE));
       if (0 < a.compareTo(MAX_BIG_VALUE))
-         throw new NumberFormatException(MessageFormat.format(_("{0} is not between {1} and {2}."), new Object[] { a, MIN_VALUE, MAX_BIG_VALUE}));
-      this.value = a;
+         throw new NumberFormatException(MessageFormat.format(getResource("{0} is not between {1} and {2}."), a, MIN_VALUE, MAX_BIG_VALUE));
+       this.value = a;
       this.top = top;
       this.bottom = bottom;
    }
@@ -72,14 +72,14 @@ public class UInt64 extends Number implements Comparable<UInt64>
    public UInt64(BigInteger value)
    {
       if (null == value)
-         throw new NumberFormatException(MessageFormat.format(_("{0} is not between {1} and {2}."), new Object[] { value, MIN_VALUE, MAX_BIG_VALUE}));
+         throw new NumberFormatException(MessageFormat.format(getResource("{0} is not between {1} and {2}."), value, MIN_VALUE, MAX_BIG_VALUE));
       if (0 > value.compareTo(BigInteger.ZERO))
-         throw new NumberFormatException(MessageFormat.format(_("{0} is not between {1} and {2}."), new Object[] { value, MIN_VALUE, MAX_BIG_VALUE}));
+         throw new NumberFormatException(MessageFormat.format(getResource("{0} is not between {1} and {2}."), value, MIN_VALUE, MAX_BIG_VALUE));
       if (0 < value.compareTo(MAX_BIG_VALUE))
-         throw new NumberFormatException(MessageFormat.format(_("{0} is not between {1} and {2}."), new Object[] { value, MIN_VALUE, MAX_BIG_VALUE}));
+         throw new NumberFormatException(MessageFormat.format(getResource("{0} is not between {1} and {2}."), value, MIN_VALUE, MAX_BIG_VALUE));
       this.value = value;
-      this.top = this.value.shiftRight(32).and(new BigInteger("4294967295")).longValue();
-      this.bottom = this.value.and(new BigInteger("4294967295")).longValue();
+       this.top = this.value.shiftRight(32).and(new BigInteger("4294967295")).longValue();
+       this.bottom = this.value.and(new BigInteger("4294967295")).longValue();
    }
    /** Create a UInt64 from a String.
     * @param value Must parse to a valid integer within MIN_VALUE&ndash;MAX_BIG_VALUE 
@@ -88,15 +88,15 @@ public class UInt64 extends Number implements Comparable<UInt64>
    public UInt64(String value)
    {
       if (null == value)
-         throw new NumberFormatException(MessageFormat.format(_("{0} is not between {1} and {2}."), new Object[] { value, MIN_VALUE, MAX_BIG_VALUE}));
+         throw new NumberFormatException(MessageFormat.format(getResource("{0} is not between {1} and {2}."), value, MIN_VALUE, MAX_BIG_VALUE));
       BigInteger a = new BigInteger(value);
       if (0 > a.compareTo(BigInteger.ZERO))
-         throw new NumberFormatException(MessageFormat.format(_("{0} is not between {1} and {2}."), new Object[] { value, MIN_VALUE, MAX_BIG_VALUE}));
+         throw new NumberFormatException(MessageFormat.format(getResource("{0} is not between {1} and {2}."), value, MIN_VALUE, MAX_BIG_VALUE));
       if (0 < a.compareTo(MAX_BIG_VALUE))
-         throw new NumberFormatException(MessageFormat.format(_("{0} is not between {1} and {2}."), new Object[] { value, MIN_VALUE, MAX_BIG_VALUE}));
+         throw new NumberFormatException(MessageFormat.format(getResource("{0} is not between {1} and {2}."), value, MIN_VALUE, MAX_BIG_VALUE));
       this.value = a;
-      this.top = this.value.shiftRight(32).and(new BigInteger("4294967295")).longValue();
-      this.bottom = this.value.and(new BigInteger("4294967295")).longValue();
+       this.top = this.value.shiftRight(32).and(new BigInteger("4294967295")).longValue();
+       this.bottom = this.value.and(new BigInteger("4294967295")).longValue();
    }
    /** The value of this as a BigInteger. */
    public BigInteger value() { return value; }

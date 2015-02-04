@@ -31,14 +31,14 @@ import java.io.PrintStream;
 
 public class Hexdump
 {
-   public static final char[] hexchars = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+   public static final char[] hexchars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
    public static String toHex(byte[] buf)
    {
       return toHex(buf, 0, buf.length);
    }
    public static String toHex(byte[] buf, int ofs, int len)
    {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       int j = ofs+len;
       for (int i = ofs; i < j; i++) {
          if (i < buf.length) {
@@ -60,7 +60,7 @@ public class Hexdump
    }
    public static String toAscii(byte[] buf, int ofs, int len)
    {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       int j = ofs+len;
       for (int i = ofs; i < j ; i++) {
          if (i < buf.length) {
@@ -81,10 +81,10 @@ public class Hexdump
    {
       int bs = (width - 8) / 4;
       int i = 0;
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       do {
          for (int j = 0; j < 6; j++) {
-            sb.append(hexchars[(i << (j*4)  & 0xF00000) >> 20]);
+            sb.append(hexchars[(i << j*4 & 0xF00000) >> 20]);
          }
          sb.append('\t');
          sb.append(toHex(buf, i, bs));
@@ -97,11 +97,11 @@ public class Hexdump
    }
    public static void print(byte[] buf)
    {
-      print(buf, System.err);
+       print(buf, System.err);
    }
    public static void print(byte[] buf, int width)
    {
-      print(buf, width, System.err);
+       print(buf, width, System.err);
    }
    public static void print(byte[] buf, int width, PrintStream out)
    {
@@ -135,13 +135,13 @@ public class Hexdump
     */
    public static String toByteArray(byte[] buf, int ofs, int len)
    {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for (int i = ofs; i < len && i < buf.length; i++) {
          sb.append('0');
          sb.append('x');
          sb.append(hexchars[(buf[i] & 0xF0) >> 4]);
          sb.append(hexchars[buf[i] & 0x0F]);
-         if ((i+1) < len && (i+1) < buf.length)
+         if (i+1 < len && i+1 < buf.length)
             sb.append(',');
       }
       return sb.toString();

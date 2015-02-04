@@ -50,7 +50,7 @@ public class TextArea extends Field
    }
    protected String print()
    {
-      return "<textarea name='"+name+"' cols='"+cols+"' rows='"+rows+"'>"+defval+"</textarea>";
+      return "<textarea name='"+ name +"' cols='"+ cols +"' rows='"+ rows +"'>"+ defval +"</textarea>";
    }
 }
 

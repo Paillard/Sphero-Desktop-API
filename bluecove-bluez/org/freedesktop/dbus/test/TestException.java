@@ -10,6 +10,7 @@
 */
 package org.freedesktop.dbus.test;
 
+import org.freedesktop.DBus;
 import org.freedesktop.DBus.Description;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
 

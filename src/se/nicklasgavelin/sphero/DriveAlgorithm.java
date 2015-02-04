@@ -30,10 +30,10 @@ public abstract class DriveAlgorithm
 	 */
 	public DriveAlgorithm()
 	{
-		this.headingOffset = 0.0D;
-		this.speedScale = 1.0D;
-		this.stopPosition = new double[ 3 ];
-		this.deadZoneDelta = new double[ 3 ];
+        this.headingOffset = 0.0D;
+        this.speedScale = 1.0D;
+        this.stopPosition = new double[ 3 ];
+        this.deadZoneDelta = new double[ 3 ];
 	}
 
 	/**
@@ -43,7 +43,7 @@ public abstract class DriveAlgorithm
 	 */
 	public void setOnConvertListener( OnConvertListener listener )
 	{
-		this.convertListener = listener;
+        this.convertListener = listener;
 	}
 
 	/**
@@ -60,9 +60,9 @@ public abstract class DriveAlgorithm
 	 */
 	protected void postOnConvert()
 	{
-		if( this.convertListener == null )
+		if(this.convertListener == null )
 			return;
-		this.convertListener.onConvert( this.heading, this.speed, this.speedScale );
+        this.convertListener.onConvert(this.heading, this.speed, this.speedScale);
 	}
 
 	/**
@@ -70,16 +70,16 @@ public abstract class DriveAlgorithm
 	 */
 	protected void adjustHeading()
 	{
-		this.adjustedHeading = ( this.heading + this.headingOffset );
-		if( this.adjustedHeading >= 360.0D )
-			this.adjustedHeading %= 360.0D;
+        this.adjustedHeading = this.heading + this.headingOffset;
+		if(this.adjustedHeading >= 360.0D )
+            this.adjustedHeading %= 360.0D;
 	}
 
 	/**
 	 * Listener class,
 	 * listens for conversion events
 	 */
-	public static abstract interface OnConvertListener
+    public abstract static interface OnConvertListener
 	{
 		/**
 		 * Event called when the conversion of the values are done
@@ -88,6 +88,6 @@ public abstract class DriveAlgorithm
 		 * @param paramDouble2 y
 		 * @param paramDouble3 z
 		 */
-		public abstract void onConvert( double paramDouble1, double paramDouble2, double paramDouble3 );
+        void onConvert(double paramDouble1, double paramDouble2, double paramDouble3);
 	}
 }

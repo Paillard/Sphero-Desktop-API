@@ -33,52 +33,52 @@ public interface BlueCoveLocalDeviceProperties {
 	/**
 	 * <code>"bluecove"</code> The version of BlueCove implementation.
 	 */
-	public static final String LOCAL_DEVICE_PROPERTY_BLUECOVE_VERSION = "bluecove";
+    String LOCAL_DEVICE_PROPERTY_BLUECOVE_VERSION = "bluecove";
 
 	/**
 	 * <code>"bluecove.stack"</code> The Bluetooth Stack: "winsock", "widcomm" or "bluesoleil" on windows. "mac", "bluez" or "emulator".
 	 */
-	public static final String LOCAL_DEVICE_PROPERTY_STACK = BlueCoveConfigProperties.PROPERTY_STACK;
+    String LOCAL_DEVICE_PROPERTY_STACK = BlueCoveConfigProperties.PROPERTY_STACK;
 
 	/**
      * <code>"bluecove"</code> The version of native stack.
      */
-	public static final String LOCAL_DEVICE_PROPERTY_STACK_VERSION = "bluecove.stack.version";
+    String LOCAL_DEVICE_PROPERTY_STACK_VERSION = "bluecove.stack.version";
 	
 	
 	/**
 	 * <code>"bluecove.feature.l2cap"</code> Does the current Bluetooth Stack support L2CAP: "true" or "false"
 	 */
-	public static final String LOCAL_DEVICE_PROPERTY_FEATURE_L2CAP = "bluecove.feature.l2cap";
+    String LOCAL_DEVICE_PROPERTY_FEATURE_L2CAP = "bluecove.feature.l2cap";
 
 	/**
 	 * <code>"bluecove.feature.service_attributes"</code>
 	 */
-	public static final String LOCAL_DEVICE_PROPERTY_FEATURE_SERVICE_ATTRIBUTES = "bluecove.feature.service_attributes";
+    String LOCAL_DEVICE_PROPERTY_FEATURE_SERVICE_ATTRIBUTES = "bluecove.feature.service_attributes";
 
 	/**
 	 * <code>"bluecove.feature.set_device_service_classes"</code>
 	 */
-	public static final String LOCAL_DEVICE_PROPERTY_FEATURE_SET_DEVICE_SERVICE_CLASSES = "bluecove.feature.set_device_service_classes";
+    String LOCAL_DEVICE_PROPERTY_FEATURE_SET_DEVICE_SERVICE_CLASSES = "bluecove.feature.set_device_service_classes";
 
 	/**
 	 * If function RemoteDeviceHelper.readRSSI(RemoteDevice device) available on native stack.
 	 * 
      * <code>"bluecove.feature.rssi"</code>
      */
-    public static final String LOCAL_DEVICE_PROPERTY_FEATURE_RSSI = "bluecove.feature.rssi";
+    String LOCAL_DEVICE_PROPERTY_FEATURE_RSSI = "bluecove.feature.rssi";
     
 	/**
 	 * <code>"bluecove.connections"</code> The number of open connections by current Bluetooth Stack.
 	 */
-	public static final String LOCAL_DEVICE_PROPERTY_OPEN_CONNECTIONS = "bluecove.connections";
+    String LOCAL_DEVICE_PROPERTY_OPEN_CONNECTIONS = "bluecove.connections";
 
 	/**
 	 * If Stack support multiple bluetooth adapters return selected one ID. (Linux BlueZ and Emulator)
 	 * 
 	 * @see com.intel.bluetooth.BlueCoveConfigProperties#PROPERTY_LOCAL_DEVICE_ID
 	 */
-	public static final String LOCAL_DEVICE_PROPERTY_DEVICE_ID = BlueCoveConfigProperties.PROPERTY_LOCAL_DEVICE_ID;
+    String LOCAL_DEVICE_PROPERTY_DEVICE_ID = BlueCoveConfigProperties.PROPERTY_LOCAL_DEVICE_ID;
 
 	/**
 	 * List the local adapters supported by the system. Returns comma separated String list.
@@ -86,15 +86,15 @@ public interface BlueCoveLocalDeviceProperties {
 	 * 
 	 * @see com.intel.bluetooth.BlueCoveConfigProperties#PROPERTY_LOCAL_DEVICE_ID
 	 */
-	public static final String LOCAL_DEVICE_DEVICES_LIST = "bluecove.local_devices_ids";
+    String LOCAL_DEVICE_DEVICES_LIST = "bluecove.local_devices_ids";
 
 	/**
      * <code>"bluecove.radio.version"</code>.
      */
-	public static final String LOCAL_DEVICE_RADIO_VERSION = "bluecove.radio.version";
+    String LOCAL_DEVICE_RADIO_VERSION = "bluecove.radio.version";
 	
 	/**
      * <code>"bluecove.radio.manufacturer"</code>.
      */
-	public static final String LOCAL_DEVICE_RADIO_MANUFACTURER = "bluecove.radio.manufacturer";
+    String LOCAL_DEVICE_RADIO_MANUFACTURER = "bluecove.radio.manufacturer";
 }

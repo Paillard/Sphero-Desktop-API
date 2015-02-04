@@ -14,5 +14,5 @@ import org.freedesktop.dbus.DBusInterface;
 
 public interface TwoPartObject extends DBusInterface
 {
-   public String getName();
+   String getName();
 }

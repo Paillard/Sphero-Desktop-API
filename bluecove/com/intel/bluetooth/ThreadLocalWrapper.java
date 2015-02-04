@@ -31,7 +31,7 @@ package com.intel.bluetooth;
  */
 class ThreadLocalWrapper {
 
-	static boolean java11 = false;
+	static boolean java11;
 
 	private Object threadLocal;
 
@@ -42,9 +42,9 @@ class ThreadLocalWrapper {
 			return;
 		}
 		try {
-			threadLocal = new ThreadLocal();
+            threadLocal = new ThreadLocal();
 		} catch (Throwable ejava11) {
-			java11 = true;
+            java11 = true;
 		}
 	}
 
@@ -58,7 +58,7 @@ class ThreadLocalWrapper {
 
 	public void set(Object value) {
 		if (java11) {
-			java11Object = value;
+            java11Object = value;
 		} else {
 			((ThreadLocal) threadLocal).set(value);
 		}

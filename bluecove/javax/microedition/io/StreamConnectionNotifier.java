@@ -31,5 +31,5 @@ public interface StreamConnectionNotifier extends Connection {
 	 * IOException - If an I/O error occurs.
 	 */
 
-	public StreamConnection acceptAndOpen() throws IOException;
+	StreamConnection acceptAndOpen() throws IOException;
 }

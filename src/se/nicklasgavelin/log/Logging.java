@@ -8,6 +8,7 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 import se.nicklasgavelin.configuration.ProjectProperties;
+import se.nicklasgavelin.log.UtilsJavaSE.StackTraceLocation;
 
 /**
  * Manages the logging of the application.
@@ -24,25 +25,25 @@ import se.nicklasgavelin.configuration.ProjectProperties;
 public class Logging
 {
 	private static final Logging log = new Logging();
-	private static boolean initialized = false;
+	private static boolean initialized;
 	private static Collection<Appender> logAppenders;
 	private static boolean log4exists = true;
 	private static final String log4logger = "site.nicklas.log.Log4JLogger";
 	private static final String from = Logging.class.getName();
-	private static final Collection<String> fromCollection = new ArrayList<String>();
+	private static final Collection<String> fromCollection = new ArrayList<>();
 	private static final Logger logger = Logger.getLogger( ProjectProperties.getInstance().getLoggerName() );// Configuration.loggerName
 																												// );
 
 	static
 	{
-		fromCollection.add( from );
+        fromCollection.add(from);
 	}
 
 	/**
 	 * Different debug levels,
 	 * mirrors that of log4j levels
 	 */
-	public static enum Level
+	public enum Level
 	{
 		/**
 		 * Debugging
@@ -64,19 +65,19 @@ public class Logging
 		 * Fatal errors
 		 */
 		FATAL( java.util.logging.Level.SEVERE );
-		private static int nextVal = 0;
+		private static int nextVal;
 		private int val;
 		private java.util.logging.Level l;
 
-		private Level( java.util.logging.Level _l )
+		Level(java.util.logging.Level _l)
 		{
-			this.initialize();
-			this.l = _l;
+            this.initialize();
+            this.l = _l;
 		}
 
 		private void initialize()
 		{
-			this.val = Level.nextVal++;
+            this.val = nextVal++;
 		}
 
 		protected int getValue()
@@ -114,7 +115,7 @@ public class Logging
 	/**
 	 * Log appender interface
 	 */
-	protected static interface Appender
+	protected interface Appender
 	{
 		/**
 		 * Log message
@@ -123,9 +124,9 @@ public class Logging
 		 * @param message The log message
 		 * @param t Throwable object to log
 		 */
-		public void log( Level l, String message, Throwable t );
+        void log(Level l, String message, Throwable t);
 
-		public boolean isLogEnabled( Level l );
+		boolean isLogEnabled(Level l);
 	}
 
 	/*
@@ -139,30 +140,30 @@ public class Logging
 	private static void initialize()
 	{
 		// Check if we have initialized earlier
-		if( initialized )
+		if(initialized)
 			return;
 
 		// Set initialized
-		initialized = true;
+        initialized = true;
 
-		logAppenders = new ArrayList<Appender>();
+        logAppenders = new ArrayList<>();
 
 		// Check if we can use log4j as debugger
 		try
 		{
-			Appender log4jAppender = (Appender) Class.forName( Logging.log4logger ).newInstance();
-			add( log4jAppender );
+			Appender log4jAppender = (Appender) Class.forName( log4logger ).newInstance();
+            add(log4jAppender);
 
 			// System.out.println( "[" + Logging.class.getCanonicalName() +
 			// "] Redirecting log to log4j (" + Configuration.debugEnabled + ")" );
 		}
 		catch( Throwable e )
 		{
-			log4exists = false;
+            log4exists = false;
 
-			setLevel();
+            setLevel();
 
-			Logging.debug( "[" + Logging.class.getCanonicalName() + "] Turning off debug as no log4j instance could be created" );
+			debug("[" + Logging.class.getCanonicalName() + "] Turning off debug as no log4j instance could be created");
 		}
 	}
 
@@ -171,7 +172,7 @@ public class Logging
 		// Fetch project settings
 		ProjectProperties pp = ProjectProperties.getInstance();
 
-		Logger topLogger = java.util.logging.Logger.getLogger( pp.getLoggerName() );// Configuration.loggerName
+		Logger topLogger = Logger.getLogger( pp.getLoggerName() );// Configuration.loggerName
 																					// );
 		topLogger.setLevel( pp.getDebugLevel().getLevel() ); // Configuration.debugLevel.getLevel()
 																// );
@@ -211,7 +212,7 @@ public class Logging
 	 */
 	public static void setDebugEnabled( boolean enabled )
 	{
-		initialize();
+        initialize();
 		// Configuration.debugEnabled = enabled;
 		ProjectProperties.getInstance().setDebugEnabled( enabled );
 	}
@@ -226,32 +227,29 @@ public class Logging
 	private static void callAppenders( Level l, String msg, Throwable t )
 	{
 		// Perform initialization if not already done
-		initialize();
+        initialize();
 
 		ProjectProperties pp = ProjectProperties.getInstance();
 
 		// Check if we have debug enabled or if the level is fatal
-		if( ( !pp.getDebugEnabled() && !l.equals( Level.FATAL ) ) )
+		if(!pp.getDebugEnabled() && !l.equals( Level.FATAL ))
 			return;
 
 		// Check if we want the messages of this level to be logged
 		if( l.getValue() < pp.getDebugLevel().getValue() )
 			return;
 
-		if( !log4exists )
+		if( !log4exists)
 		{
 			// Native debug
-			nativeDebug( l, msg, t );
+            nativeDebug(l, msg, t);
 		}
 		else
 		{
-			Iterator<Appender> i = logAppenders.iterator();
 
-			while( i.hasNext() )
-			{
-				Appender la = i.next();
-				la.log( l, msg, t );
-			}
+            for (Appender la : logAppenders) {
+                la.log(l, msg, t);
+            }
 		}
 	}
 
@@ -266,9 +264,9 @@ public class Logging
 	private static void nativeDebug( Level l, String msg, Throwable t )
 	{
 		// Fetch location for the message
-		UtilsJavaSE.StackTraceLocation s = UtilsJavaSE.getLocation( fromCollection );
-		logger.setLevel( ProjectProperties.getInstance().getDebugLevel().getLevel() );
-		Logging.logger.logp( l.getLevel(), s.className, s.methodName, "\t" + msg + "\n", t );
+		StackTraceLocation s = UtilsJavaSE.getLocation(fromCollection);
+        logger.setLevel(ProjectProperties.getInstance().getDebugLevel().getLevel());
+		logger.logp( l.getLevel(), s.className, s.methodName, "\t" + msg + "\n", t );
 	}
 
 //	/**
@@ -292,7 +290,7 @@ public class Logging
 	 */
 	private static void add( Appender loggerAppender )
 	{
-		logAppenders.add( loggerAppender );
+        logAppenders.add(loggerAppender);
 	}
 
 	/*
@@ -307,7 +305,7 @@ public class Logging
 	 */
 	public static void debug( String msg )
 	{
-		callAppenders( Level.DEBUG, msg, null );
+        callAppenders(Level.DEBUG, msg, null);
 	}
 
 	/**
@@ -318,7 +316,7 @@ public class Logging
 	 */
 	public static void debug( String msg, Throwable t )
 	{
-		callAppenders( Level.DEBUG, msg, t );
+        callAppenders(Level.DEBUG, msg, t);
 	}
 
 	/**
@@ -329,7 +327,7 @@ public class Logging
 	 */
 	public static void debug( String msg, String v )
 	{
-		callAppenders( Level.DEBUG, msg + " " + v, null );
+        callAppenders(Level.DEBUG, msg + " " + v, null);
 	}
 
 	/**
@@ -340,7 +338,7 @@ public class Logging
 	 */
 	public static void debug( String msg, Object o )
 	{
-		callAppenders( Level.DEBUG, msg + " " + o.toString(), null );
+        callAppenders(Level.DEBUG, msg + " " + o, null);
 	}
 
 	/**
@@ -350,7 +348,7 @@ public class Logging
 	 */
 	public static void error( String msg )
 	{
-		callAppenders( Level.ERROR, msg, null );
+        callAppenders(Level.ERROR, msg, null);
 	}
 
 	/**
@@ -361,7 +359,7 @@ public class Logging
 	 */
 	public static void error( String msg, Throwable t )
 	{
-		callAppenders( Level.ERROR, msg, t );
+        callAppenders(Level.ERROR, msg, t);
 	}
 
 	/**
@@ -372,7 +370,7 @@ public class Logging
 	 */
 	public static void error( String msg, String v )
 	{
-		callAppenders( Level.ERROR, msg + " " + v, null );
+        callAppenders(Level.ERROR, msg + " " + v, null);
 	}
 
 	/**
@@ -383,7 +381,7 @@ public class Logging
 	 */
 	public static void error( String msg, Object o )
 	{
-		callAppenders( Level.ERROR, msg + " " + o.toString(), null );
+        callAppenders(Level.ERROR, msg + " " + o, null);
 	}
 
 	/**
@@ -393,7 +391,7 @@ public class Logging
 	 */
 	public static void info( String msg )
 	{
-		callAppenders( Level.INFO, msg, null );
+        callAppenders(Level.INFO, msg, null);
 	}
 
 	/**
@@ -404,7 +402,7 @@ public class Logging
 	 */
 	public static void info( String msg, Throwable t )
 	{
-		callAppenders( Level.INFO, msg, t );
+        callAppenders(Level.INFO, msg, t);
 	}
 
 	/**
@@ -415,7 +413,7 @@ public class Logging
 	 */
 	public static void info( String msg, String v )
 	{
-		callAppenders( Level.INFO, msg + " " + v, null );
+        callAppenders(Level.INFO, msg + " " + v, null);
 	}
 
 	/**
@@ -426,7 +424,7 @@ public class Logging
 	 */
 	public static void info( String msg, Object o )
 	{
-		callAppenders( Level.INFO, msg + " " + o.toString(), null );
+        callAppenders(Level.INFO, msg + " " + o, null);
 	}
 
 	/**
@@ -436,7 +434,7 @@ public class Logging
 	 */
 	public static void warn( String msg )
 	{
-		callAppenders( Level.WARN, msg, null );
+        callAppenders(Level.WARN, msg, null);
 	}
 
 	/**
@@ -447,7 +445,7 @@ public class Logging
 	 */
 	public static void warn( String msg, Throwable t )
 	{
-		callAppenders( Level.WARN, msg, t );
+        callAppenders(Level.WARN, msg, t);
 	}
 
 	/**
@@ -458,7 +456,7 @@ public class Logging
 	 */
 	public static void warn( String msg, String v )
 	{
-		callAppenders( Level.WARN, msg + " " + v, null );
+        callAppenders(Level.WARN, msg + " " + v, null);
 	}
 
 	/**
@@ -469,7 +467,7 @@ public class Logging
 	 */
 	public static void warn( String msg, Object o )
 	{
-		callAppenders( Level.WARN, msg + " " + o.toString(), null );
+        callAppenders(Level.WARN, msg + " " + o, null);
 	}
 
 	/**
@@ -479,7 +477,7 @@ public class Logging
 	 */
 	public static void fatal( String msg )
 	{
-		callAppenders( Level.FATAL, msg, null );
+        callAppenders(Level.FATAL, msg, null);
 	}
 
 	/**
@@ -490,7 +488,7 @@ public class Logging
 	 */
 	public static void fatal( String msg, String v )
 	{
-		callAppenders( Level.FATAL, msg + " " + v, null );
+        callAppenders(Level.FATAL, msg + " " + v, null);
 	}
 
 	/**
@@ -501,7 +499,7 @@ public class Logging
 	 */
 	public static void fatal( String msg, Throwable e )
 	{
-		callAppenders( Level.FATAL, msg, e );
+        callAppenders(Level.FATAL, msg, e);
 	}
 
 	/**
@@ -512,6 +510,6 @@ public class Logging
 	 */
 	public static void fatal( String msg, Object o )
 	{
-		callAppenders( Level.FATAL, msg + " " + o.toString(), null );
+        callAppenders(Level.FATAL, msg + " " + o, null);
 	}
 }

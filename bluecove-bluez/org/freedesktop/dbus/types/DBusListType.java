@@ -31,7 +31,7 @@ public class DBusListType implements ParameterizedType
    }
    public Type[] getActualTypeArguments()
    {
-      return new Type[] { v };
+      return new Type[] {v};
    }
    public Type getRawType()
    {

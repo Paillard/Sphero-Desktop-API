@@ -34,7 +34,7 @@ public class DBusMapType implements ParameterizedType
    }
    public Type[] getActualTypeArguments()
    {
-      return new Type[] { k, v };
+      return new Type[] {k, v};
    }
    public Type getRawType()
    {

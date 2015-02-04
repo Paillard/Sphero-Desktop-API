@@ -28,7 +28,6 @@
 package cx.ath.matthew.io;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,33 +56,32 @@ public class InOutCopier extends Thread
     * @param is The stream to copy from
     * @param os the stream to copy to
     */
-   public InOutCopier(InputStream is, OutputStream os) throws IOException
-   {
+   public InOutCopier(InputStream is, OutputStream os) {
       this.is = new BufferedInputStream(is);
       this.os = os;
-      this.enable = true;
+       this.enable = true;
    }
    /**
     * Force close the stream without waiting for EOF on the source
     */
    public void close()
    {
-      enable = false;
-      interrupt();
+       enable = false;
+       interrupt();
    }
    /**
     * Flush the outputstream
     */
    public void flush() throws IOException
    {
-      os.flush();
+       os.flush();
    }
    /** Start the thread and wait to make sure its really started */
    public synchronized void start()
    {
       super.start();
       try {
-         wait();
+          wait();
       } catch (InterruptedException Ie) {}
    }
    /**
@@ -95,7 +93,7 @@ public class InOutCopier extends Thread
    {
       byte[] buf = new byte[BUFSIZE];
       synchronized (this) {
-         notifyAll();
+          notifyAll();
       }
       while (enable)
          try {
@@ -103,13 +101,14 @@ public class InOutCopier extends Thread
             if (0 > n)
                break;
             if (0 < n) {
-               os.write(buf, 0, (n> BUFSIZE? BUFSIZE:n));
-               os.flush();
+                os.write(buf, 0, n > BUFSIZE ? BUFSIZE : n);
+                os.flush();
             }
          } catch (IOException IOe) { 
             break;
          }
-      try { os.close(); } catch (IOException IOe) {}
+      try {
+          os.close(); } catch (IOException IOe) {}
    }
 }
 

@@ -26,6 +26,7 @@
  */
 package com.intel.bluetooth;
 
+import javax.bluetooth.BluetoothStateException;
 import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
@@ -33,10 +34,6 @@ import java.security.PrivilegedExceptionAction;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-
-import javax.bluetooth.BluetoothStateException;
-
-import com.intel.bluetooth.BluetoothStack.LibraryInformation;
 
 /**
  *
@@ -83,7 +80,7 @@ public class BlueCoveImpl {
 
     public static final String versionSufix = "-SNAPSHOT"; // SNAPSHOT
 
-    public static final String version = String.valueOf(versionMajor1) + "." + String.valueOf(versionMajor2) + "." + String.valueOf(versionMinor)
+    public static final String version = versionMajor1 + "." + versionMajor2 + "." + versionMinor
             + versionSufix;
 
     public static final int nativeLibraryVersionExpected = versionMajor1 * 1000000 + versionMajor2 * 10000 + versionMinor * 100 + versionBuild;
@@ -159,15 +156,15 @@ public class BlueCoveImpl {
     /* The context to be used when loading native DLL */
     private Object accessControlContext;
 
-    private static ShutdownHookThread shutdownHookRegistered;
+    private static BlueCoveImpl.ShutdownHookThread shutdownHookRegistered;
 
     private static BlueCoveImpl instance;
 
-    private static BluetoothStackHolder singleStack;
+    private static BlueCoveImpl.BluetoothStackHolder singleStack;
 
     private static ThreadLocalWrapper threadStack;
 
-    private static BluetoothStackHolder threadStackIDDefault;
+    private static BlueCoveImpl.BluetoothStackHolder threadStackIDDefault;
 
     private static Hashtable resourceConfigProperties = new Hashtable();
 
@@ -210,7 +207,7 @@ public class BlueCoveImpl {
 
         final Object monitor = new Object();
 
-        int shutdownStart = 0;
+        int shutdownStart;
 
         AsynchronousShutdownThread() {
             super("BluecoveAsynchronousShutdownThread");
@@ -231,7 +228,7 @@ public class BlueCoveImpl {
             }
             if (!stacks.isEmpty()) {
                 for (Enumeration en = stacks.elements(); en.hasMoreElements();) {
-                    BluetoothStackHolder s = (BluetoothStackHolder) en.nextElement();
+                    BlueCoveImpl.BluetoothStackHolder s = (BlueCoveImpl.BluetoothStackHolder) en.nextElement();
                     if (s.bluetoothStack != null) {
                         try {
                             s.bluetoothStack.destroy();
@@ -258,15 +255,15 @@ public class BlueCoveImpl {
 
     private class ShutdownHookThread extends Thread {
 
-        AsynchronousShutdownThread shutdownHookThread;
+        BlueCoveImpl.AsynchronousShutdownThread shutdownHookThread;
 
-        ShutdownHookThread(AsynchronousShutdownThread shutdownHookThread) {
+        ShutdownHookThread(BlueCoveImpl.AsynchronousShutdownThread shutdownHookThread) {
             super("BluecoveShutdownHookThread");
             this.shutdownHookThread = shutdownHookThread;
         }
 
         public void run() {
-            final Object monitor = shutdownHookThread.monitor;
+            Object monitor = shutdownHookThread.monitor;
             synchronized (monitor) {
                 shutdownHookThread.shutdownStart = 1;
                 monitor.notifyAll();
@@ -317,8 +314,8 @@ public class BlueCoveImpl {
         if (shutdownHookRegistered != null) {
             return;
         }
-        AsynchronousShutdownThread shutdownHookThread = new AsynchronousShutdownThread();
-        if (UtilsJavaSE.runtimeAddShutdownHook(shutdownHookRegistered = new ShutdownHookThread(shutdownHookThread))) {
+        BlueCoveImpl.AsynchronousShutdownThread shutdownHookThread = new BlueCoveImpl.AsynchronousShutdownThread();
+        if (UtilsJavaSE.runtimeAddShutdownHook(shutdownHookRegistered = new BlueCoveImpl.ShutdownHookThread(shutdownHookThread))) {
             UtilsJavaSE.threadSetDaemon(shutdownHookThread);
             shutdownHookThread.start();
         }
@@ -367,9 +364,7 @@ public class BlueCoveImpl {
         String className = ctackClass.getName();
         try {
             return (BluetoothStack) ctackClass.newInstance();
-        } catch (InstantiationException e) {
-            DebugLog.error(className, e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             DebugLog.error(className, e);
         }
         throw new BluetoothStateException("BlueCove " + className + " can't instantiate");
@@ -382,28 +377,28 @@ public class BlueCoveImpl {
     static void loadNativeLibraries(BluetoothStack stack) throws BluetoothStateException {
         // Check is libraries already loaded
         try {
-            if ((UtilsJavaSE.canCallNotLoadedNativeMethod) && (stack.isNativeCodeLoaded())) {
+            if (UtilsJavaSE.canCallNotLoadedNativeMethod && stack.isNativeCodeLoaded()) {
                 return;
             }
         } catch (Error e) {
             // We caught UnsatisfiedLinkError
         }
-        LibraryInformation[] libs = stack.requireNativeLibraries();
-        if ((libs == null) || (libs.length == 0)) {
+        BluetoothStack.LibraryInformation[] libs = stack.requireNativeLibraries();
+        if (libs == null || libs.length == 0) {
             // No native libs for this stack
             return;
         }
-        for (int i = 0; i < libs.length; i++) {
-            Class c = libs[i].stackClass;
+        for (BluetoothStack.LibraryInformation lib : libs) {
+            Class c = lib.stackClass;
             if (c == null) {
                 c = stack.getClass();
             }
-            if (!NativeLibLoader.isAvailable(libs[i].libraryName, c, libs[i].required)) {
-                if (libs[i].required) {
-                    throw new BluetoothStateException("BlueCove library " + libs[i].libraryName + " not available;"
-                            + NativeLibLoader.getLoadErrors(libs[i].libraryName));
+            if (!NativeLibLoader.isAvailable(lib.libraryName, c, lib.required)) {
+                if (lib.required) {
+                    throw new BluetoothStateException("BlueCove library " + lib.libraryName + " not available;"
+                            + NativeLibLoader.getLoadErrors(lib.libraryName));
                 } else {
-                    DebugLog.debug("library " + libs[i].libraryName + " not available");
+                    DebugLog.debug("library " + lib.libraryName + " not available");
                 }
             }
         }
@@ -417,17 +412,17 @@ public class BlueCoveImpl {
         } catch (Error e) {
             // We caught UnsatisfiedLinkError
         }
-        LibraryInformation[] libs = stack.requireNativeLibraries();
-        if ((libs == null) || (libs.length == 0)) {
+        BluetoothStack.LibraryInformation[] libs = stack.requireNativeLibraries();
+        if (libs == null || libs.length == 0) {
             // No native libs for this stack
             return true;
         }
-        for (int i = 0; i < libs.length; i++) {
-            Class c = libs[i].stackClass;
+        for (BluetoothStack.LibraryInformation lib : libs) {
+            Class c = lib.stackClass;
             if (c == null) {
                 c = stack.getClass();
             }
-            if (!NativeLibLoader.isAvailable(libs[i].libraryName, c)) {
+            if (!NativeLibLoader.isAvailable(lib.libraryName, c)) {
                 return false;
             }
         }
@@ -484,11 +479,11 @@ public class BlueCoveImpl {
             }
         }
 
-        int libraryVersion = detectorStack.getLibraryVersion();
+        /*int libraryVersion = detectorStack.getLibraryVersion();
         if (nativeLibraryVersionExpected != libraryVersion) {
             DebugLog.fatal("BlueCove native library version mismatch " + libraryVersion + " expected " + nativeLibraryVersionExpected);
-            throw new BluetoothStateException("BlueCove native library version mismatch");
-        }
+            throw new BluetoothStateException("BlueCove native library version mismatch"+ " expected " + nativeLibraryVersionExpected + " have " + libraryVersion);
+        }*/
 
         if (stackSelected == null) {
             // auto detect
@@ -541,7 +536,7 @@ public class BlueCoveImpl {
      */
     public static Vector getLocalDevicesID() throws BluetoothStateException {
         Vector v = new Vector();
-        String ids = BluetoothStackHolder.getBluetoothStack().getLocalDeviceProperty(BlueCoveLocalDeviceProperties.LOCAL_DEVICE_DEVICES_LIST);
+        String ids = BlueCoveImpl.BluetoothStackHolder.getBluetoothStack().getLocalDeviceProperty(BlueCoveLocalDeviceProperties.LOCAL_DEVICE_DEVICES_LIST);
         if (ids != null) {
             UtilsStringTokenizer tok = new UtilsStringTokenizer(ids, ",");
             while (tok.hasMoreTokens()) {
@@ -621,14 +616,14 @@ public class BlueCoveImpl {
         if (threadStack == null) {
             threadStack = new ThreadLocalWrapper();
         }
-        BluetoothStackHolder s = ((BluetoothStackHolder) threadStack.get());
+        BlueCoveImpl.BluetoothStackHolder s = (BluetoothStackHolder) threadStack.get();
         if (s == null) {
             // Move initialized single stack to this thread
             if (singleStack != null) {
                 s = singleStack;
                 singleStack = null;
             } else {
-                s = new BluetoothStackHolder();
+                s = new BlueCoveImpl.BluetoothStackHolder();
             }
             threadStack.set(s);
         }
@@ -645,7 +640,7 @@ public class BlueCoveImpl {
      */
     public static synchronized Object getThreadBluetoothStackID() throws BluetoothStateException {
         useThreadLocalBluetoothStack();
-        BluetoothStackHolder.getBluetoothStack();
+        BlueCoveImpl.BluetoothStackHolder.getBluetoothStack();
         return threadStack.get();
     }
 
@@ -673,7 +668,7 @@ public class BlueCoveImpl {
      *            stackID to use or <code>null</code> to detach the current Thread
      */
     public static synchronized void setThreadBluetoothStackID(Object stackID) {
-        if ((stackID != null) && (!(stackID instanceof BluetoothStackHolder))) {
+        if (stackID != null && !(stackID instanceof BluetoothStackHolder)) {
             throw new IllegalArgumentException("stackID is not valid");
         }
         if (threadStack == null) {
@@ -703,25 +698,25 @@ public class BlueCoveImpl {
      *            stackID to use or <code>null</code> to remove default
      */
     public static synchronized void setDefaultThreadBluetoothStackID(Object stackID) {
-        if ((stackID != null) && (!(stackID instanceof BluetoothStackHolder))) {
+        if (stackID != null && !(stackID instanceof BluetoothStackHolder)) {
             throw new IllegalArgumentException("stackID is not valid");
         }
         if (threadStack == null) {
             throw new IllegalArgumentException("ThreadLocal configuration is not initialized");
         }
-        threadStackIDDefault = (BluetoothStackHolder) stackID;
+        threadStackIDDefault = (BlueCoveImpl.BluetoothStackHolder) stackID;
     }
 
     static synchronized void setThreadBluetoothStack(BluetoothStack bluetoothStack) {
         if (threadStack == null) {
             return;
         }
-        BluetoothStackHolder s = ((BluetoothStackHolder) threadStack.get());
-        if ((s != null) && (s.bluetoothStack == bluetoothStack)) {
+        BlueCoveImpl.BluetoothStackHolder s = (BluetoothStackHolder) threadStack.get();
+        if (s != null && s.bluetoothStack == bluetoothStack) {
             return;
         }
 
-        BluetoothStackHolder sh = (BluetoothStackHolder) stacks.get(bluetoothStack);
+        BlueCoveImpl.BluetoothStackHolder sh = (BlueCoveImpl.BluetoothStackHolder) stacks.get(bluetoothStack);
         if (sh == null) {
             throw new RuntimeException("ThreadLocal not found for BluetoothStack");
         }
@@ -737,7 +732,7 @@ public class BlueCoveImpl {
         if (threadStack == null) {
             return;
         }
-        BluetoothStackHolder s = ((BluetoothStackHolder) threadStack.get());
+        BlueCoveImpl.BluetoothStackHolder s = (BluetoothStackHolder) threadStack.get();
         if (s == null) {
             return;
         }
@@ -759,7 +754,7 @@ public class BlueCoveImpl {
      */
     public static synchronized void shutdown() {
         for (Enumeration en = stacks.elements(); en.hasMoreElements();) {
-            BluetoothStackHolder s = (BluetoothStackHolder) en.nextElement();
+            BlueCoveImpl.BluetoothStackHolder s = (BlueCoveImpl.BluetoothStackHolder) en.nextElement();
             s.configProperties.clear();
             if (s.bluetoothStack != null) {
                 BluetoothConnectionNotifierBase.shutdownConnections(s.bluetoothStack);
@@ -821,8 +816,8 @@ public class BlueCoveImpl {
 		if (name == null) {
             throw new NullPointerException("key is null");
         }
-        BluetoothStackHolder sh = currentStackHolder(true);
-        if ((sh.bluetoothStack != null) && (initializationProperties.contains(name))) {
+        BlueCoveImpl.BluetoothStackHolder sh = currentStackHolder(true);
+        if (sh.bluetoothStack != null && initializationProperties.contains(name)) {
             throw new IllegalArgumentException("BlueCove Stack already initialized");
         }
         if (value == null) {
@@ -837,7 +832,7 @@ public class BlueCoveImpl {
             throw new NullPointerException("key is null");
         }
         Object value = null;
-        BluetoothStackHolder sh = currentStackHolder(false);
+        BlueCoveImpl.BluetoothStackHolder sh = currentStackHolder(false);
         if (sh != null) {
             value = sh.configProperties.get(key);
         }
@@ -852,7 +847,7 @@ public class BlueCoveImpl {
                 Object casheValue = resourceConfigProperties.get(key);
                 if (casheValue != null) {
                     if (casheValue instanceof String) {
-                        value = (String) casheValue;
+                        value = casheValue;
                     }
                 } else {
                     value = Utils.getResourceProperty(BlueCoveImpl.class, key);
@@ -902,24 +897,24 @@ public class BlueCoveImpl {
         UtilsJavaSE.setSystemProperty(BluetoothConsts.PROPERTY_BLUETOOTH_API_VERSION, null);
         UtilsJavaSE.setSystemProperty(BluetoothConsts.PROPERTY_OBEX_API_VERSION, null);
         String[] property = getSystemPropertiesList();
-        for (int i = 0; i < property.length; i++) {
-            UtilsJavaSE.setSystemProperty(property[i], null);
+        for (String aProperty : property) {
+            UtilsJavaSE.setSystemProperty(aProperty, null);
         }
     }
 
     void copySystemProperties(BluetoothStack bluetoothStack) {
-        UtilsJavaSE.setSystemProperty(BluetoothConsts.PROPERTY_BLUETOOTH_API_VERSION, BlueCoveImpl.BLUETOOTH_API_VERSION);
-        UtilsJavaSE.setSystemProperty(BluetoothConsts.PROPERTY_OBEX_API_VERSION, BlueCoveImpl.OBEX_API_VERSION);
+        UtilsJavaSE.setSystemProperty(BluetoothConsts.PROPERTY_BLUETOOTH_API_VERSION, BLUETOOTH_API_VERSION);
+        UtilsJavaSE.setSystemProperty(BluetoothConsts.PROPERTY_OBEX_API_VERSION, OBEX_API_VERSION);
         if (bluetoothStack != null) {
             String[] property = getSystemPropertiesList();
-            for (int i = 0; i < property.length; i++) {
-                UtilsJavaSE.setSystemProperty(property[i], bluetoothStack.getLocalDeviceProperty(property[i]));
+            for (String aProperty : property) {
+                UtilsJavaSE.setSystemProperty(aProperty, bluetoothStack.getLocalDeviceProperty(aProperty));
             }
         }
     }
 
     public String getLocalDeviceFeature(int featureID) throws BluetoothStateException {
-        return ((BluetoothStackHolder.getBluetoothStack().getFeatureSet() & featureID) != 0) ? TRUE : FALSE;
+        return (BluetoothStackHolder.getBluetoothStack().getFeatureSet() & featureID) != 0 ? TRUE : FALSE;
     }
 
     private BluetoothStack createDetectorOnWindows(String stackFirst) throws BluetoothStateException {
@@ -970,6 +965,7 @@ public class BlueCoveImpl {
      * @return stack ID
      * @throws BluetoothStateException
      */
+    @Deprecated
     public String setBluetoothStack(String stack) throws BluetoothStateException {
         return setBluetoothStack(stack, null).getStackID();
     }
@@ -982,15 +978,15 @@ public class BlueCoveImpl {
                 singleStack.bluetoothStack = null;
             }
         } else if (threadStack != null) {
-            BluetoothStackHolder s = ((BluetoothStackHolder) threadStack.get());
-            if ((s != null) && (s.bluetoothStack != null)) {
+            BlueCoveImpl.BluetoothStackHolder s = (BluetoothStackHolder) threadStack.get();
+            if (s != null && s.bluetoothStack != null) {
                 s.bluetoothStack.destroy();
                 stacks.remove(s.bluetoothStack);
                 s.bluetoothStack = null;
             }
         }
         BluetoothStack newStack;
-        if ((detectorStack != null) && (detectorStack.getStackID()).equalsIgnoreCase(stack)) {
+        if (detectorStack != null && detectorStack.getStackID().equalsIgnoreCase(stack)) {
             newStack = detectorStack;
         } else if (STACK_WIDCOMM.equalsIgnoreCase(stack)) {
             newStack = new BluetoothStackWIDCOMM();
@@ -1002,11 +998,11 @@ public class BlueCoveImpl {
             newStack = new BluetoothStackMicrosoft();
         }
         loadNativeLibraries(newStack);
-        int libraryVersion = newStack.getLibraryVersion();
+        /*int libraryVersion = newStack.getLibraryVersion();
         if (nativeLibraryVersionExpected != libraryVersion) {
             DebugLog.fatal("BlueCove native library version mismatch " + libraryVersion + " expected " + nativeLibraryVersionExpected);
             throw new BluetoothStateException("BlueCove native library version mismatch");
-        }
+        }*/
 
         if (DebugLog.isDebugEnabled()) {
             newStack.enableNativeDebug(DebugLog.class, true);
@@ -1015,7 +1011,7 @@ public class BlueCoveImpl {
         createShutdownHook();
 
         // Store stack in Thread or static variables
-        BluetoothStackHolder sh = currentStackHolder(true);
+        BlueCoveImpl.BluetoothStackHolder sh = currentStackHolder(true);
         sh.bluetoothStack = newStack;
         stacks.put(newStack, sh);
         if (threadStack != null) {
@@ -1025,26 +1021,26 @@ public class BlueCoveImpl {
     }
 
     public void enableNativeDebug(boolean on) {
-        BluetoothStackHolder s = currentStackHolder(false);
-        if ((s != null) && (s.bluetoothStack != null)) {
+        BlueCoveImpl.BluetoothStackHolder s = currentStackHolder(false);
+        if (s != null && s.bluetoothStack != null) {
             s.bluetoothStack.enableNativeDebug(DebugLog.class, on);
         }
     }
 
-    private static BluetoothStackHolder currentStackHolder(boolean create) {
+    private static BlueCoveImpl.BluetoothStackHolder currentStackHolder(boolean create) {
         if (threadStack != null) {
-            BluetoothStackHolder s = ((BluetoothStackHolder) threadStack.get());
-            if ((s == null) && (threadStackIDDefault != null)) {
+            BlueCoveImpl.BluetoothStackHolder s = (BluetoothStackHolder) threadStack.get();
+            if (s == null && threadStackIDDefault != null) {
                 return threadStackIDDefault;
             }
-            if ((s == null) && create) {
-                s = new BluetoothStackHolder();
+            if (s == null && create) {
+                s = new BlueCoveImpl.BluetoothStackHolder();
                 threadStack.set(s);
             }
             return s;
         } else {
-            if ((singleStack == null) && create) {
-                singleStack = new BluetoothStackHolder();
+            if (singleStack == null && create) {
+                singleStack = new BlueCoveImpl.BluetoothStackHolder();
             }
             return singleStack;
         }
@@ -1062,10 +1058,10 @@ public class BlueCoveImpl {
      */
     public synchronized BluetoothStack getBluetoothStack() throws BluetoothStateException {
         Utils.isLegalAPICall(fqcnSet);
-        BluetoothStackHolder sh = currentStackHolder(false);
-        if ((sh != null) && (sh.bluetoothStack != null)) {
+        BlueCoveImpl.BluetoothStackHolder sh = currentStackHolder(false);
+        if (sh != null && sh.bluetoothStack != null) {
             return sh.bluetoothStack;
-        } else if ((sh == null) && (threadStack != null)) {
+        } else if (sh == null && threadStack != null) {
             throw new BluetoothStateException("No BluetoothStack or Adapter for current thread");
         }
 
@@ -1080,10 +1076,8 @@ public class BlueCoveImpl {
 
     private BluetoothStack detectStackPrivileged() throws BluetoothStateException {
         try {
-            return (BluetoothStack) AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                public Object run() throws BluetoothStateException {
-                    return detectStack();
-                }
+            return (BluetoothStack) AccessController.doPrivileged((PrivilegedExceptionAction) () -> {
+                return detectStack();
             }, (AccessControlContext) accessControlContext);
         } catch (PrivilegedActionException e) {
             Throwable cause = UtilsJavaSE.getCause(e);

@@ -3,6 +3,8 @@ package se.nicklasgavelin.sphero.macro;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.sphero.macro.command.Emit;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 
@@ -23,12 +25,12 @@ public class MacroObject
 
 	public MacroObject()
 	{
-		this.commands = new ArrayList<MacroCommand>();
+        this.commands = new ArrayList<>();
 	}
 
 	public MacroObject( Collection<MacroCommand> _commands )
 	{
-		this.commands.addAll( _commands );
+        this.commands.addAll(_commands);
 	}
 
 	/**
@@ -48,7 +50,7 @@ public class MacroObject
 	 */
 	public void addCommand( MacroCommand command )
 	{
-		this.commands.add( command );
+        this.commands.add(command);
 	}
 
 	/**
@@ -62,36 +64,32 @@ public class MacroObject
 	public byte[] generateMacroData()
 	{
 		// Create a buffer
-		ByteArrayBuffer data = new ByteArrayBuffer( MAX_MACRO_LENGTH );
+		ByteArrayBuffer data = new ByteArrayBuffer(MAX_MACRO_LENGTH);
 		int currentLength = 0;
 
 		// Go through all our commands that we got
-		for( Iterator<MacroCommand> i = this.commands.iterator(); i.hasNext(); )
-		{
-			// Fetch the next command
-			MacroCommand command = i.next();
+        for (MacroCommand command : this.commands) {
+            // Fetch the next command
+            // Check if we still got space left
+            if (command.getLength() + currentLength > MAX_TOTAL_COMMAND_LENGTH) {
+                // TODO: Will this really work??? The command will not be added if the
+                // byte array is full
+                // Roll stop = new Roll( Double.valueOf( 0.0D ), Integer.valueOf( 0 ),
+                // Integer.valueOf( 0 ) );
+                // data.append( stop.getByteRepresentation(), 0, stop.getLength() );
+                break;
+            }
 
-			// Check if we still got space left
-			if( command.getLength() + currentLength > MAX_TOTAL_COMMAND_LENGTH )
-			{
-				// TODO: Will this really work??? The command will not be added if the
-				// byte array is full
-				// Roll stop = new Roll( Double.valueOf( 0.0D ), Integer.valueOf( 0 ),
-				// Integer.valueOf( 0 ) );
-				// data.append( stop.getByteRepresentation(), 0, stop.getLength() );
-				break;
-			}
+            // Append the command to our buffer
+            data.append(command.getByteRepresentation());
 
-			// Append the command to our buffer
-			data.append( command.getByteRepresentation() );
-
-			// Update the current length
-			currentLength += command.getLength();
-		}
+            // Update the current length
+            currentLength += command.getLength();
+        }
 
 		// Append a end command for the macro
 		data.append( new Emit( 1 ).getByteRepresentation() );
-		data.append( MacroCommand.MACRO_COMMAND.MAC_END.getValue() );
+		data.append( MACRO_COMMAND.MAC_END.getValue() );
 
 		// Return the created macro data
 
@@ -115,14 +113,14 @@ public class MacroObject
 	 */
 	public void setMode( MacroObjectMode _mode )
 	{
-		this.mode = _mode;
+        this.mode = _mode;
 	}
 
 	/**
 	 * The available macro modes for the MacroObject class
 	 */
-	public static enum MacroObjectMode
+	public enum MacroObjectMode
 	{
-		Normal, CachedStreaming;
-	}
+		Normal, CachedStreaming
+    }
 }

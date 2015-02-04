@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 import se.nicklasgavelin.util.Value;
 
@@ -16,12 +17,12 @@ public class LoopStart extends MacroCommand {
 
 	public LoopStart(int count) {
 		super( MACRO_COMMAND.MAC_LOOP_START );
-		mCount = Value.clamp(count, MIN_LOOP_VALUE, MAX_LOOP_VALUE );
+        mCount = Value.clamp(count, MIN_LOOP_VALUE, MAX_LOOP_VALUE);
 	}
 
 	public void setCount(int count) {
-	    mCount = Value.clamp(count, MIN_LOOP_VALUE, MAX_LOOP_VALUE );;
-	}
+        mCount = Value.clamp(count, MIN_LOOP_VALUE, MAX_LOOP_VALUE);
+    }
 	
 	public int getCount() {
 	    return mCount;
@@ -30,7 +31,7 @@ public class LoopStart extends MacroCommand {
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		ByteArrayBuffer bytes = new ByteArrayBuffer( getLength() );
+		ByteArrayBuffer bytes = new ByteArrayBuffer(getLength() );
 		bytes.append(getCommandID());
 		bytes.append(getCount());
 

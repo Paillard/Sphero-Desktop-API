@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.bluez.Error.InvalidArguments;
 import org.freedesktop.dbus.Path;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
@@ -42,72 +43,72 @@ public interface BlueZAPI {
     /**
      * Receive device discovery events.
      */
-    public interface DeviceInquiryListener {
+    interface DeviceInquiryListener {
 
-        public void deviceInquiryStarted();
+        void deviceInquiryStarted();
 
-        public void deviceDiscovered(String deviceAddr, String deviceName, int deviceClass, boolean paired);
+        void deviceDiscovered(String deviceAddr, String deviceName, int deviceClass, boolean paired);
 
     }
 
-    public List<String> listAdapters();
+    List<String> listAdapters();
 
-    public Path getAdapter(int number);
+    Path getAdapter(int number);
 
-    public Path findAdapter(String pattern) throws Error.InvalidArguments;
+    Path findAdapter(String pattern) throws InvalidArguments;
 
-    public Path defaultAdapter() throws Error.InvalidArguments;
+    Path defaultAdapter() throws InvalidArguments;
 
-    public void selectAdapter(Path adapterPath) throws DBusException;
+    void selectAdapter(Path adapterPath) throws DBusException;
 
-    public String getAdapterID();
+    String getAdapterID();
 
-    public String getAdapterAddress();
+    String getAdapterAddress();
 
-    public int getAdapterDeviceClass();
+    int getAdapterDeviceClass();
 
-    public String getAdapterName();
+    String getAdapterName();
 
-    public boolean isAdapterDiscoverable();
+    boolean isAdapterDiscoverable();
 
-    public int getAdapterDiscoverableTimeout();
+    int getAdapterDiscoverableTimeout();
 
-    public String getAdapterVersion();
+    String getAdapterVersion();
 
-    public String getAdapterRevision();
+    String getAdapterRevision();
 
-    public String getAdapterManufacturer();
+    String getAdapterManufacturer();
 
-    public boolean isAdapterPowerOn();
+    boolean isAdapterPowerOn();
 
-    public boolean setAdapterDiscoverable(int mode) throws DBusException;
+    boolean setAdapterDiscoverable(int mode) throws DBusException;
 
-    public void deviceInquiry(final DeviceInquiryListener listener) throws DBusException, InterruptedException;
+    void deviceInquiry(BlueZAPI.DeviceInquiryListener listener) throws DBusException, InterruptedException;
 
-    public void deviceInquiryCancel() throws DBusException;
+    void deviceInquiryCancel() throws DBusException;
 
-    public String getRemoteDeviceFriendlyName(String deviceAddress) throws DBusException, IOException;
+    String getRemoteDeviceFriendlyName(String deviceAddress) throws DBusException, IOException;
 
-    public List<String> retrieveDevices(boolean preKnown);
+    List<String> retrieveDevices(boolean preKnown);
 
-    public boolean isRemoteDeviceConnected(String deviceAddress) throws DBusException;
+    boolean isRemoteDeviceConnected(String deviceAddress) throws DBusException;
 
-    public Boolean isRemoteDeviceTrusted(String deviceAddress) throws DBusException;
+    Boolean isRemoteDeviceTrusted(String deviceAddress) throws DBusException;
 
     /**
      * If device could not be reached returns {@code null}
      */
-    public Map<Integer, String> getRemoteDeviceServices(String deviceAddress) throws DBusException;
+    Map<Integer, String> getRemoteDeviceServices(String deviceAddress) throws DBusException;
 
-    public void authenticateRemoteDevice(String deviceAddress) throws DBusException;
+    void authenticateRemoteDevice(String deviceAddress) throws DBusException;
 
-    public boolean authenticateRemoteDevice(String deviceAddress, String passkey) throws DBusException;
+    boolean authenticateRemoteDevice(String deviceAddress, String passkey) throws DBusException;
 
-    public void removeAuthenticationWithRemoteDevice(String deviceAddress) throws DBusException;
+    void removeAuthenticationWithRemoteDevice(String deviceAddress) throws DBusException;
 
-    public long registerSDPRecord(String sdpXML) throws DBusExecutionException, DBusException;
+    long registerSDPRecord(String sdpXML) throws DBusExecutionException, DBusException;
 
-    public void updateSDPRecord(long handle, String sdpXML) throws DBusExecutionException, DBusException;
+    void updateSDPRecord(long handle, String sdpXML) throws DBusExecutionException, DBusException;
 
-    public void unregisterSDPRecord(long handle) throws DBusExecutionException, DBusException;
+    void unregisterSDPRecord(long handle) throws DBusExecutionException, DBusException;
 }

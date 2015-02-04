@@ -22,8 +22,7 @@ public final class TestStruct3 extends Struct
    public final TestStruct2 a;
    @Position(1)
    public final List<List<Integer>> b;
-   public TestStruct3(TestStruct2 a, List<List<Integer>> b) throws DBusException
-   {
+   public TestStruct3(TestStruct2 a, List<List<Integer>> b) {
       this.a = a;
       this.b = b;
    }

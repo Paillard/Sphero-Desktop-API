@@ -10,6 +10,8 @@
 */
 package org.freedesktop.dbus;
 
+import org.freedesktop.dbus.Message.Flags;
+
 /**
  * Holds information on a method call
  */
@@ -18,7 +20,7 @@ public class DBusCallInfo
    /**
     * Indicates the caller won't wait for a reply (and we won't send one).
     */
-   public static final int NO_REPLY = Message.Flags.NO_REPLY_EXPECTED;
+   public static final int NO_REPLY = Flags.NO_REPLY_EXPECTED;
    public static final int ASYNC = 0x100;
    private String source;
    private String destination;
@@ -28,12 +30,12 @@ public class DBusCallInfo
    private int flags;
    DBusCallInfo(Message m)
    {
-      this.source = m.getSource();
-      this.destination = m.getDestination();
-      this.objectpath = m.getPath();
-      this.iface = m.getInterface();
-      this.method = m.getName();
-      this.flags = m.getFlags();
+       this.source = m.getSource();
+       this.destination = m.getDestination();
+       this.objectpath = m.getPath();
+       this.iface = m.getInterface();
+       this.method = m.getName();
+       this.flags = m.getFlags();
    }
   
    /** Returns the BusID which called the method */

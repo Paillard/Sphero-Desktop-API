@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -33,17 +33,17 @@ public class DBusAsyncReply<ReturnType>
     * @param replies A Collection of handles to replies to check.
     * @return A Collection only containing those calls which have had replies.
     */
-   public static Collection<DBusAsyncReply<? extends Object>> hasReply(Collection<DBusAsyncReply<? extends Object>> replies)
+   public static Collection<DBusAsyncReply<?>> hasReply(Collection<DBusAsyncReply<?>> replies)
    {
-      Collection<DBusAsyncReply<? extends Object>> c = new ArrayList<DBusAsyncReply<? extends Object>>(replies);
-      Iterator<DBusAsyncReply<? extends Object>> i = c.iterator();
+      Collection<DBusAsyncReply<?>> c = new ArrayList<>(replies);
+      Iterator<DBusAsyncReply<?>> i = c.iterator();
       while (i.hasNext())
          if (!i.next().hasReply()) i.remove();
       return c;
    }
 
-   private ReturnType rval = null;
-   private DBusExecutionException error = null;
+   private ReturnType rval;
+   private DBusExecutionException error;
    private MethodCall mc;
    private Method me;
    private AbstractConnection conn;
@@ -59,15 +59,15 @@ public class DBusAsyncReply<ReturnType>
       if (mc.hasReply()) {
          Message m = mc.getReply();
          if (m instanceof Error)
-            error = ((Error) m).getException();
+             error = ((Error) m).getException();
          else if (m instanceof MethodReturn) {
             try {
-               rval = (ReturnType) RemoteInvocationHandler.convertRV(m.getSig(), m.getParameters(), me, conn);
+                rval = (ReturnType) RemoteInvocationHandler.convertRV(m.getSig(), m.getParameters(), me, conn);
             } catch (DBusExecutionException DBEe) {
-               error = DBEe;
+                error = DBEe;
             } catch (DBusException DBe) {
                if (AbstractConnection.EXCEPTION_DEBUG && Debug.debug) Debug.print(Debug.ERR, DBe);
-               error = new DBusExecutionException(DBe.getMessage());
+                error = new DBusExecutionException(DBe.getMessage());
             }
          }
       }
@@ -80,7 +80,7 @@ public class DBusAsyncReply<ReturnType>
    public boolean hasReply()
    {
       if (null != rval || null != error) return true;
-      checkReply();
+       checkReply();
       return null != rval || null != error;
    }
    
@@ -94,15 +94,15 @@ public class DBusAsyncReply<ReturnType>
    {
       if (null != rval) return rval;
       else if (null != error) throw error;
-      checkReply();
+       checkReply();
       if (null != rval) return rval;
       else if (null != error) throw error;
-      else throw new NoReply(_("Async call has not had a reply"));
+      else throw new NoReply(getResource("Async call has not had a reply"));
    }
 
    public String toString()
    {
-      return _("Waiting for: ")+mc;
+      return getResource("Waiting for: ")+ mc;
    }
    Method getMethod() { return me; }
    AbstractConnection getConnection() { return conn; }

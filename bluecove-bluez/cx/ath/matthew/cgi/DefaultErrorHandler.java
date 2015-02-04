@@ -48,7 +48,7 @@ public class DefaultErrorHandler implements CGIErrorHandler
          System.out.println("</HEAD><BODY>");
       }
       System.out.println("<HR>");
-      System.out.println("<H1>"+e.getClass().toString()+"</H1>");
+      System.out.println("<H1>"+ e.getClass() +"</H1>");
       System.out.println("<P>");
       System.out.println("Exception Message: "+e.getMessage());
       System.out.println("</P>");

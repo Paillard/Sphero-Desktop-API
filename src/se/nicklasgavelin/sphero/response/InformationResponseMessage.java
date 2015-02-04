@@ -4,6 +4,8 @@
  */
 package se.nicklasgavelin.sphero.response;
 
+import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader;
+
 /**
  * 
  * @author Nicklas Gavelin, nicklas.gavelin@gmail.com, Luleå University of
@@ -22,7 +24,7 @@ public class InformationResponseMessage extends ResponseMessage
 
 		private byte code;
 
-		private INFORMATION_RESPONSE_CODE( int code )
+		INFORMATION_RESPONSE_CODE(int code)
 		{
 			this.code = (byte) code;
 		}
@@ -43,7 +45,7 @@ public class InformationResponseMessage extends ResponseMessage
 
 		public static INFORMATION_RESPONSE_CODE valueOf( int code )
 		{
-			return INFORMATION_RESPONSE_CODE.valueOf( (byte) code );
+			return valueOf((byte) code);
 		}
 	}
 
@@ -58,7 +60,7 @@ public class InformationResponseMessage extends ResponseMessage
 	public InformationResponseMessage( ResponseHeader rh )
 	{
 		super( rh );
-		this.responseType = INFORMATION_RESPONSE_CODE.valueOf( rh.getRawPacket()[InformationResponseMessage.INFORMATION_RESPONSE_TYPE_INDEX] );
+        this.responseType = INFORMATION_RESPONSE_CODE.valueOf( rh.getRawPacket()[InformationResponseMessage.INFORMATION_RESPONSE_TYPE_INDEX] );
 	}
 
 	/**

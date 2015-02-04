@@ -1,5 +1,7 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
+
 public class SaveTemporaryMacroCommand extends CommandMessage
 {
 	public static final byte MacroFlagNone = 0;
@@ -22,20 +24,20 @@ public class SaveTemporaryMacroCommand extends CommandMessage
 	public SaveTemporaryMacroCommand( byte flags, byte[] macro )
 	{
 		super( COMMAND_MESSAGE_TYPE.MACRO );
-		this.macroData = macro;
+        this.macroData = macro;
 		this.flags = flags;
 	}
 
 	@Override
 	protected byte[] getPacketData()
 	{
-		byte[] data = new byte[ this.macroData.length + 2 ];
+		byte[] data = new byte[this.macroData.length + 2 ];
 
 		data[0] = -1;
 		data[1] = this.flags;
 
 		for( int i = 0; i < this.macroData.length; i++ )
-			data[( i + 2 )] = this.macroData[i];
+			data[i + 2] = this.macroData[i];
 
 		return data;
 	}

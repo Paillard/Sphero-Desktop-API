@@ -5,6 +5,7 @@
 package se.nicklasgavelin.sphero.response.regular;
 
 import se.nicklasgavelin.sphero.response.ResponseMessage;
+import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader;
 
 /**
  * 

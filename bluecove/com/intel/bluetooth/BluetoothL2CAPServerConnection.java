@@ -44,7 +44,7 @@ class BluetoothL2CAPServerConnection extends BluetoothL2CAPConnection implements
 			this.securityOpt = securityOpt;
 			this.transmitMTU = this.getTransmitMTU();
             // JAR-82 If the byte array is larger than the TransmitMTU of the local device, send method will only send a byte array whose size is equal to the TransmitMTU of the local device.
-		    if ((transmitMTU > 0) && (transmitMTU < this.transmitMTU)) {
+		    if (transmitMTU > 0 && transmitMTU < this.transmitMTU) {
                 this.transmitMTU = transmitMTU;
             }
 			RemoteDeviceHelper.connected(this);
@@ -67,7 +67,7 @@ class BluetoothL2CAPServerConnection extends BluetoothL2CAPConnection implements
 	 */
 	void closeConnectionHandle(long handle) throws IOException {
 		RemoteDeviceHelper.disconnected(this);
-		bluetoothStack.l2CloseServerConnection(handle);
+        bluetoothStack.l2CloseServerConnection(handle);
 	}
 
 }

@@ -45,13 +45,13 @@ public class UtilsJavaSE
 		public int lineNumber;
 	}
 
-	static interface JavaSE5Features
+	interface JavaSE5Features
 	{
-		public void clearProperty( String propertyName );
+		void clearProperty(String propertyName);
 	}
 
-	static boolean java13 = false;
-	static boolean java14 = false;
+	static boolean java13;
+	static boolean java14;
 	static boolean detectJava5Helper = true;
 	static JavaSE5Features java5Helper;
 	static final boolean ibmJ9midp = detectJ9midp();
@@ -72,37 +72,37 @@ public class UtilsJavaSE
 		{
 			return false;
 		}
-		return ( ibmJ9config != null ) && ( ibmJ9config.indexOf( "midp" ) != -1 );
+		return ibmJ9config != null && ibmJ9config.contains("midp");
 	}
 
 	static StackTraceLocation getLocation( Collection<?> fqcnSet )
 	{
-		if( java13 || ibmJ9midp )
+		if(java13 || ibmJ9midp)
 		{
 			return null;
 		}
-		if( !javaSECompiledOut )
+		if( !javaSECompiledOut)
 		{
-			if( !java14 )
+			if( !java14)
 			{
 				try
 				{
 					Class.forName( "java.lang.StackTraceElement" );
-					java14 = true;
+                    java14 = true;
 				}
 				catch( ClassNotFoundException e )
 				{
-					java13 = true;
+                    java13 = true;
 					return null;
 				}
 			}
 			try
 			{
-				return getLocationJava14( fqcnSet );
+				return getLocationJava14(fqcnSet);
 			}
 			catch( Throwable e )
 			{
-				java13 = true;
+                java13 = true;
 			}
 		}
 		return null;
@@ -110,7 +110,7 @@ public class UtilsJavaSE
 
 	private static StackTraceLocation getLocationJava14( Collection<?> fqcnSet )
 	{
-		if( !UtilsJavaSE.javaSECompiledOut )
+		if( !javaSECompiledOut )
 		{
 			StackTraceElement[] ste = new Throwable().getStackTrace();
 			for( int i = 0; i < ste.length - 1; i++ )

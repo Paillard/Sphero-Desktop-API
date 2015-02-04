@@ -19,7 +19,7 @@ public class IdentifierMangler
 {
    private static String[] keywords;
    static {
-      keywords = new String[] {
+       keywords = new String[] {
          "true","false","null",
          "abstract","continue","for","new","switch",
          "assert","default","goto","package","synchronized",

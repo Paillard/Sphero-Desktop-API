@@ -10,7 +10,7 @@ import se.nicklasgavelin.util.Value;
  */
 public class FrontLEDCommand extends CommandMessage
 {
-	private float brightness = 0;
+	private float brightness;
 
 	/**
 	 * Create a front LED command to modify the brightness of the LED on
@@ -31,7 +31,7 @@ public class FrontLEDCommand extends CommandMessage
 	 */
 	public float getBrightness()
 	{
-		return this.brightness;
+		return brightness;
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class FrontLEDCommand extends CommandMessage
 	public byte[] getPacketData()
 	{
 		byte[] data = new byte[ 1 ];
-		data[0] = (byte) (int) ( 255.0D * this.brightness );
+		data[0] = (byte) (int) ( 255.0D * brightness);
 
 		return data;
 	}

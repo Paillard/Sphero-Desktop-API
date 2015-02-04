@@ -39,13 +39,12 @@ import javax.obex.ResponseCodes;
  */
 abstract class OBEXUtils {
 
-	static void readFully(InputStream is, OBEXConnectionParams obexConnectionParams, byte[] b) throws IOException,
-			EOFException {
-		readFully(is, obexConnectionParams, b, 0, b.length);
+	static void readFully(InputStream is, OBEXConnectionParams obexConnectionParams, byte[] b) throws IOException {
+        readFully(is, obexConnectionParams, b, 0, b.length);
 	}
 
 	static void readFully(InputStream is, OBEXConnectionParams obexConnectionParams, byte[] b, int off, int len)
-			throws IOException, EOFException {
+			throws IOException {
 		if (len < 0) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -76,8 +75,8 @@ abstract class OBEXUtils {
 		}
 	}
 
-	static String newStringUTF16Simple(byte bytes[]) throws UnsupportedEncodingException {
-		StringBuffer buf = new StringBuffer();
+	static String newStringUTF16Simple(byte bytes[]) {
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < bytes.length; i += 2) {
 			buf.append((char) bytesToShort(bytes[i], bytes[i + 1]));
 		}
@@ -96,7 +95,7 @@ abstract class OBEXUtils {
 		}
 	}
 
-	static byte[] getUTF16BytesSimple(String str) throws UnsupportedEncodingException {
+	static byte[] getUTF16BytesSimple(String str) {
 		ByteArrayOutputStream buf = new ByteArrayOutputStream();
 		int len = str.length();
 		for (int i = 0; i < len; i++) {
@@ -120,7 +119,7 @@ abstract class OBEXUtils {
 	}
 
 	static byte hiByte(int value) {
-		return (byte) ((value >> 8) & 0xFF);
+		return (byte) (value >> 8 & 0xFF);
 	}
 
 	static byte loByte(int value) {
@@ -128,7 +127,7 @@ abstract class OBEXUtils {
 	}
 
 	static int bytesToShort(byte valueHi, byte valueLo) {
-		return ((((int) valueHi << 8) & 0xFF00) + (valueLo & 0xFF));
+		return ((int) valueHi << 8 & 0xFF00) + (valueLo & 0xFF);
 	}
 
 	public static String toStringObexResponseCodes(byte code) {

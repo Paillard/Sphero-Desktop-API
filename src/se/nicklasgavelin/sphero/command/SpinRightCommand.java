@@ -1,5 +1,6 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
 import se.nicklasgavelin.sphero.command.RawMotorCommand.MOTOR_MODE;
 
 /**

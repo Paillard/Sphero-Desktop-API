@@ -10,13 +10,14 @@
 */
 package org.freedesktop.dbus.viewer;
 
+import org.freedesktop.dbus.bin.CreateInterface;
+import org.freedesktop.dbus.bin.CreateInterface.PrintStreamFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.freedesktop.dbus.bin.CreateInterface.PrintStreamFactory;
 
 /**
  * A factory using a byte array input stream
@@ -27,7 +28,7 @@ import org.freedesktop.dbus.bin.CreateInterface.PrintStreamFactory;
  */
 final class StringStreamFactory extends PrintStreamFactory
 {
-	Map<String, ByteArrayOutputStream> streamMap = new HashMap<String, ByteArrayOutputStream>();
+	Map<String, ByteArrayOutputStream> streamMap = new HashMap<>();
 
 	/** {@inheritDoc} */
 	public void init(String file, String path)
@@ -37,10 +38,9 @@ final class StringStreamFactory extends PrintStreamFactory
 
 	/** {@inheritDoc} */
 	@SuppressWarnings("unused")
-	public PrintStream createPrintStream(final String file) throws IOException
-	{
+	public PrintStream createPrintStream(String file) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		streamMap.put(file, stream);
+        streamMap.put(file, stream);
 		return new PrintStream(stream);
 
 	}

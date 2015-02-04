@@ -10,9 +10,10 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.util.Vector;
+
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.MessageFormatException;
 import cx.ath.matthew.debug.Debug;
@@ -27,50 +28,50 @@ public class MethodCall extends Message
    }
    public MethodCall(String source, String dest, String path, String iface, String member, byte flags, String sig, Object... args) throws DBusException
    {
-      super(Message.Endian.BIG, Message.MessageType.METHOD_CALL, flags);
+      super(Endian.BIG, MessageType.METHOD_CALL, flags);
 
       if (null == member || null == path)
-         throw new MessageFormatException(_("Must specify destination, path and function name to MethodCalls."));
-      headers.put(Message.HeaderField.PATH,path);
-      headers.put(Message.HeaderField.MEMBER,member);
+         throw new MessageFormatException(getResource("Must specify destination, path and function name to MethodCalls."));
+       headers.put(HeaderField.PATH, path);
+       headers.put(HeaderField.MEMBER, member);
 
-      Vector<Object> hargs = new Vector<Object>();
+      Vector<Object> hargs = new Vector<>();
 
-      hargs.add(new Object[] { Message.HeaderField.PATH, new Object[] { ArgumentType.OBJECT_PATH_STRING, path } });
+      hargs.add(new Object[] { HeaderField.PATH, new Object[] { ArgumentType.OBJECT_PATH_STRING, path } });
       
       if (null != source) {
-         headers.put(Message.HeaderField.SENDER,source);
-         hargs.add(new Object[] { Message.HeaderField.SENDER, new Object[] { ArgumentType.STRING_STRING, source } });
+          headers.put(HeaderField.SENDER, source);
+         hargs.add(new Object[] { HeaderField.SENDER, new Object[] { ArgumentType.STRING_STRING, source } });
       }
       
       if (null != dest) {
-         headers.put(Message.HeaderField.DESTINATION,dest);
-         hargs.add(new Object[] { Message.HeaderField.DESTINATION, new Object[] { ArgumentType.STRING_STRING, dest } });
+          headers.put(HeaderField.DESTINATION, dest);
+         hargs.add(new Object[] { HeaderField.DESTINATION, new Object[] { ArgumentType.STRING_STRING, dest } });
       }
       
       if (null != iface) {
-         hargs.add(new Object[] { Message.HeaderField.INTERFACE, new Object[] { ArgumentType.STRING_STRING, iface } });
-         headers.put(Message.HeaderField.INTERFACE,iface);
+         hargs.add(new Object[] { HeaderField.INTERFACE, new Object[] { ArgumentType.STRING_STRING, iface } });
+          headers.put(HeaderField.INTERFACE, iface);
       }
       
-      hargs.add(new Object[] { Message.HeaderField.MEMBER, new Object[] { ArgumentType. STRING_STRING, member } });
+      hargs.add(new Object[] { HeaderField.MEMBER, new Object[] { ArgumentType. STRING_STRING, member } });
 
       if (null != sig) {
          if (Debug.debug) Debug.print(Debug.DEBUG, "Appending arguments with signature: "+sig);
-         hargs.add(new Object[] { Message.HeaderField.SIGNATURE, new Object[] { ArgumentType.SIGNATURE_STRING, sig } });
-         headers.put(Message.HeaderField.SIGNATURE,sig);
-         setArgs(args);
+         hargs.add(new Object[] { HeaderField.SIGNATURE, new Object[] { ArgumentType.SIGNATURE_STRING, sig } });
+          headers.put(HeaderField.SIGNATURE, sig);
+          setArgs(args);
       }
 
       byte[] blen = new byte[4];
-      appendBytes(blen);
-      append("ua(yv)", serial, hargs.toArray());
-      pad((byte)8);
+       appendBytes(blen);
+       append("ua(yv)", serial, hargs.toArray());
+       pad((byte)8);
 
       long c = bytecounter;
       if (null != sig) append(sig, args);
-      if (Debug.debug) Debug.print(Debug.DEBUG, "Appended body, type: "+sig+" start: "+c+" end: "+bytecounter+" size: "+(bytecounter-c));
-      marshallint(bytecounter-c, blen, 0, 4);
+      if (Debug.debug) Debug.print(Debug.DEBUG, "Appended body, type: "+sig+" start: "+c+" end: "+ bytecounter +" size: "+(bytecounter -c));
+       marshallint(bytecounter -c, blen, 0, 4);
       if (Debug.debug) Debug.print("marshalled size ("+blen+"): "+Hexdump.format(blen));
    }
    private static long REPLY_WAIT_TIMEOUT = 20000;
@@ -81,9 +82,9 @@ public class MethodCall extends Message
     */
    public static void setDefaultTimeout(long timeout)
    {
-      REPLY_WAIT_TIMEOUT = timeout;
+       REPLY_WAIT_TIMEOUT = timeout;
    }
-   Message reply = null;
+   Message reply;
    public synchronized boolean hasReply()
    {
       return null != reply;
@@ -98,7 +99,7 @@ public class MethodCall extends Message
       if (Debug.debug) Debug.print(Debug.VERBOSE, "Blocking on "+this);
       if (null != reply) return reply;
       try {
-         wait(timeout);
+          wait(timeout);
          return reply;
       } catch (InterruptedException Ie) { return reply; }
    }
@@ -112,7 +113,7 @@ public class MethodCall extends Message
       if (Debug.debug) Debug.print(Debug.VERBOSE, "Blocking on "+this);
       if (null != reply) return reply;
       try {
-         wait(REPLY_WAIT_TIMEOUT);
+          wait(REPLY_WAIT_TIMEOUT);
          return reply;
       } catch (InterruptedException Ie) { return reply; }
    }
@@ -120,7 +121,7 @@ public class MethodCall extends Message
    {
       if (Debug.debug) Debug.print(Debug.VERBOSE, "Setting reply to "+this+" to "+reply);
       this.reply = reply;
-      notifyAll();
+       notifyAll();
    }
 
 }

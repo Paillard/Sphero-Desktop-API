@@ -20,9 +20,9 @@ public class BluetoothDevice implements DiscoveryListener
 	private final Bluetooth bt;
 	private BluetoothService service;
 	private int activeSearch;
-	private String name = null;
-	private String address = null;
-	private String connectionUrl = null;
+	private String name;
+	private String address;
+	private String connectionUrl;
 	private static final String UNKNOWN_NAME = "(UNKNOWN)";
 
 	/**
@@ -35,17 +35,17 @@ public class BluetoothDevice implements DiscoveryListener
 	{
 		this.bt = bt;
 		this.device = device;
-		this.activeSearch = -1;
-		this.address = device.getBluetoothAddress();
+        this.activeSearch = -1;
+        this.address = device.getBluetoothAddress();
 
 		try
 		{
 			// Try to fetch the name for the device
-			this.setName( this.device.getFriendlyName( false ) );
+            this.setName( this.device.getFriendlyName( false ) );
 		}
 		catch( IOException e )
 		{
-			this.setName( UNKNOWN_NAME );
+            this.setName(UNKNOWN_NAME);
 		}
 	}
 
@@ -62,7 +62,7 @@ public class BluetoothDevice implements DiscoveryListener
 	{
 		this.bt = bt;
 		this.connectionUrl = connectionUrl;
-		this.address = this.connectionUrl.split( "://" )[1].split( ":" )[0];
+        this.address = this.connectionUrl.split( "://" )[1].split( ":" )[0];
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class BluetoothDevice implements DiscoveryListener
 	 */
 	public String getConnectionURL()
 	{
-		if( this.connectionUrl != null )
+		if(this.connectionUrl != null )
 			return this.connectionUrl;
 		try
 		{
@@ -114,16 +114,16 @@ public class BluetoothDevice implements DiscoveryListener
 	 */
 	public String getName()
 	{
-		if( this.name == null && this.device != null )
+		if(this.name == null && this.device != null )
 		{
 			try
 			{
 				// Try and updat the name
-				this.name = this.device.getFriendlyName( false );
+                this.name = this.device.getFriendlyName(false);
 			}
 			catch( IOException e )
 			{
-				this.name = UNKNOWN_NAME;
+                this.name = UNKNOWN_NAME;
 			}
 		}
 
@@ -153,12 +153,12 @@ public class BluetoothDevice implements DiscoveryListener
 		// Request name
 		try
 		{
-			if( this.device != null )
-				this.setName( this.device.getFriendlyName( false ) );
+			if(this.device != null )
+                this.setName(this.device.getFriendlyName(false) );
 		}
 		catch( IOException e )
 		{
-			error( "Failed to update bluetooth device name: " + e.getMessage() );
+            error( "Failed to update bluetooth device name: " + e.getMessage() );
 		}
 	}
 
@@ -172,21 +172,21 @@ public class BluetoothDevice implements DiscoveryListener
 	public BluetoothConnection connect() throws RobotBluetoothException
 	{
 		// Check if we have any active services
-		if( this.connectionUrl != null )
+		if(this.connectionUrl != null )
 		{
 			// Fetch a new service
-			this.service = new BluetoothService( this.connectionUrl );
+            this.service = new BluetoothService(this.connectionUrl);
 
-			if( this.service == null )
+			if(this.service == null )
 				return null;
 		}
-		else if( this.service == null )
+		else if(this.service == null )
 		{
 			// Force discovery
-			this.discover();
+            this.discover();
 
 			// Check if we found anything
-			if( this.service == null )
+			if(this.service == null )
 				return null;
 		}
 
@@ -211,31 +211,26 @@ public class BluetoothDevice implements DiscoveryListener
 	public void discover() throws RobotBluetoothException
 	{
 		// Check if we have tried with discovery earlier
-		if( this.activeSearch < 0 )
+		if(this.activeSearch < 0 )
 		{
 			try
 			{
 				// See to it that we are the only one performing stuff on the bt
 				// instance.
-				synchronized( this.bt )
+				synchronized(this.bt)
 				{
 					// Serh for available services for this device
-					this.activeSearch = this.bt.getDiscoveryAgent().searchServices( new int[] { BluetoothService.ATTR_SERVICENAME, BluetoothService.ATTR_SERVICEDESC, BluetoothService.ATTR_PROVIDERNAME }, new javax.bluetooth.UUID[] { this.bt.getUUID() }, this.device, this );
+                    this.activeSearch = this.bt.getDiscoveryAgent().searchServices( new int[] { BluetoothService.ATTR_SERVICENAME, BluetoothService.ATTR_SERVICEDESC, BluetoothService.ATTR_PROVIDERNAME }, new UUID[] {this.bt.getUUID() }, this.device, this );
 
 					// Lock until we are done
-					this.bt.wait();
+                    this.bt.wait();
 				}
 			}
-			catch( BluetoothStateException e )
+			catch( BluetoothStateException | InterruptedException e )
 			{
 				throw new RobotBluetoothException( e.getMessage() );
 			}
-			catch( InterruptedException e )
-			{
-				// Failure to discover
-				throw new RobotBluetoothException( e.getMessage() );
-			}
-		}
+        }
 	}
 
 	/**
@@ -244,10 +239,10 @@ public class BluetoothDevice implements DiscoveryListener
 	public void cancelDiscovery()
 	{
 		// Cancel any active discovery searches
-		if( this.activeSearch >= 0 )
+		if(this.activeSearch >= 0 )
 		{
-			this.bt.getDiscoveryAgent().cancelServiceSearch( this.activeSearch );
-			activeSearch = -1;
+            this.bt.getDiscoveryAgent().cancelServiceSearch(this.activeSearch);
+            activeSearch = -1;
 		}
 	}
 
@@ -261,32 +256,32 @@ public class BluetoothDevice implements DiscoveryListener
 	public void serviceSearchCompleted( int transId, int respCode )
 	{
 		// Notify observers
-		synchronized( this.bt )
+		synchronized(this.bt)
 		{
-			if( this.activeSearch == transId )
-				this.bt.notifyAll();
+			if(this.activeSearch == transId )
+                this.bt.notifyAll();
 		}
 
 		// Check the response code
 		switch ( respCode )
 		{
 			case DiscoveryListener.SERVICE_SEARCH_COMPLETED:
-				log( "The service search completed normally" );
+                log( "The service search completed normally" );
 				break;
 			case DiscoveryListener.SERVICE_SEARCH_TERMINATED:
-				log( "The service search request was cancelled by a call to DiscoveryAgent.cancelServiceSearch(int)" );
+                log( "The service search request was cancelled by a call to DiscoveryAgent.cancelServiceSearch(int)" );
 				break;
 			case DiscoveryListener.SERVICE_SEARCH_ERROR:
-				log( "An error occurred while processing the request" );
+                log( "An error occurred while processing the request" );
 				break;
 			case DiscoveryListener.SERVICE_SEARCH_NO_RECORDS:
-				log( "No records were found during the service search" );
+                log( "No records were found during the service search" );
 				break;
 			case DiscoveryListener.SERVICE_SEARCH_DEVICE_NOT_REACHABLE:
-				log( "The device specified in the search request could not be reached or the local device could not establish a connection to the remote device" );
+                log( "The device specified in the search request could not be reached or the local device could not establish a connection to the remote device" );
 				break;
 			default:
-				log( "Unknown Response Code - " + respCode );
+                log( "Unknown Response Code - " + respCode );
 				break;
 		}
 	}
@@ -303,10 +298,10 @@ public class BluetoothDevice implements DiscoveryListener
 	@Override
 	public void servicesDiscovered( int transId, ServiceRecord[] records )
 	{
-		if( this.activeSearch == transId )
+		if(this.activeSearch == transId )
 		{
 			if( records.length > 0 )
-				this.service = new BluetoothService( this, records[0] );//, this.bt );// TODO:
+                this.service = new BluetoothService( this, records[0] );//, this.bt );// TODO:
 																					// Will
 																					// there
 																					// ever

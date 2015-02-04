@@ -10,15 +10,14 @@ package experimental.sensor;
  */
 public class AccelerometerSensorData extends SensorData
 {
-    private AccelerometerAcceleration acceleration;
-    private SensorData.Axis3Sensor accelerationRaw;
-    private SensorData.Axis3SensorState state;
+    private AccelerometerSensorData.AccelerometerAcceleration acceleration;
+    private Axis3Sensor accelerationRaw;
+    private Axis3SensorState state;
 
 
     public AccelerometerSensorData( int x, int y, int z )
     {
-        super();
-        this.accelerationRaw = new Axis3Sensor( x, y, z );
+        this.accelerationRaw = new SensorData.Axis3Sensor( x, y, z );
 
 //        int x = (data[1] | (data[0] << 8));
 //        int y = (data[3] | (data[2] << 8));
@@ -32,13 +31,13 @@ public class AccelerometerSensorData extends SensorData
     }
 
 
-    public Axis3Sensor getAxis3Sensor()
+    public SensorData.Axis3Sensor getAxis3Sensor()
     {
         return this.accelerationRaw;//new Vector3D( this.accelerationRaw.x, this.accelerationRaw.y, this.accelerationRaw.z );
     }
 
 
-    public AccelerometerAcceleration getAcceleration()
+    public AccelerometerSensorData.AccelerometerAcceleration getAcceleration()
     {
         return this.acceleration;
     }

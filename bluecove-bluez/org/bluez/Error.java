@@ -47,8 +47,7 @@ public interface Error extends DBusInterface {
     /**
      * The remote device is either powered down or out of range.
      */
-    @SuppressWarnings("serial")
-    public class DeviceUnreachable extends DBusExecutionException {
+    @SuppressWarnings("serial") class DeviceUnreachable extends DBusExecutionException {
         public DeviceUnreachable(String message) {
             super(message);
         }
@@ -57,8 +56,7 @@ public interface Error extends DBusInterface {
     /**
      * A connection request has been received on an already connected device.
      */
-    @SuppressWarnings("serial")
-    public class AlreadyConnected extends DBusExecutionException {
+    @SuppressWarnings("serial") class AlreadyConnected extends DBusExecutionException {
         public AlreadyConnected(String message) {
             super(message);
         }
@@ -68,8 +66,7 @@ public interface Error extends DBusInterface {
      * An unexpected error (other than DeviceUnreachable) error has occurred while
      * attempting a connection to a device.
      */
-    @SuppressWarnings("serial")
-    public class ConnectionAttemptFailed extends DBusExecutionException {
+    @SuppressWarnings("serial") class ConnectionAttemptFailed extends DBusExecutionException {
         public ConnectionAttemptFailed(String message) {
             super(message);
         }
@@ -81,8 +78,7 @@ public interface Error extends DBusInterface {
      * The error messages is taken from the strerror(errno) function.
      * 
      */
-    @SuppressWarnings("serial")
-    public class Failed extends DBusExecutionException {
+    @SuppressWarnings("serial") class Failed extends DBusExecutionException {
         public Failed(String message) {
             super(message);
         }
@@ -93,8 +89,7 @@ public interface Error extends DBusInterface {
      * type, or the arguments are there but their value is wrong, or does not makes sense
      * in the current context.
      */
-    @SuppressWarnings("serial")
-    public class InvalidArguments extends DBusExecutionException {
+    @SuppressWarnings("serial") class InvalidArguments extends DBusExecutionException {
         public InvalidArguments(String message) {
             super(message);
         }
@@ -106,8 +101,7 @@ public interface Error extends DBusInterface {
      * 
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class NotAuthorized extends DBusExecutionException {
+    @SuppressWarnings("serial") class NotAuthorized extends DBusExecutionException {
         public NotAuthorized(String message) {
             super(message);
         }
@@ -117,8 +111,7 @@ public interface Error extends DBusInterface {
      * Error returned when a memory allocation via malloc() fails. This error is similar
      * to ENOMEM.
      */
-    @SuppressWarnings("serial")
-    public class OutOfMemory extends DBusExecutionException {
+    @SuppressWarnings("serial") class OutOfMemory extends DBusExecutionException {
         public OutOfMemory(String message) {
             super(message);
         }
@@ -130,8 +123,7 @@ public interface Error extends DBusInterface {
      * 
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class NoSuchAdapter extends DBusExecutionException {
+    @SuppressWarnings("serial") class NoSuchAdapter extends DBusExecutionException {
         public NoSuchAdapter(String message) {
             super(message);
         }
@@ -142,8 +134,7 @@ public interface Error extends DBusInterface {
      * 
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class NotReady extends DBusExecutionException {
+    @SuppressWarnings("serial") class NotReady extends DBusExecutionException {
         public NotReady(String message) {
             super(message);
         }
@@ -154,8 +145,7 @@ public interface Error extends DBusInterface {
      * 
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class UnknwownMethod extends DBusExecutionException {
+    @SuppressWarnings("serial") class UnknwownMethod extends DBusExecutionException {
         public UnknwownMethod(String message) {
             super(message);
         }
@@ -164,8 +154,7 @@ public interface Error extends DBusInterface {
     /**
      * Error returned when a specified record is not available.
      */
-    @SuppressWarnings("serial")
-    public class NotAvailable extends DBusExecutionException {
+    @SuppressWarnings("serial") class NotAvailable extends DBusExecutionException {
         public NotAvailable(String message) {
             super(message);
         }
@@ -175,8 +164,7 @@ public interface Error extends DBusInterface {
      * The remote device is not connected, while the method call would expect it to be, or
      * is not in the expected state to perform the action.
      */
-    @SuppressWarnings("serial")
-    public class NotConnected extends DBusExecutionException {
+    @SuppressWarnings("serial") class NotConnected extends DBusExecutionException {
         public NotConnected(String message) {
             super(message);
         }
@@ -189,8 +177,7 @@ public interface Error extends DBusInterface {
      * tried create a new one. The error message however should indicate the procedure
      * that fails. For example "Bonding already exists"
      */
-    @SuppressWarnings("serial")
-    public class AlreadyExists extends DBusExecutionException {
+    @SuppressWarnings("serial") class AlreadyExists extends DBusExecutionException {
         public AlreadyExists(String message) {
             super(message);
         }
@@ -203,8 +190,7 @@ public interface Error extends DBusInterface {
      * message however should indicate the procedure that fails. For example
      * "Bonding does not exist".
      */
-    @SuppressWarnings("serial")
-    public class DoesNotExist extends DBusExecutionException {
+    @SuppressWarnings("serial") class DoesNotExist extends DBusExecutionException {
         public DoesNotExist(String message) {
             super(message);
         }
@@ -215,8 +201,7 @@ public interface Error extends DBusInterface {
      * can be used in various situations, the error message should be more clear about
      * what is in progress. For example "Bonding in progress".
      */
-    @SuppressWarnings("serial")
-    public class InProgress extends DBusExecutionException {
+    @SuppressWarnings("serial") class InProgress extends DBusExecutionException {
         public InProgress(String message) {
             super(message);
         }
@@ -227,8 +212,7 @@ public interface Error extends DBusInterface {
      * 
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class Rejected extends DBusExecutionException {
+    @SuppressWarnings("serial") class Rejected extends DBusExecutionException {
         public Rejected(String message) {
             super(message);
         }
@@ -237,8 +221,7 @@ public interface Error extends DBusInterface {
     /**
      * The operation was canceled.
      */
-    @SuppressWarnings("serial")
-    public class Canceled extends DBusExecutionException {
+    @SuppressWarnings("serial") class Canceled extends DBusExecutionException {
         public Canceled(String message) {
             super(message);
         }
@@ -247,8 +230,7 @@ public interface Error extends DBusInterface {
     /**
      * The remote device does not support the expected feature.
      */
-    @SuppressWarnings("serial")
-    public class NotSupported extends DBusExecutionException {
+    @SuppressWarnings("serial") class NotSupported extends DBusExecutionException {
         public NotSupported(String message) {
             super(message);
         }
@@ -259,8 +241,7 @@ public interface Error extends DBusInterface {
      * 
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class NoSuchService extends DBusExecutionException {
+    @SuppressWarnings("serial") class NoSuchService extends DBusExecutionException {
         public NoSuchService(String message) {
             super(message);
         }
@@ -269,8 +250,7 @@ public interface Error extends DBusInterface {
     /**
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class RequestDeferred extends DBusExecutionException {
+    @SuppressWarnings("serial") class RequestDeferred extends DBusExecutionException {
         public RequestDeferred(String message) {
             super(message);
         }
@@ -281,8 +261,7 @@ public interface Error extends DBusInterface {
      * 
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class NotInProgress extends DBusExecutionException {
+    @SuppressWarnings("serial") class NotInProgress extends DBusExecutionException {
         public NotInProgress(String message) {
             super(message);
         }
@@ -293,8 +272,7 @@ public interface Error extends DBusInterface {
      * 
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class UnsupportedMajorClass extends DBusExecutionException {
+    @SuppressWarnings("serial") class UnsupportedMajorClass extends DBusExecutionException {
         public UnsupportedMajorClass(String message) {
             super(message);
         }
@@ -303,8 +281,7 @@ public interface Error extends DBusInterface {
     /**
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class AuthenticationFailed extends DBusExecutionException {
+    @SuppressWarnings("serial") class AuthenticationFailed extends DBusExecutionException {
         public AuthenticationFailed(String message) {
             super(message);
         }
@@ -313,8 +290,7 @@ public interface Error extends DBusInterface {
     /**
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class AuthenticationTimeout extends DBusExecutionException {
+    @SuppressWarnings("serial") class AuthenticationTimeout extends DBusExecutionException {
         public AuthenticationTimeout(String message) {
             super(message);
         }
@@ -323,8 +299,7 @@ public interface Error extends DBusInterface {
     /**
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class AuthenticationRejected extends DBusExecutionException {
+    @SuppressWarnings("serial") class AuthenticationRejected extends DBusExecutionException {
         public AuthenticationRejected(String message) {
             super(message);
         }
@@ -333,8 +308,7 @@ public interface Error extends DBusInterface {
     /**
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class AuthenticationCanceled extends DBusExecutionException {
+    @SuppressWarnings("serial") class AuthenticationCanceled extends DBusExecutionException {
         public AuthenticationCanceled(String message) {
             super(message);
         }
@@ -343,8 +317,7 @@ public interface Error extends DBusInterface {
     /**
      * Hcid specific Error (Can be thrown by hcid only)
      */
-    @SuppressWarnings("serial")
-    public class RepeatedAttempts extends DBusExecutionException {
+    @SuppressWarnings("serial") class RepeatedAttempts extends DBusExecutionException {
         public RepeatedAttempts(String message) {
             super(message);
         }

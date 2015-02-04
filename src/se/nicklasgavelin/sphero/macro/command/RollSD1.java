@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 import se.nicklasgavelin.util.Value;
 
@@ -28,8 +29,8 @@ public class RollSD1 extends MacroCommand
 	public RollSD1( double _speed, int _heading )
 	{
 		super( MACRO_COMMAND.MAC_ROLL_SD1 );
-		this.setSpeed( _speed );
-		this.setHeading( _heading );
+        this.setSpeed( _speed );
+        this.setHeading( _heading );
 	}
 
 	/**
@@ -49,7 +50,7 @@ public class RollSD1 extends MacroCommand
 	 */
 	public void setHeading( int _heading )
 	{
-		this.heading = Value.clamp( _heading, MIN_HEADING, MAX_HEADING );
+        this.heading = Value.clamp( _heading, MIN_HEADING, MAX_HEADING);
 		// if ( (_heading.intValue() >= 0) && (_heading.intValue() <= 359) )
 		// this.heading = _heading;
 	}
@@ -71,7 +72,7 @@ public class RollSD1 extends MacroCommand
 	 */
 	public void setSpeed( double _speed )
 	{
-		this.speed = Value.clamp( _speed, MIN_SPEED, MAX_SPEED );
+        this.speed = Value.clamp( _speed, MIN_SPEED, MAX_SPEED);
 		// if ( (_speed.doubleValue() >= 0.0D) && (_speed.doubleValue() <= 1.0D) )
 		// this.speed = _speed;
 	}
@@ -79,11 +80,11 @@ public class RollSD1 extends MacroCommand
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		ByteArrayBuffer bytes = new ByteArrayBuffer( getLength() );
-		bytes.append( getCommandID() );
-		bytes.append( (int) ( this.speed * 255.0D ) );
-		bytes.append( this.heading >> 8 );
-		bytes.append( this.heading & 0xFF );
+		ByteArrayBuffer bytes = new ByteArrayBuffer(getLength() );
+		bytes.append(getCommandID() );
+		bytes.append( (int) (this.speed * 255.0D ) );
+		bytes.append(this.heading >> 8 );
+		bytes.append(this.heading & 0xFF );
 
 		return bytes.toByteArray();
 	}

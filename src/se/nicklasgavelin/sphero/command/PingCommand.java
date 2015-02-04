@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.command;
 
 import se.nicklasgavelin.sphero.Robot;
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
 
 /**
  * Ping command to keep the connection to the Sphero alive. The original Ping
@@ -21,14 +22,14 @@ public class PingCommand extends CommandMessage
 	public PingCommand( Robot r )
 	{
 		super( COMMAND_MESSAGE_TYPE.CUSTOM_PING );
-		this.brightness = r.getLed().getFrontLEDBrightness();
+        this.brightness = r.getLed().getFrontLEDBrightness();
 	}
 
 	@Override
 	public byte[] getPacketData()
 	{
 		byte[] data = new byte[ 1 ];
-		data[0] = (byte) (int) ( 255.0D * this.brightness );
+		data[0] = (byte) (int) ( 255.0D * this.brightness);
 
 		return data;
 	}

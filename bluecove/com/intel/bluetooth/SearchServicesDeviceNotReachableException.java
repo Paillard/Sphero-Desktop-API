@@ -33,8 +33,7 @@ class SearchServicesDeviceNotReachableException extends SearchServicesException 
 	private static final long serialVersionUID = 1L;
 
 	public SearchServicesDeviceNotReachableException() {
-		super();
-	}
+    }
 
 	public SearchServicesDeviceNotReachableException(String s) {
 		super(s);

@@ -1,5 +1,7 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
+
 /**
  * Command to get the configuration of the Sphero.
  * Havn't seen any visible return values.
@@ -18,7 +20,7 @@ public class GetConfigurationBlockCommand extends CommandMessage
 		FACTORY( 0 ), USER( 1 );
 		private int block;
 
-		private BLOCK_SPECIFIER( int block )
+		BLOCK_SPECIFIER(int block)
 		{
 			this.block = block;
 		}

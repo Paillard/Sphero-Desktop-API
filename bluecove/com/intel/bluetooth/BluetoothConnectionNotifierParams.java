@@ -53,17 +53,16 @@ class BluetoothConnectionNotifierParams {
 	 * btl2cap://localhost;name=test;bluecovepsm=11 where bluecovepsm is
 	 * 4*4(HEXDIG)
 	 */
-	int bluecove_ext_psm = 0;
+	int bluecove_ext_psm;
 
 	public BluetoothConnectionNotifierParams(UUID uuid, boolean authenticate, boolean encrypt, boolean authorize,
 			String name, boolean master) {
-		super();
-		this.uuid = uuid;
+        this.uuid = uuid;
 		this.authenticate = authenticate;
 		this.encrypt = encrypt;
 		this.authorize = authorize;
 		this.name = name;
 		this.master = master;
-		this.obex = false;
+        this.obex = false;
 	}
 }

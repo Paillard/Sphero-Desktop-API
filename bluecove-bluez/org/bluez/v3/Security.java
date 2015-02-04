@@ -32,6 +32,8 @@
  */
 package org.bluez.v3;
 
+import org.bluez.Error.AlreadyExists;
+import org.bluez.Error.DoesNotExist;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
 
@@ -75,14 +77,14 @@ public interface Security extends DBusInterface {
      * If an application disconnects from the bus all registered passkey agent will be
      * removed.
      */
-    void RegisterDefaultPasskeyAgent(String path) throws org.bluez.Error.AlreadyExists;
+    void RegisterDefaultPasskeyAgent(String path) throws AlreadyExists;
 
     /**
      * This unregisters a default passkey agent that has been previously registered. The
      * object path and the path parameter must match the same values that has been used on
      * registration.
      */
-    void UnregisterDefaultPasskeyAgent(String path) throws org.bluez.Error.DoesNotExist;
+    void UnregisterDefaultPasskeyAgent(String path) throws DoesNotExist;
 
     /**
      * This registers the application passkey agent that will be used for any application
@@ -97,7 +99,7 @@ public interface Security extends DBusInterface {
      * or fails. The application has to take care of that it reregisters the passkey
      * agent.
      **/
-    void RegisterPasskeyAgent(String path, String address) throws org.bluez.Error.AlreadyExists;
+    void RegisterPasskeyAgent(String path, String address) throws AlreadyExists;
 
     /**
      * This unregisters a passkey agent that has been previously registered. The object
@@ -107,7 +109,7 @@ public interface Security extends DBusInterface {
      * The method is actually only needed if an application wants to removed the passkey
      * agent and don't wanna wait for the automatic timeout.
      */
-    void UnregisterPasskeyAgent(String path, String address) throws org.bluez.Error.DoesNotExist;
+    void UnregisterPasskeyAgent(String path, String address) throws DoesNotExist;
 
     /**
      * This registers the default authorization agent. It can register an authorization

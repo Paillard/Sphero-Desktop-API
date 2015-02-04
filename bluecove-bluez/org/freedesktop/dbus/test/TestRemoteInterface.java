@@ -10,11 +10,12 @@
 */
 package org.freedesktop.dbus.test;
 
+import org.freedesktop.DBus;
+import org.freedesktop.DBus.Description;
+import org.freedesktop.DBus.Method.NoReply;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.Path;
 import org.freedesktop.dbus.UInt16;
-import org.freedesktop.DBus.Description;
-import org.freedesktop.DBus.Method;
 
 import java.lang.reflect.Type;
 
@@ -29,29 +30,29 @@ public interface TestRemoteInterface extends DBusInterface
     * A simple method with no parameters which returns a String
     */
    @Description("Simple test method")
-   public String getName();
-   public String getNameAndThrow();
+   String getName();
+   String getNameAndThrow();
    @Description("Test of nested maps")
-   public <T> int frobnicate(List<Long> n, Map<String,Map<UInt16,Short>> m, T v);
+   <T> int frobnicate(List<Long> n, Map<String, Map<UInt16, Short>> m, T v);
    @Description("Throws a TestException when called")
-   public void throwme() throws TestException;
+   void throwme() throws TestException;
    @Description("Waits then doesn't return")
-   @Method.NoReply()
-   public void waitawhile();
+   @NoReply()
+   void waitawhile();
    @Description("Interface-overloaded method")
-   public int overload();
+   int overload();
    @Description("Testing Type Signatures")
-   public void sig(Type[] s);
+   void sig(Type[] s);
    @Description("Testing object paths as Path objects")
-   public void newpathtest(Path p);
+   void newpathtest(Path p);
    @Description("Testing the float type")
-   public float testfloat(float[] f);
+   float testfloat(float[] f);
    @Description("Testing structs of structs")
-   public int[][] teststructstruct(TestStruct3 in);
+   int[][] teststructstruct(TestStruct3 in);
    @Description("Regression test for #13291")
-   public void reg13291(byte[] as, byte[] bs);
+   void reg13291(byte[] as, byte[] bs);
    /* test lots of things involving Path */
-   public Path pathrv(Path a);
-   public List<Path> pathlistrv(List<Path> a);
-   public Map<Path,Path> pathmaprv(Map<Path,Path> a);
+   Path pathrv(Path a);
+   List<Path> pathlistrv(List<Path> a);
+   Map<Path,Path> pathmaprv(Map<Path, Path> a);
 }

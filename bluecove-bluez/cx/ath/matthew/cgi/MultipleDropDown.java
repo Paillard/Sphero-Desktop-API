@@ -97,16 +97,16 @@ public class MultipleDropDown extends DropDown {
 	protected String print()
 	   {
 	      String s = "";
-	      s += "<select name='"+name+"' multiple='multiple' size='"+values.length+"'>\n";
-	      for (int i=0; i<values.length; i++) {
+	      s += "<select name='"+ name +"' multiple='multiple' size='"+ values.length+"'>\n";
+	      for (int i=0; i< values.length; i++) {
 	         if (indexed)
 	            s += "   <option value='"+i+"'";
 	         else
 	            s += "   <option";
 	         if (values[i].equals(defval))
-	            s += " selected='selected'>"+values[i]+"</option>\n";
+	            s += " selected='selected'>"+ values[i]+"</option>\n";
 	         else
-	            s += ">"+values[i]+"</option>\n";
+	            s += ">"+ values[i]+"</option>\n";
 	      }
 	      s += "</select>\n";
 	      return s;

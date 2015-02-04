@@ -33,7 +33,7 @@ public class DisplayField extends Field
    String value;
    public DisplayField(String label, String value)
    {
-      this.name = "";
+       this.name = "";
       this.label = label;
       this.value = value;
    }

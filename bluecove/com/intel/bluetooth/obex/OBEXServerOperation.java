@@ -42,37 +42,37 @@ abstract class OBEXServerOperation implements Operation, OBEXOperation {
 
 	protected OBEXHeaderSetImpl sendHeaders;
 
-	protected boolean isClosed = false;
+	protected boolean isClosed;
 
-	protected boolean isAborted = false;
+	protected boolean isAborted;
 
-	protected boolean finalPacketReceived = false;
+	protected boolean finalPacketReceived;
 
-	protected boolean requestEnded = false;
+	protected boolean requestEnded;
 
-	protected boolean errorReceived = false;
+	protected boolean errorReceived;
 
-	protected boolean incommingDataReceived = false;
+	protected boolean incommingDataReceived;
 
 	protected OBEXOperationOutputStream outputStream;
 
-	protected boolean outputStreamOpened = false;
+	protected boolean outputStreamOpened;
 
 	protected OBEXOperationInputStream inputStream;
 
-	protected boolean inputStreamOpened = false;
+	protected boolean inputStreamOpened;
 
 	protected OBEXServerOperation(OBEXServerSessionImpl session, OBEXHeaderSetImpl receivedHeaders) throws IOException {
 		this.session = session;
 		this.receivedHeaders = receivedHeaders;
 		if (receivedHeaders.hasAuthenticationChallenge()) {
-			sendHeaders = OBEXSessionBase.createOBEXHeaderSetImpl();
+            sendHeaders = OBEXSessionBase.createOBEXHeaderSetImpl();
 			this.session.handleAuthenticationChallenge(receivedHeaders, sendHeaders);
 		}
 	}
 
 	boolean exchangeRequestPhasePackets() throws IOException {
-		session.writePacket(OBEXOperationCodes.OBEX_RESPONSE_CONTINUE, null);
+        session.writePacket(OBEXOperationCodes.OBEX_RESPONSE_CONTINUE, null);
 		return readRequestPacket();
 	}
 
@@ -80,14 +80,14 @@ abstract class OBEXServerOperation implements Operation, OBEXOperation {
 
 	void writeResponse(int responseCode) throws IOException {
 		DebugLog.debug0x("server operation reply final", responseCode);
-		session.writePacket(responseCode, sendHeaders);
-		sendHeaders = null;
+        session.writePacket(responseCode, sendHeaders);
+        sendHeaders = null;
 		if (responseCode == ResponseCodes.OBEX_HTTP_OK) {
-			while ((!finalPacketReceived) && (!session.isClosed())) {
+			while (!this.finalPacketReceived && !this.session.isClosed()) {
 				DebugLog.debug("server waits to receive final packet");
-				readRequestPacket();
+                readRequestPacket();
 				if (!errorReceived) {
-					session.writePacket(responseCode, null);
+                    session.writePacket(responseCode, null);
 				}
 			}
 		} else {
@@ -108,11 +108,11 @@ abstract class OBEXServerOperation implements Operation, OBEXOperation {
 			}
 		}
 		if (data != null) {
-			incommingDataReceived = true;
+            incommingDataReceived = true;
 			DebugLog.debug("server received Data eof: " + eof + " len:", data.length);
-			inputStream.appendData(data, eof);
+            inputStream.appendData(data, eof);
 		} else if (eof) {
-			inputStream.appendData(null, eof);
+            inputStream.appendData(null, eof);
 		}
 	}
 
@@ -159,7 +159,7 @@ abstract class OBEXServerOperation implements Operation, OBEXOperation {
 		if (sendHeaders != null) {
 			OBEXHeaderSetImpl.appendHeaders(sendHeaders, headers);
 		} else {
-			sendHeaders = (OBEXHeaderSetImpl) headers;
+            sendHeaders = (OBEXHeaderSetImpl) headers;
 		}
 	}
 
@@ -189,7 +189,7 @@ abstract class OBEXServerOperation implements Operation, OBEXOperation {
 		if (len == null) {
 			return -1;
 		}
-		return len.longValue();
+		return len;
 	}
 
 	/*
@@ -230,7 +230,7 @@ abstract class OBEXServerOperation implements Operation, OBEXOperation {
 	 * @see javax.microedition.io.Connection#close()
 	 */
 	public void close() throws IOException {
-		this.isClosed = true;
+        this.isClosed = true;
 	}
 
 	public boolean isClosed() {

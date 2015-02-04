@@ -51,11 +51,10 @@ public class TeeOutputStream extends FilterOutputStream
     * @param os Writes to this OutputStream
     * @param tos Write to this OutputStream
     */
-   public TeeOutputStream(OutputStream os, OutputStream tos) throws IOException
-   {
+   public TeeOutputStream(OutputStream os, OutputStream tos) {
       super(os);
-      this.out = os;
-      this.fos = tos;
+       this.out = os;
+       this.fos = tos;
    }
    /**
     * Create a new TeeOutputStream on the given OutputStream
@@ -67,8 +66,8 @@ public class TeeOutputStream extends FilterOutputStream
    public TeeOutputStream(OutputStream os, File f, boolean append) throws IOException
    {
       super(os);
-      this.out = os;
-      this.fos = new FileOutputStream(f, append);
+       this.out = os;
+       this.fos = new FileOutputStream(f, append);
    }
    /**
     * Create a new TeeOutputStream on the given OutputStream
@@ -79,8 +78,8 @@ public class TeeOutputStream extends FilterOutputStream
    public TeeOutputStream(OutputStream os, File f) throws IOException
    {
       super(os);
-      this.out = os;
-      this.fos = new FileOutputStream(f);
+       this.out = os;
+       this.fos = new FileOutputStream(f);
    }
    /**
     * Create a new TeeOutputStream on the given OutputStream
@@ -105,34 +104,34 @@ public class TeeOutputStream extends FilterOutputStream
    }
    public void close() throws IOException
    {
-      out.close();
-      fos.close();
+       out.close();
+       fos.close();
    }
    public void flush() throws IOException
    {
-      fos.flush();
-      out.flush();
+       fos.flush();
+       out.flush();
    }
    public void write(int b) throws IOException
    {
-      fos.write(b);
-      out.write(b);
+       fos.write(b);
+       out.write(b);
    }
    public void write(byte[] b) throws IOException
    {
-      fos.write(b);
-      out.write(b);
+       fos.write(b);
+       out.write(b);
    }
    public void write(byte[] b, int off, int len) throws IOException
-   {  
-      fos.write(b, off, len);
-      out.write(b, off, len);
+   {
+       fos.write(b, off, len);
+       out.write(b, off, len);
    }
 
    public void finalize()
    {
       try {
-         close();
+          close();
       } catch (Exception e) {}
    }
 }

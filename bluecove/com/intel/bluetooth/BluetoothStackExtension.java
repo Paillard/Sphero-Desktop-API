@@ -40,6 +40,6 @@ public interface BluetoothStackExtension {
 	 * 
 	 * @see com.intel.bluetooth.RemoteDeviceHelper#readRSSI(javax.bluetooth.RemoteDevice);
 	 */
-	public int readRemoteDeviceRSSI(long address) throws IOException;
+    int readRemoteDeviceRSSI(long address) throws IOException;
 
 }

@@ -1,6 +1,8 @@
 package se.nicklasgavelin.sphero.command;
 
 import java.awt.Color;
+
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
 import se.nicklasgavelin.util.Value;
 
 /**

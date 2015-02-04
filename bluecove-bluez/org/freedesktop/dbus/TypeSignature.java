@@ -22,13 +22,13 @@ public class TypeSignature
    }
    public TypeSignature(Type[] types) throws DBusException
    {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for (Type t: types) {
          String[] ts = Marshalling.getDBusType(t);
          for (String s: ts)
             sb.append(s);
       }
-      this.sig = sb.toString();
+       this.sig = sb.toString();
    }
    public String getSig()
    { 

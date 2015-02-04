@@ -21,6 +21,6 @@ public class Vector3D
 
 	public double magnitude()
 	{
-		return Math.sqrt( this.x * this.x + this.y * this.y + this.z * this.z );
+		return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
 	}
 }

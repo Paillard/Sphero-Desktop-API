@@ -1,5 +1,7 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
+
 /**
  * Command to request version information from the Sphero robot.
  * The response received after sending this command contains the version

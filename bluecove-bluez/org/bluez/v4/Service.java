@@ -32,6 +32,11 @@
  */
 package org.bluez.v4;
 
+import org.bluez.Error.DoesNotExist;
+import org.bluez.Error.Failed;
+import org.bluez.Error.InvalidArguments;
+import org.bluez.Error.NotAuthorized;
+import org.bluez.Error.NotAvailable;
 import org.freedesktop.dbus.DBusInterfaceName;
 import org.freedesktop.dbus.UInt32;
 
@@ -56,12 +61,12 @@ public interface Service extends org.bluez.v3.Service {
      * Adds a new service record from the XML description and returns the
      * assigned record handle.
      */
-    UInt32 AddRecord(String record) throws org.bluez.Error.InvalidArguments, org.bluez.Error.Failed;
+    UInt32 AddRecord(String record) throws InvalidArguments, Failed;
 
     /**
      * Updates a given service record provided in the XML format.
      */
-    void UpdateRecord(UInt32 handle, String record) throws org.bluez.Error.InvalidArguments, org.bluez.Error.NotAvailable, org.bluez.Error.Failed;
+    void UpdateRecord(UInt32 handle, String record) throws InvalidArguments, NotAvailable, Failed;
 
     /**
      * Remove a service record identified by its handle.
@@ -69,17 +74,17 @@ public interface Service extends org.bluez.v3.Service {
      * It is only possible to remove service records that where added by the
      * current connection.
      */
-    void RemoveRecord(UInt32 handle) throws org.bluez.Error.InvalidArguments, org.bluez.Error.NotAuthorized, org.bluez.Error.DoesNotExist,
-            org.bluez.Error.Failed;
+    void RemoveRecord(UInt32 handle) throws InvalidArguments, NotAuthorized, DoesNotExist,
+            Failed;
 
     /**
      * Request an authorization for an incoming connection for a specific
      * service record. The service record needs to be registered via AddRecord
      * first.
      */
-    void RequestAuthorization(String address, UInt32 handle) throws org.bluez.Error.InvalidArguments, org.bluez.Error.NotAuthorized,
-            org.bluez.Error.DoesNotExist, org.bluez.Error.Failed;
+    void RequestAuthorization(String address, UInt32 handle) throws InvalidArguments, NotAuthorized,
+            DoesNotExist, Failed;
 
-    void CancelAuthorization() throws org.bluez.Error.InvalidArguments, org.bluez.Error.NotAuthorized, org.bluez.Error.DoesNotExist, org.bluez.Error.Failed;
+    void CancelAuthorization() throws InvalidArguments, NotAuthorized, DoesNotExist, Failed;
 
 }

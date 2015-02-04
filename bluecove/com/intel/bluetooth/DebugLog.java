@@ -24,6 +24,8 @@
  */
 package com.intel.bluetooth;
 
+import com.intel.bluetooth.UtilsJavaSE.StackTraceLocation;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -43,21 +45,21 @@ public abstract class DebugLog {
 
 	private static final boolean debugCompiledOut = false;
 
-	public final static int DEBUG = 1;
+	public static final int DEBUG = 1;
 
-	public final static int ERROR = 4;
+	public static final int ERROR = 4;
 
-	private static boolean debugEnabled = false;
+	private static boolean debugEnabled;
 
-	private static boolean initialized = false;
+	private static boolean initialized;
 
-	private static boolean debugInternalEnabled = false;
+	private static boolean debugInternalEnabled;
 
 	private static final String FQCN = DebugLog.class.getName();
 
 	private static final Vector fqcnSet = new Vector();
 
-	private static boolean java13 = false;
+	private static boolean java13;
 
 	private static Vector loggerAppenders = new Vector();
 
@@ -65,43 +67,43 @@ public abstract class DebugLog {
 	 * Different log system can be injected in BlueCove using DebugLog.addAppender(customLoggerAppender)
 	 *
 	 */
-	public static interface LoggerAppender {
-		public void appendLog(int level, String message, Throwable throwable);
+	public interface LoggerAppender {
+		void appendLog(int level, String message, Throwable throwable);
 	}
 
-	public static interface LoggerAppenderExt extends LoggerAppender {
-		public boolean isLogEnabled(int level);
+	public interface LoggerAppenderExt extends LoggerAppender {
+		boolean isLogEnabled(int level);
 	}
 
 	static {
-		fqcnSet.addElement(FQCN);
+        fqcnSet.addElement(FQCN);
 	}
 
 	private DebugLog() {
 
 	}
 
-	private synchronized static void initialize() {
+	private static synchronized void initialize() {
 		if (initialized) {
 			return;
 		}
-		initialized = true;
-		debugEnabled = BlueCoveImpl.getConfigProperty(BlueCoveConfigProperties.PROPERTY_DEBUG, false);
+        initialized = true;
+        debugEnabled = BlueCoveImpl.getConfigProperty(BlueCoveConfigProperties.PROPERTY_DEBUG, false);
 		if (debugEnabled && debugCompiledOut) {
-			debugEnabled = false;
+            debugEnabled = false;
 			System.err.println("BlueCove debug functions have been Compiled Out");
 		}
 		boolean useStdOut = BlueCoveImpl.getConfigProperty(BlueCoveConfigProperties.PROPERTY_DEBUG_STDOUT, true);
-		debugInternalEnabled = useStdOut && debugEnabled;
+        debugInternalEnabled = useStdOut && debugEnabled;
 		boolean useLog4j = BlueCoveImpl.getConfigProperty(BlueCoveConfigProperties.PROPERTY_DEBUG_LOG4J, true);
 		if (useLog4j) {
 			try {
 				LoggerAppenderExt log4jAppender = (LoggerAppenderExt) Class.forName(
 						"com.intel.bluetooth.DebugLog4jAppender").newInstance();
 //				System.out.println("BlueCove log redirected to log4j");
-				addAppender(log4jAppender);
+                addAppender(log4jAppender);
 				if (log4jAppender.isLogEnabled(DEBUG)) {
-					debugEnabled = true || debugEnabled;
+                    debugEnabled = true || debugEnabled;
 				}
 			} catch (Throwable e) {
 			}
@@ -110,14 +112,14 @@ public abstract class DebugLog {
 
 	public static boolean isDebugEnabled() {
 		if (!initialized) {
-			initialize();
+            initialize();
 		}
 		return debugEnabled;
 	}
 
 	public static void setDebugEnabled(boolean debugEnabled) {
 		if (!initialized) {
-			initialize();
+            initialize();
 		}
 		if (debugEnabled && debugCompiledOut) {
 			debugEnabled = false;
@@ -125,30 +127,30 @@ public abstract class DebugLog {
 		} else {
 			BlueCoveImpl.instance().enableNativeDebug(debugEnabled);
 			DebugLog.debugEnabled = debugEnabled;
-			DebugLog.debugInternalEnabled = DebugLog.debugEnabled;
+			debugInternalEnabled = DebugLog.debugEnabled;
 		}
 	}
 
 	public static void debug(String message) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, null, null);
-			printLocation();
-			callAppenders(DEBUG, message, null);
+            log(message, null, null);
+            printLocation();
+            callAppenders(DEBUG, message, null);
 		}
 	}
 
 	public static void debug(String message, String v) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, " ", v);
-			printLocation();
-			callAppenders(DEBUG, message + " " + v, null);
+            log(message, " ", v);
+            printLocation();
+            callAppenders(DEBUG, message + " " + v, null);
 		}
 	}
 
 	public static void debug(String message, Throwable t) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, " ", t.toString());
-			printLocation();
+            log(message, " ", t.toString());
+            printLocation();
 			// I have the reson not to make this as function.
 			if (!UtilsJavaSE.javaSECompiledOut) {
 				if (!UtilsJavaSE.ibmJ9midp) {
@@ -159,65 +161,65 @@ public abstract class DebugLog {
 			} else {
 				t.printStackTrace();
 			}
-			callAppenders(DEBUG, message, t);
+            callAppenders(DEBUG, message, t);
 		}
 	}
 
 	public static void debug(String message, Object obj) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, " ", obj.toString());
-			printLocation();
-			callAppenders(DEBUG, message + " " + obj.toString(), null);
+            log(message, " ", obj.toString());
+            printLocation();
+            callAppenders(DEBUG, message + " " + obj, null);
 		}
 	}
 
 	public static void debug(String message, String v, String v2) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, " ", v + " " + v2);
-			printLocation();
-			callAppenders(DEBUG, message + " " + v + " " + v2, null);
+            log(message, " ", v + " " + v2);
+            printLocation();
+            callAppenders(DEBUG, message + " " + v + " " + v2, null);
 		}
 	}
 
 	public static void debug(String message, long v) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, " ", Long.toString(v));
-			printLocation();
-			callAppenders(DEBUG, message + " " + Long.toString(v), null);
+            log(message, " ", Long.toString(v));
+            printLocation();
+            callAppenders(DEBUG, message + " " + Long.toString(v), null);
 		}
 	}
 
 	public static void debug0x(String message, long v) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, " 0x", Utils.toHexString(v));
-			printLocation();
-			callAppenders(DEBUG, message + " 0x" + Utils.toHexString(v), null);
+            log(message, " 0x", Utils.toHexString(v));
+            printLocation();
+            callAppenders(DEBUG, message + " 0x" + Utils.toHexString(v), null);
 		}
 	}
 
 	public static void debug0x(String message, String s, long v) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, " " + s + " 0x", Utils.toHexString(v));
-			printLocation();
-			callAppenders(DEBUG, message + " " + s + " 0x" + Utils.toHexString(v), null);
+            log(message, " " + s + " 0x", Utils.toHexString(v));
+            printLocation();
+            callAppenders(DEBUG, message + " " + s + " 0x" + Utils.toHexString(v), null);
 		}
 	}
 
 	public static void debug(String message, boolean v) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, " ", String.valueOf(v));
-			printLocation();
-			callAppenders(DEBUG, message + " " + v, null);
+            log(message, " ", String.valueOf(v));
+            printLocation();
+            callAppenders(DEBUG, message + " " + v, null);
 		}
 	}
 
 	public static void debug(String message, byte[] data) {
-		debug(message, data, 0, (data == null) ? 0 : data.length);
+        debug(message, data, 0, data == null ? 0 : data.length);
 	}
 
 	public static void debug(String message, byte[] data, int off, int len) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			if (data == null) {
 				buf.append(" null byte[]");
 			} else {
@@ -226,26 +228,26 @@ public abstract class DebugLog {
 					if (i != off) {
 						buf.append(", ");
 					}
-					buf.append((new Byte(data[i])).toString());
+					buf.append(new Byte(data[i]));
 				}
 				buf.append("]");
 				if (len > 4) {
 					buf.append(" ").append(len);
 				}
 			}
-			log(message, buf.toString(), null);
-			printLocation();
-			callAppenders(DEBUG, message + buf.toString(), null);
+            log(message, buf.toString(), null);
+            printLocation();
+            callAppenders(DEBUG, message + buf, null);
 		}
 	}
 
 	public static void debug(String message, int[] data) {
-		debug(message, data, 0, (data == null) ? 0 : data.length);
+        debug(message, data, 0, data == null ? 0 : data.length);
 	}
 
 	public static void debug(String message, int[] data, int off, int len) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			if (data == null) {
 				buf.append(" null int[]");
 			} else {
@@ -261,18 +263,18 @@ public abstract class DebugLog {
 					buf.append(" ").append(len);
 				}
 			}
-			log(message, buf.toString(), null);
-			printLocation();
-			callAppenders(DEBUG, message + buf.toString(), null);
+            log(message, buf.toString(), null);
+            printLocation();
+            callAppenders(DEBUG, message + buf, null);
 		}
 	}
 
 	public static void nativeDebugCallback(String fileName, int lineN, String message) {
 		try {
-			if ((fileName != null) && fileName.startsWith(".\\")) {
+			if (fileName != null && fileName.startsWith(".\\")) {
 				fileName = fileName.substring(2);
 			}
-			DebugLog.debugNative(fileName + ":" + lineN, message);
+			debugNative(fileName + ":" + lineN, message);
 		} catch (Throwable e) {
 			try {
 				System.out.println("Error when calling debug " + e);
@@ -284,39 +286,39 @@ public abstract class DebugLog {
 
 	public static void debugNative(String location, String message) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log(message, "\n\t  ", location);
-			callAppenders(DEBUG, message, null);
+            log(message, "\n\t  ", location);
+            callAppenders(DEBUG, message, null);
 		}
 	}
 
 	public static void error(String message) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log("error ", message, null);
-			printLocation();
-			callAppenders(ERROR, message, null);
+            log("error ", message, null);
+            printLocation();
+            callAppenders(ERROR, message, null);
 		}
 	}
 
 	public static void error(String message, long v) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log("error ", message, " " + v);
-			printLocation();
-			callAppenders(ERROR, message + " " + v, null);
+            log("error ", message, " " + v);
+            printLocation();
+            callAppenders(ERROR, message + " " + v, null);
 		}
 	}
 
 	public static void error(String message, String v) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log("error ", message, " " + v);
-			printLocation();
-			callAppenders(ERROR, message + " " + v, null);
+            log("error ", message, " " + v);
+            printLocation();
+            callAppenders(ERROR, message + " " + v, null);
 		}
 	}
 
 	public static void error(String message, Throwable t) {
 		if (!debugCompiledOut && isDebugEnabled()) {
-			log("error ", message, " " + t);
-			printLocation();
+            log("error ", message, " " + t);
+            printLocation();
 			// I have the reson not to make this as function.
 			if (!UtilsJavaSE.javaSECompiledOut) {
 				if (!UtilsJavaSE.ibmJ9midp) {
@@ -328,19 +330,19 @@ public abstract class DebugLog {
 				t.printStackTrace();
 			}
 
-			callAppenders(ERROR, message, t);
+            callAppenders(ERROR, message, t);
 		}
 	}
 
 	public static void fatal(String message) {
-		log("error ", message, null);
-		printLocation();
-		callAppenders(ERROR, message, null);
+        log("error ", message, null);
+        printLocation();
+        callAppenders(ERROR, message, null);
 	}
 
 	public static void fatal(String message, Throwable t) {
-		log("error ", message, " " + t);
-		printLocation();
+        log("error ", message, " " + t);
+        printLocation();
 		// I have the reson not to make this as function.
 		if (!UtilsJavaSE.javaSECompiledOut) {
 			if (!UtilsJavaSE.ibmJ9midp) {
@@ -352,7 +354,7 @@ public abstract class DebugLog {
 			t.printStackTrace();
 		}
 
-		callAppenders(ERROR, message, t);
+        callAppenders(ERROR, message, t);
 	}
 
 	private static void callAppenders(int level, String message, Throwable throwable) {
@@ -363,18 +365,18 @@ public abstract class DebugLog {
 	}
 
 	public static void addAppender(LoggerAppender newAppender) {
-		loggerAppenders.addElement(newAppender);
+        loggerAppenders.addElement(newAppender);
 	}
 
 	public static void removeAppender(LoggerAppender newAppender) {
-		loggerAppenders.removeElement(newAppender);
+        loggerAppenders.removeElement(newAppender);
 	}
 
 	private static String d00(int i) {
 		if (i > 9) {
 			return String.valueOf(i);
 		} else {
-			return "0" + String.valueOf(i);
+			return "0" + i;
 		}
 	}
 
@@ -382,9 +384,9 @@ public abstract class DebugLog {
 		if (i > 99) {
 			return String.valueOf(i);
 		} else if (i > 9) {
-			return "0" + String.valueOf(i);
+			return "0" + i;
 		} else {
-			return "00" + String.valueOf(i);
+			return "00" + i;
 		}
 	}
 
@@ -411,7 +413,7 @@ public abstract class DebugLog {
 				sb.append(va2);
 			}
 
-			System.out.println(sb.toString());
+			System.out.println(sb);
 		} catch (Throwable ignore) {
 		}
 	}
@@ -421,16 +423,16 @@ public abstract class DebugLog {
 			return;
 		}
 		try {
-			UtilsJavaSE.StackTraceLocation ste = UtilsJavaSE.getLocation(fqcnSet);
+			StackTraceLocation ste = UtilsJavaSE.getLocation(fqcnSet);
 			if (ste != null) {
 				System.out.println("\t  " + formatLocation(ste));
 			}
 		} catch (Throwable e) {
-			java13 = true;
+            java13 = true;
 		}
 	}
 
-	private static String formatLocation(UtilsJavaSE.StackTraceLocation ste) {
+	private static String formatLocation(StackTraceLocation ste) {
 		if (ste == null) {
 			return "";
 		}

@@ -39,15 +39,15 @@ class BluetoothRFCommConnectionNotifier extends BluetoothConnectionNotifierBase 
 			throws IOException {
 		super(bluetoothStack, params);
 
-		this.handle = bluetoothStack.rfServerOpen(params, serviceRecord);
+        this.handle = bluetoothStack.rfServerOpen(params, serviceRecord);
 
-		this.rfcommChannel = serviceRecord.getChannel(BluetoothConsts.RFCOMM_PROTOCOL_UUID);
+        this.rfcommChannel = serviceRecord.getChannel(BluetoothConsts.RFCOMM_PROTOCOL_UUID);
 
-		this.serviceRecord.attributeUpdated = false;
+        this.serviceRecord.attributeUpdated = false;
 
-		this.securityOpt = Utils.securityOpt(params.authenticate, params.encrypt);
+        this.securityOpt = Utils.securityOpt(params.authenticate, params.encrypt);
 
-		this.connectionCreated();
+        this.connectionCreated();
 	}
 
 	/*
@@ -56,7 +56,7 @@ class BluetoothRFCommConnectionNotifier extends BluetoothConnectionNotifierBase 
 	 * @see com.intel.bluetooth.BluetoothConnectionNotifierBase#stackServerClose(long)
 	 */
 	protected void stackServerClose(long handle) throws IOException {
-		bluetoothStack.rfServerClose(handle, serviceRecord);
+        bluetoothStack.rfServerClose(handle, serviceRecord);
 	}
 
 	/*
@@ -69,7 +69,7 @@ class BluetoothRFCommConnectionNotifier extends BluetoothConnectionNotifierBase 
 		if (closed) {
 			throw new IOException("Notifier is closed");
 		}
-		updateServiceRecord(true);
+        updateServiceRecord(true);
 		try {
 			long clientHandle = bluetoothStack.rfServerAcceptAndOpenRfServerConnection(handle);
 			int clientSecurityOpt = bluetoothStack.rfGetSecurityOpt(clientHandle, this.securityOpt);
@@ -99,7 +99,7 @@ class BluetoothRFCommConnectionNotifier extends BluetoothConnectionNotifierBase 
 	 */
 	protected void updateStackServiceRecord(ServiceRecordImpl serviceRecord, boolean acceptAndOpen)
 			throws ServiceRegistrationException {
-		bluetoothStack.rfServerUpdateServiceRecord(handle, serviceRecord, acceptAndOpen);
+        bluetoothStack.rfServerUpdateServiceRecord(handle, serviceRecord, acceptAndOpen);
 	}
 
 }

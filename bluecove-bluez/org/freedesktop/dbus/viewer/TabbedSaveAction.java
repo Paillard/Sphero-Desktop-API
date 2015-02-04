@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus.viewer;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -31,8 +31,7 @@ abstract class TabbedSaveAction extends AbstractAction implements Iterable<TextF
 	protected final JTabbedPane tabbedPane;
 	protected TabbedSaveAction(JTabbedPane tabbedPane)
 	{
-		super();
-		this.tabbedPane = tabbedPane;
+        this.tabbedPane = tabbedPane;
 	}
 	protected TabbedSaveAction(JTabbedPane tabbedPane, String name)
 	{
@@ -48,11 +47,11 @@ abstract class TabbedSaveAction extends AbstractAction implements Iterable<TextF
 	{
 		JScrollPane scrollPane = (JScrollPane) tabbedPane.getComponentAt(index);
 		JTextComponent textComponent = (JTextComponent) scrollPane.getViewport().getView();
-		final String sourceCode = textComponent.getText();
+		String sourceCode = textComponent.getText();
 		
 		
 
-		final String fileName = getFileName(index);
+		String fileName = getFileName(index);
 		
 
 		TextFile textFile = new TextFile(fileName, sourceCode);
@@ -66,7 +65,7 @@ abstract class TabbedSaveAction extends AbstractAction implements Iterable<TextF
 	 */
 	protected String getFileName(int index)
 	{
-		return (index > -1) ? tabbedPane.getTitleAt(index) : "";
+		return index > -1 ? tabbedPane.getTitleAt(index) : "";
 	}
 	
 	/** {@inheritDoc} */
@@ -76,10 +75,10 @@ abstract class TabbedSaveAction extends AbstractAction implements Iterable<TextF
 		if (chooser == null)
 		{
 			/** Occurs on event dispatch thread, so no problems with lazy static init here */
-			chooser = new JFileChooser();
+            chooser = new JFileChooser();
 		}
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		chooser.setDialogTitle(_("Select parent directory for saving"));
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setDialogTitle(getResource("Select parent directory for saving"));
 		
 		int result = chooser.showDialog(tabbedPane, "Select");
 		
@@ -96,12 +95,12 @@ abstract class TabbedSaveAction extends AbstractAction implements Iterable<TextF
 				}
 				else
 				{
-					JOptionPane.showMessageDialog(tabbedPane, _("Could not write to parent directory"), _("Invalid Parent Directory"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(tabbedPane, getResource("Could not write to parent directory"), getResource("Invalid Parent Directory"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(tabbedPane, _("Could not access parent directory"), _("Invalid Parent Directory"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(tabbedPane, getResource("Could not access parent directory"), getResource("Invalid Parent Directory"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

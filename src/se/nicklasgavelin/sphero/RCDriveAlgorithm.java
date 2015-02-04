@@ -28,15 +28,15 @@ public class RCDriveAlgorithm extends DriveAlgorithm
 			curHeading -= 360.0D;
 
 		// Update heading
-		this.heading = curHeading;
+        this.heading = curHeading;
 
 		// Update x value
 		x = Value.clamp( x, 0.0D, 1.0D );
 
 		// Update current speed
-		this.speed = ( this.speedScale * ( x * x ) );
+        this.speed = this.speedScale * x * x;
 
 		// Notify any listeners
-		postOnConvert();
+        postOnConvert();
 	}
 }

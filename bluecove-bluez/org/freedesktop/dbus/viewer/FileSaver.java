@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus.viewer;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.awt.Component;
 import java.io.BufferedWriter;
@@ -44,22 +44,22 @@ final class FileSaver implements Runnable
 	{
 		this.parentComponent = parentComponent;
 		this.parentDirectory = parentDirectory;
-		this.textFiles = files;
+        this.textFiles = files;
 	}
 
 	/** {@inheritDoc} */
 	public void run()
 	{
-		saveFiles();
+        saveFiles();
 	}
 
 	private void saveFiles()
 	{
 		String overwritePolicy = null;
-		final Iterator<TextFile> iterator = textFiles.iterator();
+		Iterator<TextFile> iterator = textFiles.iterator();
 		while (iterator.hasNext())
 		{
-			final TextFile textFile = iterator.next();
+			TextFile textFile = iterator.next();
 			String fileName = textFile.getFileName();
 			File fileToSave = new File(parentDirectory, fileName);
 			File parentFile = fileToSave.getParentFile();
@@ -72,12 +72,12 @@ final class FileSaver implements Runnable
 					String[] selectionValues;
 					if (iterator.hasNext())
 					{
-						selectionValues = new String[] { OVERWRITE,
-								OVERWRITE_ALL, SKIP, SKIP_ALL, CANCEL };
+						selectionValues = new String[] {OVERWRITE,
+                                OVERWRITE_ALL, SKIP, SKIP_ALL, CANCEL};
 					}
 					else
 					{
-						selectionValues = new String[] { OVERWRITE, CANCEL };
+						selectionValues = new String[] {OVERWRITE, CANCEL};
 					}
 					int option = JOptionPane.showOptionDialog(parentComponent,
 							"File exists: " + fileName, "Save",
@@ -102,20 +102,20 @@ final class FileSaver implements Runnable
 					try
 					{
 						String contents = textFile.getContents();
-						writeFile(fileToSave, contents);
+                        writeFile(fileToSave, contents);
 					}
-					catch (final IOException ex)
+					catch (IOException ex)
 					{
 						/* Can't access parent directory for saving */
-						final String errorMessage = "Could not save "
+						String errorMessage = "Could not save "
 								+ fileName + ": " + ex.getLocalizedMessage();
 						if (iterator.hasNext())
 						{
 
 							int confirm = JOptionPane.showConfirmDialog(
-									parentComponent, errorMessage
-											+ ".\n"+_("Try saving other files?"),
-									_("Save Failed"),
+                                    parentComponent, errorMessage
+											+ ".\n"+ getResource("Try saving other files?"),
+									getResource("Save Failed"),
 									JOptionPane.OK_CANCEL_OPTION,
 									JOptionPane.ERROR_MESSAGE);
 							if (confirm != JOptionPane.OK_OPTION)
@@ -126,7 +126,7 @@ final class FileSaver implements Runnable
 						else
 						{
 							JOptionPane.showMessageDialog(parentComponent,
-									errorMessage + ".", _("Save Failed"),
+									errorMessage + ".", getResource("Save Failed"),
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -135,15 +135,15 @@ final class FileSaver implements Runnable
 			else
 			{
 
-				final String errorMessage = _("Could not access parent directory for ")
+				String errorMessage = getResource("Could not access parent directory for ")
 						+ fileName;
 				if (iterator.hasNext())
 				{
 
 					int confirm = JOptionPane.showConfirmDialog(
-							parentComponent, errorMessage
-									+ ".\n"+_("Try saving other files?"),
-							_("Save Failed"), JOptionPane.OK_CANCEL_OPTION,
+                            parentComponent, errorMessage
+									+ ".\n"+ getResource("Try saving other files?"),
+							getResource("Save Failed"), JOptionPane.OK_CANCEL_OPTION,
 							JOptionPane.ERROR_MESSAGE);
 					if (confirm != JOptionPane.OK_OPTION)
 					{
@@ -153,7 +153,7 @@ final class FileSaver implements Runnable
 				else
 				{
 					JOptionPane.showMessageDialog(parentComponent, errorMessage
-							+ ".", _("Save Failed"), JOptionPane.ERROR_MESSAGE);
+							+ ".", getResource("Save Failed"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}

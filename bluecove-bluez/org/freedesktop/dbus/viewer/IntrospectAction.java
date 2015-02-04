@@ -29,6 +29,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.freedesktop.DBus;
 import org.freedesktop.DBus.Introspectable;
 import org.freedesktop.dbus.bin.CreateInterface;
 
@@ -40,7 +41,7 @@ final class IntrospectAction extends AbstractAction implements ListSelectionList
 	IntrospectAction(JTable table)
 	{
 		super("Introspect");
-		setEnabled(false);
+        setEnabled(false);
 		this.table = table;
 		
 
@@ -59,8 +60,8 @@ final class IntrospectAction extends AbstractAction implements ListSelectionList
 			if (selection > -1 && selection < model.getRowCount())
 			{
 				DBusEntry entry = model.getEntry(selection);
-				final Introspectable introspectable = entry.getIntrospectable();
-				setEnabled(introspectable != null);
+				Introspectable introspectable = entry.getIntrospectable();
+                setEnabled(introspectable != null);
 			}
 		}
 	}			
@@ -74,8 +75,8 @@ final class IntrospectAction extends AbstractAction implements ListSelectionList
 		if (row > -1 && row < model.getRowCount())
 		{
 			DBusEntry entry = model.getEntry(row);
-			final String xmlFile = entry.getName() + ".xml";
-			final Introspectable introspectable = entry.getIntrospectable();
+			String xmlFile = entry.getName() + ".xml";
+			Introspectable introspectable = entry.getIntrospectable();
 			new Thread(new Runnable()
 			{
 				public void run()
@@ -90,19 +91,19 @@ final class IntrospectAction extends AbstractAction implements ListSelectionList
 						String docType = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">";
 	
 						createInterface.createInterface(new StringReader(xml.replace(docType, "")));
-						final JTabbedPane tabbedPane = new JTabbedPane();
+						JTabbedPane tabbedPane = new JTabbedPane();
 						
 						tabbedPane.addTab(xmlFile, createSourceTab(xmlFile, xml));
 						
 						for (String file : factory.streamMap.keySet())
 						{
-							final String source = factory.streamMap.get(file).toString();
+							String source = factory.streamMap.get(file).toString();
 							
 							tabbedPane.addTab(file, createSourceTab(file, source));
 						}
 						tabbedPane.setPreferredSize(new Dimension(600, 400));
 						
-						final JPanel introspectionPanel = new JPanel(new BorderLayout());
+						JPanel introspectionPanel = new JPanel(new BorderLayout());
 						introspectionPanel.add(tabbedPane, BorderLayout.CENTER);
 
 						JPanel southPanel = new JPanel();
@@ -110,31 +111,17 @@ final class IntrospectAction extends AbstractAction implements ListSelectionList
 						southPanel.add(new JButton(new SaveAllAction(tabbedPane)));
 						introspectionPanel.add(southPanel, BorderLayout.SOUTH);
 						
-						SwingUtilities.invokeLater(new Runnable()
-						{
-							@SuppressWarnings("synthetic-access")
-							public void run()
-							{
-								JOptionPane.showMessageDialog(table, introspectionPanel, "Introspection", JOptionPane.PLAIN_MESSAGE);
-							}
-						});
+						SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(table, introspectionPanel, "Introspection", JOptionPane.PLAIN_MESSAGE));
 						
 					}
-					catch (final Exception e)
+					catch (Exception e)
 					{
 						e.printStackTrace();
-						SwingUtilities.invokeLater(new Runnable()
-						{
-							@SuppressWarnings("synthetic-access")
-							public void run()
-							{
-								JOptionPane.showMessageDialog(table, e.getMessage(), "Introspection Failed", JOptionPane.ERROR_MESSAGE);
-							}
-						});
+						SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(table, e.getMessage(), "Introspection Failed", JOptionPane.ERROR_MESSAGE));
 					}
 				}
 	
-				private JScrollPane createSourceTab(String file, final String source)
+				private JScrollPane createSourceTab(String file, String source)
 				{
 					JTextArea area = new JTextArea(source);
 					area.setLineWrap(true);

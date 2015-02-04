@@ -1,5 +1,7 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
+
 /**
  * Command for turning on/off the Sphero stabilization.
  * I have no idea how this command works or if it does something
@@ -40,6 +42,6 @@ public class StabilizationCommand extends CommandMessage
 	@Override
 	protected byte[] getPacketData()
 	{
-		return new byte[] { (byte) ( this.on ? 1 : 0 ) };
+		return new byte[] { (byte) (this.on ? 1 : 0 ) };
 	}
 }

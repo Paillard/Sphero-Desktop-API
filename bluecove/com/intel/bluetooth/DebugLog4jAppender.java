@@ -39,7 +39,7 @@ class DebugLog4jAppender implements LoggerAppenderExt {
 	private Logger logger;
 
 	DebugLog4jAppender() {
-		logger = Logger.getLogger("com.intel.bluetooth");
+        logger = Logger.getLogger("com.intel.bluetooth");
 	}
 
 	/* (non-Javadoc)
@@ -49,10 +49,10 @@ class DebugLog4jAppender implements LoggerAppenderExt {
 	public void appendLog(int level, String message, Throwable throwable) {
 		switch (level) {
 		case DebugLog.DEBUG:
-			this.logger.log(FQCN, Level.DEBUG, message, throwable);
+            this.logger.log(FQCN, Level.DEBUG, message, throwable);
 			break;
 		case DebugLog.ERROR:
-			this.logger.log(FQCN, Level.ERROR, message, throwable);
+            this.logger.log(FQCN, Level.ERROR, message, throwable);
 			break;
 		}
 	}

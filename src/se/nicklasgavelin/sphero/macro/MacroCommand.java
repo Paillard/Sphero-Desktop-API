@@ -97,7 +97,7 @@ public abstract class MacroCommand
 		 * 
 		 * @param value The id for the command
 		 */
-		private MACRO_COMMAND( int value, int length )
+        MACRO_COMMAND(int value, int length)
 		{
 			this.value = value;
 			this.length = length;
@@ -145,9 +145,9 @@ public abstract class MacroCommand
 		public static MACRO_COMMAND valueOf( int value )
 		{
 			MACRO_COMMAND[] mc = MACRO_COMMAND.values();
-			for( int i = 0; i < mc.length; i++ )
-				if( mc[i].getValue() == value )
-					return mc[i];
+            for (MACRO_COMMAND aMc : mc)
+                if (aMc.getValue() == value)
+                    return aMc;
 			return null;
 		}
 	}

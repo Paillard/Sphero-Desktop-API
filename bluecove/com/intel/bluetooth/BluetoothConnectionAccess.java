@@ -39,25 +39,25 @@ import javax.bluetooth.RemoteDevice;
  */
 public interface BluetoothConnectionAccess {
 
-	public BluetoothStack getBluetoothStack();
+	BluetoothStack getBluetoothStack();
 
-	public long getRemoteAddress() throws IOException;
+	long getRemoteAddress() throws IOException;
 
-	public boolean isClosed();
+	boolean isClosed();
 
-	public void markAuthenticated();
+	void markAuthenticated();
 
-	public int getSecurityOpt();
+	int getSecurityOpt();
 
-	public void shutdown() throws IOException;
+	void shutdown() throws IOException;
 
 	/**
 	 * @see javax.bluetooth.RemoteDevice#encrypt(javax.microedition.io.Connection ,
 	 *      boolean)
 	 */
-	public boolean encrypt(long address, boolean on) throws IOException;
+    boolean encrypt(long address, boolean on) throws IOException;
 
-	public RemoteDevice getRemoteDevice();
+	RemoteDevice getRemoteDevice();
 
-	public void setRemoteDevice(RemoteDevice remoteDevice);
+	void setRemoteDevice(RemoteDevice remoteDevice);
 }

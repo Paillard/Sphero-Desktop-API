@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -41,37 +41,36 @@ class ExportedObject
          try {
             Method m = t.getMethod("value");
             value = m.invoke(a).toString();
-         } catch (NoSuchMethodException NSMe) {
-         } catch (InvocationTargetException ITe) {
-         } catch (IllegalAccessException IAe) {}
+         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException NSMe) {
+         }
 
-         ans += "  <annotation name=\""+AbstractConnection.dollar_pattern.matcher(t.getName()).replaceAll(".")+"\" value=\""+value+"\" />\n";
+          ans += "  <annotation name=\""+AbstractConnection.dollar_pattern.matcher(t.getName()).replaceAll(".")+"\" value=\""+value+"\" />\n";
       }
       return ans;
    }
    @SuppressWarnings("unchecked")
    private Map<MethodTuple,Method> getExportedMethods(Class c) throws DBusException
    {
-      if (DBusInterface.class.equals(c)) return new HashMap<MethodTuple,Method>();
-      Map<MethodTuple,Method> m = new HashMap<MethodTuple,Method>();
+      if (DBusInterface.class.equals(c)) return new HashMap<>();
+      Map<MethodTuple,Method> m = new HashMap<>();
       for (Class i: c.getInterfaces())
          if (DBusInterface.class.equals(i)) {
             // add this class's public methods
             if (null != c.getAnnotation(DBusInterfaceName.class)) {
                String name = ((DBusInterfaceName) c.getAnnotation(DBusInterfaceName.class)).value();
-               introspectiondata += " <interface name=\""+name+"\">\n";
+                introspectiondata += " <interface name=\""+name+"\">\n";
                DBusSignal.addInterfaceMap(c.getName(), name);
             } else {
                // don't let people export things which don't have a
                // valid D-Bus interface name
                if (c.getName().equals(c.getSimpleName()))
-                  throw new DBusException(_("DBusInterfaces cannot be declared outside a package"));
+                  throw new DBusException(getResource("DBusInterfaces cannot be declared outside a package"));
                if (c.getName().length() > DBusConnection.MAX_NAME_LENGTH) 
-                  throw new DBusException(_("Introspected interface name exceeds 255 characters. Cannot export objects of type ")+c.getName());
+                  throw new DBusException(getResource("Introspected interface name exceeds 255 characters. Cannot export objects of type ")+c.getName());
                else
-                  introspectiondata += " <interface name=\""+AbstractConnection.dollar_pattern.matcher(c.getName()).replaceAll(".")+"\">\n";
+                   introspectiondata += " <interface name=\""+AbstractConnection.dollar_pattern.matcher(c.getName()).replaceAll(".")+"\">\n";
             }
-            introspectiondata += getAnnotations(c);
+             introspectiondata += getAnnotations(c);
             for (Method meth: c.getDeclaredMethods()) 
                if (Modifier.isPublic(meth.getModifiers())) {
                   String ms = "";
@@ -81,16 +80,16 @@ class ExportedObject
                   else
                      name = meth.getName();
                   if (name.length() > DBusConnection.MAX_NAME_LENGTH) 
-                     throw new DBusException(_("Introspected method name exceeds 255 characters. Cannot export objects with method ")+name);
-                  introspectiondata += "  <method name=\""+name+"\" >\n";
-                  introspectiondata += getAnnotations(meth);
+                     throw new DBusException(getResource("Introspected method name exceeds 255 characters. Cannot export objects with method ")+name);
+                   introspectiondata += "  <method name=\""+name+"\" >\n";
+                   introspectiondata += getAnnotations(meth);
                   for (Class ex: meth.getExceptionTypes())
                      if (DBusExecutionException.class.isAssignableFrom(ex))
-                        introspectiondata +=
+                         introspectiondata +=
                            "   <annotation name=\"org.freedesktop.DBus.Method.Error\" value=\""+AbstractConnection.dollar_pattern.matcher(ex.getName()).replaceAll(".")+"\" />\n";
                   for (Type pt: meth.getGenericParameterTypes())
                      for (String s: Marshalling.getDBusType(pt)) {
-                        introspectiondata += "   <arg type=\""+s+"\" direction=\"in\"/>\n";
+                         introspectiondata += "   <arg type=\""+s+"\" direction=\"in\"/>\n";
                         ms += s;
                      }
                   if (!Void.TYPE.equals(meth.getGenericReturnType())) {
@@ -101,14 +100,14 @@ class ExportedObject
                         for (Type t: ts)
                            if (t != null)
                               for (String s: Marshalling.getDBusType(t))
-                                 introspectiondata += "   <arg type=\""+s+"\" direction=\"out\"/>\n";
+                                  introspectiondata += "   <arg type=\""+s+"\" direction=\"out\"/>\n";
                      } else if (Object[].class.equals(meth.getGenericReturnType())) {
-                        throw new DBusException(_("Return type of Object[] cannot be introspected properly"));
+                        throw new DBusException(getResource("Return type of Object[] cannot be introspected properly"));
                      } else
                         for (String s: Marshalling.getDBusType(meth.getGenericReturnType()))
-                        introspectiondata += "   <arg type=\""+s+"\" direction=\"out\"/>\n";
+                            introspectiondata += "   <arg type=\""+s+"\" direction=\"out\"/>\n";
                   }
-                  introspectiondata += "  </method>\n";
+                   introspectiondata += "  </method>\n";
                   m.put(new MethodTuple(name, ms), meth);
                }
             for (Class sig: c.getDeclaredClasses()) 
@@ -120,18 +119,18 @@ class ExportedObject
                   } else
                      name = sig.getSimpleName();
                   if (name.length() > DBusConnection.MAX_NAME_LENGTH) 
-                     throw new DBusException(_("Introspected signal name exceeds 255 characters. Cannot export objects with signals of type ")+name);
-                  introspectiondata += "  <signal name=\""+name+"\">\n";
+                     throw new DBusException(getResource("Introspected signal name exceeds 255 characters. Cannot export objects with signals of type ")+name);
+                   introspectiondata += "  <signal name=\""+name+"\">\n";
                   Constructor con = sig.getConstructors()[0];
                   Type[] ts = con.getGenericParameterTypes();
                   for (int j = 1; j < ts.length; j++)
                      for (String s: Marshalling.getDBusType(ts[j]))
-                        introspectiondata += "   <arg type=\""+s+"\" direction=\"out\" />\n";
-                  introspectiondata += getAnnotations(sig);
-                  introspectiondata += "  </signal>\n";
+                         introspectiondata += "   <arg type=\""+s+"\" direction=\"out\" />\n";
+                   introspectiondata += getAnnotations(sig);
+                   introspectiondata += "  </signal>\n";
 
                }
-            introspectiondata += " </interface>\n";
+             introspectiondata += " </interface>\n";
          } else {
             // recurse
             m.putAll(getExportedMethods(i));
@@ -144,18 +143,18 @@ class ExportedObject
    public ExportedObject(DBusInterface object, boolean weakreferences) throws DBusException
    {
       if (weakreferences)
-         this.object = new WeakReference<DBusInterface>(object);
+         this.object = new WeakReference<>(object);
       else
-         this.object = new StrongReference<DBusInterface>(object);
-      introspectiondata = "";
-      methods = getExportedMethods(object.getClass());
-      introspectiondata += 
+         this.object = new StrongReference<>(object);
+       introspectiondata = "";
+       methods = getExportedMethods(object.getClass());
+       introspectiondata +=
          " <interface name=\"org.freedesktop.DBus.Introspectable\">\n"+
          "  <method name=\"Introspect\">\n"+
          "   <arg type=\"s\" direction=\"out\"/>\n"+
          "  </method>\n"+
          " </interface>\n";
-      introspectiondata += 
+       introspectiondata +=
          " <interface name=\"org.freedesktop.DBus.Peer\">\n"+
          "  <method name=\"Ping\">\n"+
          "  </method>\n"+

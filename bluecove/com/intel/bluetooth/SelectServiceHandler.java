@@ -130,14 +130,14 @@ public class SelectServiceHandler implements DiscoveryListener {
 		}
 
 		RemoteDevice[] devs = agent.retrieveDevices(DiscoveryAgent.PREKNOWN);
-		for (int i = 0; (devs != null) && (i < devs.length); i++) {
+		for (int i = 0; devs != null && i < devs.length; i++) {
 			ServiceRecord sr = findServiceOnDevice(uuid, devs[i]);
 			if (sr != null) {
 				return sr.getConnectionURL(security, master);
 			}
 		}
 		devs = agent.retrieveDevices(DiscoveryAgent.CACHED);
-		for (int i = 0; (devs != null) && (i < devs.length); i++) {
+		for (int i = 0; devs != null && i < devs.length; i++) {
 			ServiceRecord sr = findServiceOnDevice(uuid, devs[i]);
 			if (sr != null) {
 				return sr.getConnectionURL(security, master);
@@ -152,17 +152,17 @@ public class SelectServiceHandler implements DiscoveryListener {
 			}
 			while (!inquiryCompleted) {
 				try {
-					inquiryCompletedEvent.wait();
+                    inquiryCompletedEvent.wait();
 				} catch (InterruptedException e) {
 					return null;
 				}
 			}
-			agent.cancelInquiry(this);
+            agent.cancelInquiry(this);
 		}
 
-		if ((servRecordDiscovered == null) && (!t.processedAll())) {
+		if (this.servRecordDiscovered == null && !t.processedAll()) {
 			synchronized (serviceSearchDeviceQueue) {
-				serviceSearchDeviceQueue.notifyAll();
+                serviceSearchDeviceQueue.notifyAll();
 			}
 			try {
 				t.join();
@@ -181,45 +181,45 @@ public class SelectServiceHandler implements DiscoveryListener {
 
 	private class ParallelSearchServicesThread extends Thread {
 
-		private boolean stoped = false;
+		private boolean stoped;
 
-		private int processedNext = 0;
+		private int processedNext;
 
-		private int processedSize = 0;
+		private int processedSize;
 
 		private UUID uuid;
 
 		ParallelSearchServicesThread(UUID uuid) {
-			super("SelectServiceThread-" + nextThreadNum());
+			super("SelectServiceThread-" + SelectServiceHandler.nextThreadNum());
 			this.uuid = uuid;
 		}
 
 		boolean processedAll() {
-			return (processedNext == serviceSearchDeviceQueue.size());
+			return this.processedNext == SelectServiceHandler.this.serviceSearchDeviceQueue.size();
 		}
 
 		public void interrupt() {
-			stoped = true;
+            stoped = true;
 			synchronized (serviceSearchDeviceQueue) {
-				serviceSearchDeviceQueue.notifyAll();
+                serviceSearchDeviceQueue.notifyAll();
 			}
 			super.interrupt();
 		}
 
 		public void run() {
-			mainLoop: while ((!stoped) && (servRecordDiscovered == null)) {
+			mainLoop: while (!this.stoped && SelectServiceHandler.this.servRecordDiscovered == null) {
 				synchronized (serviceSearchDeviceQueue) {
-					if ((inquiryCompleted) && (processedSize == serviceSearchDeviceQueue.size())) {
+					if (SelectServiceHandler.this.inquiryCompleted && this.processedSize == SelectServiceHandler.this.serviceSearchDeviceQueue.size()) {
 						return;
 					}
 					if (processedSize == serviceSearchDeviceQueue.size()) {
 						try {
-							serviceSearchDeviceQueue.wait();
+                            serviceSearchDeviceQueue.wait();
 						} catch (InterruptedException e) {
 							return;
 						}
 					}
-					processedSize = serviceSearchDeviceQueue.size();
+                    processedSize = serviceSearchDeviceQueue.size();
 				}
 				for (int i = processedNext; i < processedSize; i++) {
 					RemoteDevice btDevice = (RemoteDevice) serviceSearchDeviceQueue.elementAt(i);
@@ -227,7 +227,7 @@ public class SelectServiceHandler implements DiscoveryListener {
 						break mainLoop;
 					}
 				}
-				processedNext = processedSize + 1;
+                processedNext = processedSize + 1;
 			}
 		}
 
@@ -237,19 +237,19 @@ public class SelectServiceHandler implements DiscoveryListener {
 		if (devicesProcessed.containsKey(device)) {
 			return null;
 		}
-		devicesProcessed.put(device, device);
+        devicesProcessed.put(device, device);
 		DebugLog.debug("searchServices on ", device);
 		synchronized (serviceSearchCompletedEvent) {
 			try {
-				serviceSearchCompleted = false;
-				agent.searchServices(null, new UUID[] { uuid }, device, this);
+                serviceSearchCompleted = false;
+                agent.searchServices(null, new UUID[]{uuid}, device, this);
 			} catch (BluetoothStateException e) {
 				DebugLog.error("searchServices", e);
 				return null;
 			}
 			while (!serviceSearchCompleted) {
 				try {
-					serviceSearchCompletedEvent.wait();
+                    serviceSearchCompletedEvent.wait();
 				} catch (InterruptedException e) {
 					return null;
 				}
@@ -258,40 +258,40 @@ public class SelectServiceHandler implements DiscoveryListener {
 		return servRecordDiscovered;
 	}
 
-	public void deviceDiscovered(final RemoteDevice btDevice, DeviceClass cod) {
+	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
 		if (devicesProcessed.containsKey(btDevice)) {
 			return;
 		}
 		synchronized (serviceSearchDeviceQueue) {
-			serviceSearchDeviceQueue.addElement(btDevice);
-			serviceSearchDeviceQueue.notifyAll();
+            serviceSearchDeviceQueue.addElement(btDevice);
+            serviceSearchDeviceQueue.notifyAll();
 		}
 	}
 
 	public void inquiryCompleted(int discType) {
 		synchronized (inquiryCompletedEvent) {
-			inquiryCompleted = true;
-			inquiryCompletedEvent.notifyAll();
+            inquiryCompleted = true;
+            inquiryCompletedEvent.notifyAll();
 		}
 	}
 
 	public void serviceSearchCompleted(int transID, int respCode) {
 		synchronized (serviceSearchCompletedEvent) {
-			serviceSearchCompleted = true;
-			serviceSearchCompletedEvent.notifyAll();
+            serviceSearchCompleted = true;
+            serviceSearchCompletedEvent.notifyAll();
 		}
 	}
 
 	public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
-		if ((servRecord.length > 0) && (servRecordDiscovered == null)) {
-			servRecordDiscovered = servRecord[0];
+		if (servRecord.length > 0 && this.servRecordDiscovered == null) {
+            servRecordDiscovered = servRecord[0];
 			synchronized (serviceSearchCompletedEvent) {
-				serviceSearchCompleted = true;
-				serviceSearchCompletedEvent.notifyAll();
+                serviceSearchCompleted = true;
+                serviceSearchCompletedEvent.notifyAll();
 			}
 			synchronized (inquiryCompletedEvent) {
-				inquiryCompleted = true;
-				inquiryCompletedEvent.notifyAll();
+                inquiryCompleted = true;
+                inquiryCompletedEvent.notifyAll();
 			}
 		}
 	}

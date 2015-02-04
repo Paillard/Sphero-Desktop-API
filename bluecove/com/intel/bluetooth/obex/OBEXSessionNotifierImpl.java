@@ -59,7 +59,7 @@ public class OBEXSessionNotifierImpl implements SessionNotifier, BluetoothConnec
 	private static final Vector fqcnSet = new Vector();
 
 	static {
-		fqcnSet.addElement(FQCN);
+        fqcnSet.addElement(FQCN);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class OBEXSessionNotifierImpl implements SessionNotifier, BluetoothConnec
 	 *                if called from outside of BlueCove internal code.
 	 */
 	public OBEXSessionNotifierImpl(StreamConnectionNotifier notifier, OBEXConnectionParams obexConnectionParams)
-			throws IOException, Error {
+			throws Error {
 		Utils.isLegalAPICall(fqcnSet);
 		this.notifier = notifier;
 		this.obexConnectionParams = obexConnectionParams;
@@ -87,14 +87,14 @@ public class OBEXSessionNotifierImpl implements SessionNotifier, BluetoothConnec
 			throw new NullPointerException("handler is null");
 		}
 		OBEXServerSessionImpl sessionImpl = new OBEXServerSessionImpl(notifier.acceptAndOpen(), handler, auth,
-				obexConnectionParams);
+                obexConnectionParams);
 		sessionImpl.startSessionHandlerThread();
 		return sessionImpl;
 	}
 
 	public void close() throws IOException {
 		StreamConnectionNotifier n = this.notifier;
-		this.notifier = null;
+        this.notifier = null;
 		if (n != null) {
 			n.close();
 		}

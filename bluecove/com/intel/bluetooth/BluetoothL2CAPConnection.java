@@ -51,7 +51,7 @@ abstract class BluetoothL2CAPConnection implements L2CAPConnection, BluetoothCon
 	protected BluetoothL2CAPConnection(BluetoothStack bluetoothStack, long handle) {
 		this.bluetoothStack = bluetoothStack;
 		this.handle = handle;
-		this.isClosed = false;
+        this.isClosed = false;
 	}
 
 	/*
@@ -129,7 +129,7 @@ abstract class BluetoothL2CAPConnection implements L2CAPConnection, BluetoothCon
 		if (data == null) {
 			throw new NullPointerException("data is null");
 		}
-		bluetoothStack.l2Send(handle, data, transmitMTU);
+        bluetoothStack.l2Send(handle, data, transmitMTU);
 	}
 
 	abstract void closeConnectionHandle(long handle) throws IOException;
@@ -144,8 +144,8 @@ abstract class BluetoothL2CAPConnection implements L2CAPConnection, BluetoothCon
 			return;
 		}
 
-		isClosed = true;
-		shutdown();
+        isClosed = true;
+        shutdown();
 	}
 
 	/*
@@ -160,17 +160,17 @@ abstract class BluetoothL2CAPConnection implements L2CAPConnection, BluetoothCon
 			long synchronizedHandle;
 			synchronized (this) {
 				synchronizedHandle = handle;
-				handle = 0;
+                handle = 0;
 			}
 			if (synchronizedHandle != 0) {
-				closeConnectionHandle(synchronizedHandle);
+                closeConnectionHandle(synchronizedHandle);
 			}
 		}
 	}
 
 	protected void finalize() {
 		try {
-			close();
+            close();
 		} catch (IOException e) {
 		}
 	}
@@ -191,7 +191,7 @@ abstract class BluetoothL2CAPConnection implements L2CAPConnection, BluetoothCon
 	 */
 	public void markAuthenticated() {
 		if (this.securityOpt == ServiceRecord.NOAUTHENTICATE_NOENCRYPT) {
-			this.securityOpt = ServiceRecord.AUTHENTICATE_NOENCRYPT;
+            this.securityOpt = ServiceRecord.AUTHENTICATE_NOENCRYPT;
 		}
 	}
 
@@ -202,7 +202,7 @@ abstract class BluetoothL2CAPConnection implements L2CAPConnection, BluetoothCon
 	 */
 	public int getSecurityOpt() {
 		try {
-			this.securityOpt = bluetoothStack.l2GetSecurityOpt(this.handle, this.securityOpt);
+            this.securityOpt = bluetoothStack.l2GetSecurityOpt(this.handle, this.securityOpt);
 		} catch (IOException notChanged) {
 		}
 		return this.securityOpt;
@@ -221,9 +221,9 @@ abstract class BluetoothL2CAPConnection implements L2CAPConnection, BluetoothCon
 		boolean changed = bluetoothStack.l2Encrypt(address, this.handle, on);
 		if (changed) {
 			if (on) {
-				this.securityOpt = ServiceRecord.AUTHENTICATE_ENCRYPT;
+                this.securityOpt = ServiceRecord.AUTHENTICATE_ENCRYPT;
 			} else {
-				this.securityOpt = ServiceRecord.AUTHENTICATE_NOENCRYPT;
+                this.securityOpt = ServiceRecord.AUTHENTICATE_NOENCRYPT;
 			}
 		}
 		return changed;

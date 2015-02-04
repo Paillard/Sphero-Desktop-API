@@ -56,20 +56,20 @@ public class Connection implements CreateConnection, ClientSession, SessionNotif
 	private javax.microedition.io.Connection impl;
 
 	public Connection() {
-		impl = null;
+        impl = null;
 	}
 
 	public void setParameters(String spec, int access, boolean timeout) throws IOException {
-		impl = MicroeditionConnector.open(BluetoothConsts.PROTOCOL_SCHEME_TCP_OBEX + ":" + spec, access, timeout);
+        impl = MicroeditionConnector.open(BluetoothConsts.PROTOCOL_SCHEME_TCP_OBEX + ":" + spec, access, timeout);
 	}
 
 	public javax.microedition.io.Connection setParameters2(String spec, int access, boolean timeout) throws IOException {
-		setParameters(spec, access, timeout);
+        setParameters(spec, access, timeout);
 		return this;
 	}
 
 	public void close() throws IOException {
-		impl.close();
+        impl.close();
 	}
 
 	public HeaderSet connect(HeaderSet headers) throws IOException {

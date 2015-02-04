@@ -10,7 +10,6 @@
 */
 package org.freedesktop.dbus.test;
 
-import org.freedesktop.DBus.Method.NoReply;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.exceptions.DBusException;
@@ -19,22 +18,22 @@ import java.util.Map;
 
 public interface Profiler extends DBusInterface
 {
-   public class ProfileSignal extends DBusSignal
+   class ProfileSignal extends DBusSignal
    {
       public ProfileSignal(String path) throws DBusException
       {
          super(path);
       }
    }
-   public void array(int[] v);
-   public void stringarray(String[] v);
-   public void map(Map<String,String> m);
-   public void list(List<String> l);
-   public void bytes(byte[] b);
-   public void struct(ProfileStruct ps);
-   public void string(String s);
-	public void NoReply();
-	public void Pong();
+   void array(int[] v);
+   void stringarray(String[] v);
+   void map(Map<String, String> m);
+   void list(List<String> l);
+   void bytes(byte[] b);
+   void struct(ProfileStruct ps);
+   void string(String s);
+	void NoReply();
+	void Pong();
 }
 
 

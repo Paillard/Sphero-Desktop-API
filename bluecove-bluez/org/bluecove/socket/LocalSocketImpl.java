@@ -36,21 +36,21 @@ import java.net.UnknownServiceException;
 /**
  * Socket implementation used for Unix domain sockets on Linux 
  */
-class LocalSocketImpl extends java.net.SocketImpl {
+class LocalSocketImpl extends SocketImpl {
 
     public interface LocalSocketOptions {
         
-        public final static int SO_LINGER = 1; 
+        int SO_LINGER = 1;
         
-        public final static int SO_PASSCRED = 2;
+        int SO_PASSCRED = 2;
         
-        public final static int SO_SNDBUF = 3;
+        int SO_SNDBUF = 3;
         
-        public final static int SO_RCVBUF = 4;
+        int SO_RCVBUF = 4;
         
-        public final static int SO_RCVTIMEO = 5;
+        int SO_RCVTIMEO = 5;
 
-        public final static int SO_SNDTIMEO  = 6;
+        int SO_SNDTIMEO  = 6;
         
     }
     
@@ -111,11 +111,11 @@ class LocalSocketImpl extends java.net.SocketImpl {
     @Override
     protected void close() throws IOException {
     	if (!this.closed) {
-    		this.closed = true;
-        	nativeClose(socket);
+            this.closed = true;
+            nativeClose(socket);
     	}
-    	this.bound = false;
-    	this.endpoint = null;
+        this.bound = false;
+        this.endpoint = null;
     }
     
     void unlink(String path) {
@@ -148,7 +148,7 @@ class LocalSocketImpl extends java.net.SocketImpl {
     
     @Override
     protected void create(boolean stream) throws IOException {
-    	socket = nativeCreate(stream);
+        socket = nativeCreate(stream);
     }
 
     @Override
@@ -184,15 +184,15 @@ class LocalSocketImpl extends java.net.SocketImpl {
 
     public Object getOption(int optID) throws SocketException {
         int rc = nativeGetOption(socket, optID);
-        return Integer.valueOf(rc);
+        return rc;
     }
 
     public void setOption(int optID, Object value) throws SocketException {
         int nativeValue;
         if (value instanceof Boolean) {
-            nativeValue = ((Boolean) value) ? 1 : -1;
+            nativeValue = (Boolean) value ? 1 : -1;
         } else if (value instanceof Integer) {
-            nativeValue = ((Integer) value).intValue();
+            nativeValue = (Integer) value;
         } else {
             throw new IllegalArgumentException();
         }

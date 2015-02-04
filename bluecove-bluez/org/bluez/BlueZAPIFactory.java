@@ -27,6 +27,7 @@ package org.bluez;
 import org.bluez.v3.BlueZAPIV3;
 import org.bluez.v4.BlueZAPIV4;
 import org.freedesktop.DBus;
+import org.freedesktop.DBus.Error.UnknownMethod;
 import org.freedesktop.dbus.DBusConnection;
 import org.freedesktop.dbus.exceptions.DBusException;
 
@@ -57,7 +58,7 @@ public abstract class BlueZAPIFactory {
         try {
             dbusManagerV3.InterfaceVersion();
             return new BlueZAPIV3(dbusConn, dbusManagerV3);
-        } catch (DBus.Error.UnknownMethod ok) {
+        } catch (UnknownMethod ok) {
             DebugLog.debug("Switch to bluez D-Bus for version 4");
             org.bluez.v4.Manager dbusManagerV4 = dbusConn.getRemoteObject("org.bluez", "/", org.bluez.v4.Manager.class);
             return new BlueZAPIV4(dbusConn, dbusManagerV4);

@@ -24,7 +24,6 @@
 package com.intel.bluetooth;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -33,16 +32,14 @@ import java.util.Vector;
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DataElement;
 import javax.bluetooth.DeviceClass;
-import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.DiscoveryListener;
 import javax.bluetooth.RemoteDevice;
-import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.ServiceRegistrationException;
 import javax.bluetooth.UUID;
 
 class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, SearchServicesRunnable {
 
-	private boolean initialized = false;
+	private boolean initialized;
 
 	private Vector deviceDiscoveryListeners = new Vector/* <DiscoveryListener> */();
 	
@@ -50,9 +47,9 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 
 	private Hashtable deviceDiscoveryListenerReportedDevices = new Hashtable();
 
-	private final static int ATTR_RETRIEVABLE_MAX = 0xFFFF;
+	private static final int ATTR_RETRIEVABLE_MAX = 0xFFFF;
 
-	private final static int RECEIVE_MTU_MAX = 1024;
+	private static final int RECEIVE_MTU_MAX = 1024;
 
 	// FIXME
 	private String getBTWVersionInfo()
@@ -107,8 +104,8 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 	 * 
 	 * @see com.intel.bluetooth.BluetoothStack#requireNativeLibraries()
 	 */
-	public LibraryInformation[] requireNativeLibraries() {
-		return LibraryInformation.library(BlueCoveImpl.NATIVE_LIB_TOSHIBA);
+	public BluetoothStack.LibraryInformation[] requireNativeLibraries() {
+		return BluetoothStack.LibraryInformation.library(BlueCoveImpl.NATIVE_LIB_TOSHIBA);
 	}
 
 	public native int getLibraryVersion();
@@ -125,13 +122,13 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 		if (!initializeImpl()) {
 			throw new BluetoothStateException("TOSHIBA BluetoothStack not found");
 		}
-		initialized = true;
+        initialized = true;
 	}
 
 	public void destroy() {
 		if (initialized) {
-			destroyImpl();
-			initialized = false;
+            destroyImpl();
+            initialized = false;
 			DebugLog.debug("TOSHIBA destroyed");
 		}
 	}
@@ -329,11 +326,11 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 			DiscoveryListener listener) throws BluetoothStateException;
 
 	public boolean startInquiry(int accessCode, DiscoveryListener listener) throws BluetoothStateException {
-		deviceDiscoveryListeners.addElement(listener);
+        deviceDiscoveryListeners.addElement(listener);
 		if (BlueCoveImpl.getConfigProperty(BlueCoveConfigProperties.PROPERTY_INQUIRY_REPORT_ASAP, false)) {
-			deviceDiscoveryListenerFoundDevices.put(listener, new Hashtable());
+            deviceDiscoveryListenerFoundDevices.put(listener, new Hashtable());
 		}
-		deviceDiscoveryListenerReportedDevices.put(listener, new Vector());
+        deviceDiscoveryListenerReportedDevices.put(listener, new Vector());
 		return DeviceInquiryThread.startInquiry(this, this, accessCode, listener);
 	}
 
@@ -353,7 +350,7 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 						}
 						reported.addElement(remoteDevice);
 						Integer deviceClassInt = (Integer) previouslyFound.get(remoteDevice);
-						DeviceClass deviceClass = new DeviceClass(deviceClassInt.intValue());
+						DeviceClass deviceClass = new DeviceClass(deviceClassInt);
 						listener.deviceDiscovered(remoteDevice, deviceClass);
 						// If cancelInquiry has been called
 						if (!deviceDiscoveryListeners.contains(listener)) {
@@ -364,9 +361,9 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 			}
 			return discType;
 		} finally {
-			deviceDiscoveryListeners.removeElement(listener);
-			deviceDiscoveryListenerFoundDevices.remove(listener);
-			deviceDiscoveryListenerReportedDevices.remove(listener);
+            deviceDiscoveryListeners.removeElement(listener);
+            deviceDiscoveryListenerFoundDevices.remove(listener);
+            deviceDiscoveryListenerReportedDevices.remove(listener);
 		}
 	}
 
@@ -380,7 +377,7 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 		// Update name if name retrieved
 		RemoteDevice remoteDevice = RemoteDeviceHelper.createRemoteDevice(this, deviceAddr, deviceName, paired);
 		Vector reported = (Vector) deviceDiscoveryListenerReportedDevices.get(listener);
-		if (reported == null || (reported.contains(remoteDevice))) {
+		if (reported == null || reported.contains(remoteDevice)) {
 			return;
 		}
 		// See -Dbluecove.inquiry.report_asap=false
@@ -388,9 +385,9 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 		if (previouslyFound != null) {
 			Integer deviceClassInt = (Integer) previouslyFound.get(remoteDevice);
 			if (deviceClassInt == null) {
-				previouslyFound.put(remoteDevice, new Integer(deviceClass));
+				previouslyFound.put(remoteDevice, deviceClass);
 			} else if (deviceClass != 0) {
-				previouslyFound.put(remoteDevice, new Integer(deviceClass));
+				previouslyFound.put(remoteDevice, deviceClass);
 			}
 		} else {
 			DeviceClass cod = new DeviceClass(deviceClass);
@@ -404,12 +401,9 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 	private native boolean deviceInquiryCancelImpl();
 
 	public boolean cancelInquiry(DiscoveryListener listener) {
-		// no further deviceDiscovered() events will occur for this inquiry
-		if (!deviceDiscoveryListeners.removeElement(listener)) {
-			return false;
-		}
-		return deviceInquiryCancelImpl();
-	}
+        // no further deviceDiscovered() events will occur for this inquiry
+        return deviceDiscoveryListeners.removeElement(listener) && deviceInquiryCancelImpl();
+    }
 
 	/**
 	 * get device name while discovery running. Device may not report its name first time while discovering.
@@ -445,36 +439,35 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 		catch (Exception e) {
 		}
 
-		for (int i = 0; i < attrIDs.length; i++) {
-			int id = attrIDs[i];
-			try {
-				if (BluetoothStackWIDCOMMSDPInputStream.debug) {
-					DebugLog.debug("decode attribute " + id + " Ox" + Integer.toHexString(id));
-				}
-				DataElement element = btis.readElement();
+        for (int id : attrIDs) {
+            try {
+                if (BluetoothStackWIDCOMMSDPInputStream.debug) {
+                    DebugLog.debug("decode attribute " + id + " Ox" + Integer.toHexString(id));
+                }
+                DataElement element = btis.readElement();
 
-				// Do special case conversion for only one element in the
-				// list.
-				if (id == BluetoothConsts.ProtocolDescriptorList) {
-					Enumeration protocolsSeqEnum = (Enumeration) element.getValue();
-					if (protocolsSeqEnum.hasMoreElements()) {
-						DataElement protocolElement = (DataElement) protocolsSeqEnum.nextElement();
-						if (protocolElement.getDataType() != DataElement.DATSEQ) {
-							DataElement newMainSeq = new DataElement(DataElement.DATSEQ);
-							newMainSeq.addElement(element);
-							element = newMainSeq;
-						}
-					}
-				}
+                // Do special case conversion for only one element in the
+                // list.
+                if (id == BluetoothConsts.ProtocolDescriptorList) {
+                    Enumeration protocolsSeqEnum = (Enumeration) element.getValue();
+                    if (protocolsSeqEnum.hasMoreElements()) {
+                        DataElement protocolElement = (DataElement) protocolsSeqEnum.nextElement();
+                        if (protocolElement.getDataType() != DataElement.DATSEQ) {
+                            DataElement newMainSeq = new DataElement(DataElement.DATSEQ);
+                            newMainSeq.addElement(element);
+                            element = newMainSeq;
+                        }
+                    }
+                }
 
-				serviceRecord.populateAttributeValue(id, element);
-				anyRetrived = true;
-			} catch (Throwable e) {
-				if (BluetoothStackWIDCOMMSDPInputStream.debug) {
-					DebugLog.error("error populate attribute " + id + " Ox" + Integer.toHexString(id), e);
-				}
-			}
-		}
+                serviceRecord.populateAttributeValue(id, element);
+                anyRetrived = true;
+            } catch (Throwable e) {
+                if (BluetoothStackWIDCOMMSDPInputStream.debug) {
+                    DebugLog.error("error populate attribute " + id + " Ox" + Integer.toHexString(id), e);
+                }
+            }
+        }
 		return anyRetrived;
 	}
 
@@ -505,12 +498,12 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 			handles = searchServicesImpl(startedNotify, cid, uuidBytes);
 		}
 		catch (Exception e) {
-			disconnectSDPImpl(cid);
+            disconnectSDPImpl(cid);
 			return DiscoveryListener.SERVICE_SEARCH_ERROR;
 		}
 
 		if (handles.length <= 0) {
-			disconnectSDPImpl(cid);
+            disconnectSDPImpl(cid);
 			return DiscoveryListener.SERVICE_SEARCH_NO_RECORDS;
 		}
 
@@ -523,17 +516,17 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 				bytes = populateWorkerImpl(cid, handles[i], attrSet);
 			}
 			catch (Exception e) {
-				disconnectSDPImpl(cid);
+                disconnectSDPImpl(cid);
 				return DiscoveryListener.SERVICE_SEARCH_ERROR;
 			}
 			if (bytes != null) {
-				setAttributes(records[i], attrSet, bytes);
+                setAttributes(records[i], attrSet, bytes);
 			}
 		}
 
 		listener.servicesDiscovered(startedNotify.getTransID(), records);
 
-		disconnectSDPImpl(cid);
+        disconnectSDPImpl(cid);
 
 		return DiscoveryListener.SERVICE_SEARCH_COMPLETED;
 	}
@@ -568,7 +561,7 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 			bytes = populateWorkerImpl(cid, serviceRecord.getHandle(), attrIDs);
 		}
 		catch (Exception e) {
-			disconnectSDPImpl(cid);
+            disconnectSDPImpl(cid);
 			return false;
 		}
 
@@ -580,7 +573,7 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 
 		ret = setAttributes(serviceRecord, attrIDs, bytes);
 
-		disconnectSDPImpl(cid);
+        disconnectSDPImpl(cid);
 
 		return ret;
 	}

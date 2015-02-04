@@ -59,7 +59,7 @@ public class Connection extends BluetoothConnectionAccessAdapter implements Crea
 	javax.microedition.io.Connection impl;
 
 	public Connection() {
-		impl = null;
+        impl = null;
 	}
 
 	/*
@@ -72,16 +72,16 @@ public class Connection extends BluetoothConnectionAccessAdapter implements Crea
 	}
 
 	public void setParameters(String spec, int access, boolean timeout) throws IOException {
-		impl = MicroeditionConnector.open(BluetoothConsts.PROTOCOL_SCHEME_RFCOMM + ":" + spec, access, timeout);
+        impl = MicroeditionConnector.open(BluetoothConsts.PROTOCOL_SCHEME_RFCOMM + ":" + spec, access, timeout);
 	}
 
 	public javax.microedition.io.Connection setParameters2(String spec, int access, boolean timeout) throws IOException {
-		setParameters(spec, access, timeout);
+        setParameters(spec, access, timeout);
 		return this;
 	}
 
 	public void close() throws IOException {
-		impl.close();
+        impl.close();
 	}
 
 	public DataInputStream openDataInputStream() throws IOException {

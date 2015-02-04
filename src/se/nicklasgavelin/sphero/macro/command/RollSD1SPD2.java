@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 import se.nicklasgavelin.util.Value;
 
@@ -25,7 +26,7 @@ public class RollSD1SPD2 extends MacroCommand
 	public RollSD1SPD2( int _heading )
 	{
 		super( MACRO_COMMAND.MAC_ROLL_SPD2_SD1 );
-		this.setHeading( _heading );
+        this.setHeading( _heading );
 	}
 
 	/**
@@ -40,7 +41,7 @@ public class RollSD1SPD2 extends MacroCommand
 
 	public void setHeading( int _heading )
 	{
-		this.heading = Value.clamp( _heading, MIN_HEADING, MAX_HEADING );
+        this.heading = Value.clamp( _heading, MIN_HEADING, MAX_HEADING);
 		// if ( (_heading.intValue() >= 0) && (_heading.intValue() <= 359) )
 		// this.heading = _heading;
 	}
@@ -48,10 +49,10 @@ public class RollSD1SPD2 extends MacroCommand
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		ByteArrayBuffer bytes = new ByteArrayBuffer( getLength() );
-		bytes.append( getCommandID() );
-		bytes.append( this.heading >> 8 );
-		bytes.append( this.heading & 0xFF );
+		ByteArrayBuffer bytes = new ByteArrayBuffer(getLength() );
+		bytes.append(getCommandID() );
+		bytes.append(this.heading >> 8 );
+		bytes.append(this.heading & 0xFF );
 		return bytes.toByteArray();
 	}
 }

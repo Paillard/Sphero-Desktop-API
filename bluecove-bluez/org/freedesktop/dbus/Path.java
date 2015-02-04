@@ -27,7 +27,7 @@ public class Path implements Comparable<Path>
    }
    public boolean equals(Object other)
    {
-      return (other instanceof Path) && path.equals(((Path) other).path);
+      return other instanceof Path && path.equals(((Path) other).path);
    }
    public int hashCode()
    {

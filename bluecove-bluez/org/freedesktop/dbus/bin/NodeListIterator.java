@@ -22,7 +22,7 @@ class NodeListIterator implements Iterator<Node>
    NodeListIterator(NodeList nl)
    {
       this.nl = nl;
-      i = 0;
+       i = 0;
    }
    public boolean hasNext()
    {
@@ -31,8 +31,8 @@ class NodeListIterator implements Iterator<Node>
    public Node next()
    {
       Node n = nl.item(i);
-      i++;      
+       i++;
       return n;
    }
-   public void remove() {};
+   public void remove() {}
 }

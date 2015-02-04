@@ -70,7 +70,7 @@ public class HTMLForm
       this.target = target;
       this.submitlabel = submitlabel;
       this.tableclass = tableclass;
-      fields = new Vector();
+       fields = new Vector();
    }
 
    /**
@@ -80,7 +80,7 @@ public class HTMLForm
     */
    public void addField(Field field)
    {
-      fields.add(field);
+       fields.add(field);
    }
 
    /**
@@ -89,7 +89,7 @@ public class HTMLForm
     */
    public void setGET(boolean enable)
    {
-      post = !enable;
+       post = !enable;
    }
    
    /**
@@ -100,11 +100,11 @@ public class HTMLForm
    {
       try {
          cgi.out("<form action='"+CGITools.escapeChar(target,'"')+"' method='"+
-               (post?"post":"get")+"'>");
+               (post ?"post":"get")+"'>");
          if (null == tableclass)
             cgi.out("<table>");
          else
-            cgi.out("<table class='"+tableclass+"'>");
+            cgi.out("<table class='"+ tableclass +"'>");
          
          Iterator i = fields.iterator();
          while (i.hasNext()) {

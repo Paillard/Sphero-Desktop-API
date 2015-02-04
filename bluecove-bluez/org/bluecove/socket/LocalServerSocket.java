@@ -24,19 +24,20 @@
  */
 package org.bluecove.socket;
 
+import org.bluecove.socket.LocalSocketImpl.LocalSocketOptions;
+
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
-
-import org.bluecove.socket.LocalSocketImpl.LocalSocketOptions;
 
 /**
  * Unix domain server socket on Linux.
  * 
  * Inheritance from java.net.ServerSocket is mainly for documentation consistency. 
  */
-public class LocalServerSocket extends java.net.ServerSocket {
+public class LocalServerSocket extends ServerSocket {
     
     /**
      * The implementation of this Socket.
@@ -44,7 +45,6 @@ public class LocalServerSocket extends java.net.ServerSocket {
     private LocalSocketImpl impl;
     
     public LocalServerSocket() throws IOException {
-        super();
         impl = new LocalSocketImpl();
         impl.create(true);
     }
@@ -79,9 +79,9 @@ public class LocalServerSocket extends java.net.ServerSocket {
 	
     public void close() throws IOException {
         SocketAddress endpoint = getLocalSocketAddress();
-		impl.close();
-		if ((endpoint != null) && !((LocalSocketAddress)endpoint).isAbstractNamespace()) {
-		    impl.unlink(((LocalSocketAddress)endpoint).getName());
+        impl.close();
+		if (endpoint != null && !((LocalSocketAddress)endpoint).isAbstractNamespace()) {
+            impl.unlink(((LocalSocketAddress) endpoint).getName());
 		}
 	}
 	
@@ -115,7 +115,7 @@ public class LocalServerSocket extends java.net.ServerSocket {
         if (isClosed()) {
             throw new SocketException("Socket is already closed");
         }
-        impl.setOption(LocalSocketOptions.SO_PASSCRED, Integer.valueOf((on?1:0)));
+        impl.setOption(LocalSocketOptions.SO_PASSCRED, Integer.valueOf(on ? 1 : 0));
     }
     
     public boolean getReceiveCredentials() throws SocketException {
@@ -123,10 +123,6 @@ public class LocalServerSocket extends java.net.ServerSocket {
             throw new SocketException("Socket is already closed");
         }
         Object value = impl.getOption(LocalSocketOptions.SO_PASSCRED);
-        if (value instanceof Integer) {
-            return (((Integer) value).intValue() > 0);
-        } else {
-            return false;
-        }
+        return value instanceof Integer && ((Integer) value).intValue() > 0;
     }
 }

@@ -132,7 +132,8 @@ public class DeviceClass {
 	 * 
 	 * @deprecated Use ((Object)deviceClass).toString() if you want your application to run in MDIP profile
 	 */
-	public String toString() {
+	@Deprecated
+    public String toString() {
 		return BluetoothConsts.toString(this);
 	}
 }

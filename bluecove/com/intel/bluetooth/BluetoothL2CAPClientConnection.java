@@ -38,7 +38,7 @@ class BluetoothL2CAPClientConnection extends BluetoothL2CAPConnection {
             this.securityOpt = bluetoothStack.l2GetSecurityOpt(this.handle, Utils.securityOpt(params.authenticate, params.encrypt));
             this.transmitMTU = this.getTransmitMTU();
             // JAR-82 If the byte array is larger than the TransmitMTU of the local device, send method will only send a byte array whose size is equal to the TransmitMTU of the local device.
-            if ((transmitMTU > 0) && (transmitMTU < this.transmitMTU)) {
+            if (transmitMTU > 0 && transmitMTU < this.transmitMTU) {
                 this.transmitMTU = transmitMTU;
             }
             RemoteDeviceHelper.connected(this);

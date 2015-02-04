@@ -30,6 +30,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
 
+import org.bluez.Error.DoesNotExist;
+import org.bluez.Error.InvalidArguments;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.UInt32;
 import org.freedesktop.dbus.Variant;
@@ -44,8 +46,8 @@ public abstract class DBusProperties {
 	    
 	    READWRITE,
 	    
-	    READONLY;
-	}
+	    READONLY
+    }
 
 	@Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
 	public @interface DBusProperty {
@@ -71,7 +73,7 @@ public abstract class DBusProperties {
 		 * 
 		 * @return
 		 */
-		public Map<String, Variant<?>> GetProperties() throws org.bluez.Error.DoesNotExist, org.bluez.Error.InvalidArguments;
+        Map<String, Variant<?>> GetProperties() throws DoesNotExist, InvalidArguments;
 
 		/**
 		 * Changes the value of the specified property. Only properties that are listed a read-write are changeable.
@@ -79,7 +81,7 @@ public abstract class DBusProperties {
 		 * @param name
 		 * @param value
 		 */
-		public void SetProperty(String name, Variant<?> value) throws org.bluez.Error.DoesNotExist, org.bluez.Error.InvalidArguments;
+        void SetProperty(String name, Variant<?> value) throws DoesNotExist, InvalidArguments;
 	}
 
 	public static String getStringValue(PropertiesAccess dBusInterface, PropertyEnum propertyEnum) {

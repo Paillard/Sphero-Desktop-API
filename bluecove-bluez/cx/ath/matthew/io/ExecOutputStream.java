@@ -55,11 +55,11 @@ public class ExecOutputStream extends FilterOutputStream
    public ExecOutputStream(OutputStream os, Process p) throws IOException
    {
       super(os);
-      proc = p;
-      stdin = p.getOutputStream();
-      stdout = p.getInputStream();
-      copy = new InOutCopier(stdout, out);
-      copy.start();
+       proc = p;
+       stdin = p.getOutputStream();
+       stdout = p.getInputStream();
+       copy = new InOutCopier(stdout, out);
+       copy.start();
    }
    /**
     * Create a new ExecOutputStream on the given OutputStream
@@ -98,39 +98,39 @@ public class ExecOutputStream extends FilterOutputStream
 
    public void close() throws IOException
    {
-      stdin.close();
+       stdin.close();
       try {
-         proc.waitFor();
+          proc.waitFor();
       } catch (InterruptedException Ie)  {}
       //copy.close();
       try {
-         copy.join();
+          copy.join();
       } catch (InterruptedException Ie)  {}
-      stdout.close();
-      out.close();
+       stdout.close();
+       out.close();
    }
    public void flush() throws IOException
    {
-      stdin.flush();
-      copy.flush();
-      out.flush();
+       stdin.flush();
+       copy.flush();
+       out.flush();
    }
    public void write(byte[] b) throws IOException
    {
-      stdin.write(b);
+       stdin.write(b);
    }
    public void write(byte[] b, int off, int len) throws IOException
    {
-      stdin.write(b, off, len);
+       stdin.write(b, off, len);
    }
    public void write(int b) throws IOException
    {
-      stdin.write(b);
+       stdin.write(b);
    }
    public void finalize()
    {
       try {
-         close();
+          close();
       } catch (Exception e) {}
    }
 }

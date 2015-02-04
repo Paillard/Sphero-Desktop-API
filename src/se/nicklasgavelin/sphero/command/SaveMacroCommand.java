@@ -1,5 +1,6 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 
 /**
@@ -36,9 +37,9 @@ public class SaveMacroCommand extends CommandMessage
 	{
 		super( COMMAND_MESSAGE_TYPE.SAVE_MACRO );
 
-		this.macroFlags = flags;
+        this.macroFlags = flags;
 		this.destination = destination;
-		this.macroData = macro;
+        this.macroData = macro;
 	}
 
 	/**
@@ -56,11 +57,10 @@ public class SaveMacroCommand extends CommandMessage
 	@Override
 	protected byte[] getPacketData()
 	{
-		ByteArrayBuffer bab = new ByteArrayBuffer( this.macroData.length + 2 );
-		;
-		bab.append( this.destination );
-		bab.append( this.macroFlags );
-		bab.append( this.macroData );
+		ByteArrayBuffer bab = new ByteArrayBuffer(this.macroData.length + 2 );
+        bab.append(this.destination);
+		bab.append(this.macroFlags);
+		bab.append(this.macroData);
 
 		return bab.toByteArray();
 	}

@@ -32,6 +32,8 @@
  */
 package org.bluez.v4;
 
+import org.bluez.Error.Canceled;
+import org.bluez.Error.Rejected;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
 import org.freedesktop.dbus.Path;
@@ -70,7 +72,7 @@ public interface Agent extends DBusInterface {
      * The return value should be a string of 1-16 characters length. The string
      * can be alphanumeric.
      */
-    String RequestPinCode(Path device) throws org.bluez.Error.Rejected, org.bluez.Error.Canceled;
+    String RequestPinCode(Path device) throws Rejected, Canceled;
 
     /**
      * This method gets called when the service daemon needs to get the passkey
@@ -78,7 +80,7 @@ public interface Agent extends DBusInterface {
      * 
      * The return value should be a numeric value between 0-999999.
      */
-    UInt32 RequestPasskey(Path device) throws org.bluez.Error.Rejected, org.bluez.Error.Canceled;
+    UInt32 RequestPasskey(Path device) throws Rejected, Canceled;
 
     /**
      * This method gets called when the service daemon needs to display a
@@ -102,19 +104,19 @@ public interface Agent extends DBusInterface {
      * To confirm the value it should return an empty reply or an error in case
      * the passkey is invalid.
      */
-    void RequestConfirmation(Path device, UInt32 passkey) throws org.bluez.Error.Rejected, org.bluez.Error.Canceled;
+    void RequestConfirmation(Path device, UInt32 passkey) throws Rejected, Canceled;
 
     /**
      * This method gets called when the service daemon needs to authorize a
      * connection/service request.
      */
-    void Authorize(Path device, String uuid) throws org.bluez.Error.Rejected, org.bluez.Error.Canceled;
+    void Authorize(Path device, String uuid) throws Rejected, Canceled;
 
     /**
      * This method gets called if a mode change is requested that needs to be
      * confirmed by the user. An example would be leaving flight mode.
      */
-    void ConfirmModeChange(String mode) throws org.bluez.Error.Rejected, org.bluez.Error.Canceled;
+    void ConfirmModeChange(String mode) throws Rejected, Canceled;
 
     /**
      * This method gets called to indicate that the agent request failed before

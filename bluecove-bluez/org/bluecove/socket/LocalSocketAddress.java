@@ -24,12 +24,14 @@
  */
 package org.bluecove.socket;
 
+import java.net.SocketAddress;
+
 /**
  * This class represents an address local interprocess communication on Linux.
  * 
  * PF_UNIX, AF_UNIX, PF_LOCAL, AF_LOCAL
  */
-public class LocalSocketAddress extends java.net.SocketAddress {
+public class LocalSocketAddress extends SocketAddress {
 
     private static final long serialVersionUID = -8958827981306326634L;
 
@@ -56,7 +58,6 @@ public class LocalSocketAddress extends java.net.SocketAddress {
      * @param abstractNamespace
      */
     public LocalSocketAddress(String name, boolean abstractNamespace) {
-        super();
         if (name == null) {
             throw new NullPointerException("socket Name is null");
         }
@@ -84,11 +85,7 @@ public class LocalSocketAddress extends java.net.SocketAddress {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof LocalSocketAddress) {
-            return (this.abstractNamespace == ((LocalSocketAddress) o).abstractNamespace) && this.name.equals(((LocalSocketAddress) o).name);
-        } else {
-            return false;
-        }
+        return o instanceof LocalSocketAddress && this.abstractNamespace == ((LocalSocketAddress) o).abstractNamespace && this.name.equals(((LocalSocketAddress) o).name);
     }
 
     public int hashCode() {

@@ -36,7 +36,7 @@ public class ServerSocketConnection implements
 	private ServerSocket serverSocket;
 
 	public ServerSocketConnection(int port) throws IOException {
-		serverSocket = new ServerSocket(port);
+        serverSocket = new ServerSocket(port);
 	}
 
 	public String getLocalAddress() throws IOException {
@@ -53,6 +53,6 @@ public class ServerSocketConnection implements
 	}
 
 	public void close() throws IOException {
-		serverSocket.close();
+        serverSocket.close();
 	}
 }

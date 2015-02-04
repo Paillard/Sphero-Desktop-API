@@ -6,6 +6,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.Value;
 
 /**
@@ -41,17 +42,17 @@ public class Fade extends MacroCommand
 	public Fade( int r, int g, int b, int delay )
 	{
 		super( MACRO_COMMAND.MAC_FADE );
-		this.r = Value.clamp( r, MIN_COLOR_VALUE, MAX_COLOR_VALUE );
-		this.g = Value.clamp( g, MIN_COLOR_VALUE, MAX_COLOR_VALUE );
-		this.b = Value.clamp( b, MIN_COLOR_VALUE, MAX_COLOR_VALUE );
+		this.r = Value.clamp( r, MIN_COLOR_VALUE, MAX_COLOR_VALUE);
+		this.g = Value.clamp( g, MIN_COLOR_VALUE, MAX_COLOR_VALUE);
+		this.b = Value.clamp( b, MIN_COLOR_VALUE, MAX_COLOR_VALUE);
 
-		this.delay = Value.clamp( delay, MIN_DELAY_VALUE, MAX_DELAY_VALUE );
+		this.delay = Value.clamp( delay, MIN_DELAY_VALUE, MAX_DELAY_VALUE);
 	}
 
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		byte[] data = new byte[ getLength() ];
+		byte[] data = new byte[getLength() ];
 
 		data[0] = getCommandID();
 
@@ -59,8 +60,8 @@ public class Fade extends MacroCommand
 		data[2] = (byte) this.g;
 		data[3] = (byte) this.b;
 
-		data[4] = (byte) ( this.delay >> 8 );
-		data[5] = (byte) ( this.delay & 0xFF );
+		data[4] = (byte) (this.delay >> 8 );
+		data[5] = (byte) (this.delay & 0xFF );
 
 		return data;
 	}

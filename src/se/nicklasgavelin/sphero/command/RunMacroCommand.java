@@ -1,5 +1,6 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 
 public class RunMacroCommand extends CommandMessage
@@ -9,7 +10,7 @@ public class RunMacroCommand extends CommandMessage
 	public RunMacroCommand( byte macroId )
 	{
 		super( COMMAND_MESSAGE_TYPE.RUN_MACRO );
-		this.identifier = macroId;
+        this.identifier = macroId;
 	}
 
 	public RunMacroCommand( int macroId )
@@ -21,7 +22,7 @@ public class RunMacroCommand extends CommandMessage
 	protected byte[] getPacketData()
 	{
 		ByteArrayBuffer bab = new ByteArrayBuffer( 1 );
-		bab.append( this.identifier );
+		bab.append(this.identifier);
 
 		return bab.toByteArray();
 		// byte[] data = new byte[ 1 ];

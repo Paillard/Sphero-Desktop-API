@@ -18,7 +18,7 @@ class StructStruct
 {
    public static Map<StructStruct, Type[]> fillPackages(Map<StructStruct, Type[]> structs, String pack)
    {
-      Map<StructStruct, Type[]> newmap = new HashMap<StructStruct, Type[]>();
+      Map<StructStruct, Type[]> newmap = new HashMap<>();
       for (StructStruct ss: structs.keySet()) {
          Type[] type = structs.get(ss);
          if (null == ss.pack) ss.pack = pack;
@@ -49,6 +49,6 @@ class StructStruct
    }
    public String toString()
    {
-      return "<"+name+", "+pack+">";
+      return "<"+ name +", "+ pack +">";
    }
 }

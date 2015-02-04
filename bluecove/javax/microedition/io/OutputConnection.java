@@ -38,7 +38,7 @@ public interface OutputConnection extends Connection {
 	 * 
 	 * @exception IOException If an I/O error occur
 	 */
-	public OutputStream openOutputStream() throws IOException;
+    OutputStream openOutputStream() throws IOException;
 
 	/**
 	 * Open and return a data output stream for a connection. 
@@ -47,5 +47,5 @@ public interface OutputConnection extends Connection {
 	 * 
 	 * @exception IOException If an I/O error occur
 	 */
-	public DataOutputStream openDataOutputStream() throws IOException;
+    DataOutputStream openDataOutputStream() throws IOException;
 }

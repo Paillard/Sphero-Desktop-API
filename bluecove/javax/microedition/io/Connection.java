@@ -37,5 +37,5 @@ public interface Connection {
 	 * Throws: IOException - If an I/O error occurs
 	 */
 
-	public void close() throws IOException;
+	void close() throws IOException;
 }

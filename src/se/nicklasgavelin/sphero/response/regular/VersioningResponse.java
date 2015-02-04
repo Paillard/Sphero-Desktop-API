@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.response.regular;
 
 import se.nicklasgavelin.sphero.response.ResponseMessage;
+import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader;
 
 /**
  * Version response giving the version of the Sphero.
@@ -10,7 +11,7 @@ import se.nicklasgavelin.sphero.response.ResponseMessage;
  */
 public class VersioningResponse extends ResponseMessage
 {
-	private int modelNumber = 0;
+	private int modelNumber;
 
 	// Indexes
 	private static final int RECORD_VERSION_INDEX = 0, MODEL_VERSION_INDEX = 1,
@@ -20,9 +21,9 @@ public class VersioningResponse extends ResponseMessage
 			OVERLAY_MANAGER_VERSION_INDEX = 7;
 
 	// Values
-	private String recordVersion = null, hardwareVersion = null,
-			mainApplicationVersion = null, overlayManagerVersion = null,
-			bootloaderVersion = null, orbBasicVersion = null;
+	private String recordVersion, hardwareVersion,
+			mainApplicationVersion, overlayManagerVersion,
+			bootloaderVersion, orbBasicVersion;
 
 	/**
 	 * Create a version response from a data array
@@ -38,13 +39,13 @@ public class VersioningResponse extends ResponseMessage
 		{
 			byte[] data = this.getPacketPayload();
 
-			this.recordVersion = ( ( data[RECORD_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[RECORD_VERSION_INDEX] ) );
-			this.modelNumber = data[MODEL_VERSION_INDEX];
-			this.hardwareVersion = ( ( data[HARDWARE_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[HARDWARE_VERSION_INDEX] ) );
-			this.mainApplicationVersion = ( data[MAIN_APPLICATION_VERSION_INDEX_1] + "." + data[MAIN_APPLICATION_VERSION_INDEX_2] );
-			this.bootloaderVersion = ( ( data[BOOTLOADER_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[BOOTLOADER_VERSION_INDEX] ) );
-			this.orbBasicVersion = ( ( data[ORB_BASIC_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[ORB_BASIC_VERSION_INDEX] ) );
-			this.overlayManagerVersion = ( ( data[OVERLAY_MANAGER_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[OVERLAY_MANAGER_VERSION_INDEX] ) );
+            this.recordVersion = ( data[RECORD_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[RECORD_VERSION_INDEX] );
+            this.modelNumber = data[MODEL_VERSION_INDEX];
+            this.hardwareVersion = ( data[HARDWARE_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[HARDWARE_VERSION_INDEX] );
+            this.mainApplicationVersion = data[MAIN_APPLICATION_VERSION_INDEX_1] + "." + data[MAIN_APPLICATION_VERSION_INDEX_2];
+            this.bootloaderVersion = ( data[BOOTLOADER_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[BOOTLOADER_VERSION_INDEX] );
+            this.orbBasicVersion = ( data[ORB_BASIC_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[ORB_BASIC_VERSION_INDEX] );
+            this.overlayManagerVersion = ( data[OVERLAY_MANAGER_VERSION_INDEX] >> 4 ) + "." + ( 0xF & data[OVERLAY_MANAGER_VERSION_INDEX] );
 		}
 	}
 
@@ -121,14 +122,14 @@ public class VersioningResponse extends ResponseMessage
 	@Override
 	public String toString()
 	{
-		return getClass().getCanonicalName() + 
-				"[recordVersion=" + getRecordVersion() + 
-				", overlayManagerVersion=" + getOverlayManagerVersion() + 
-				", orbBasicVersion=" + getOrbBasicVersion() + 
-				", modelNumber=" + getModelNumber() + 
-				", mainApplicationVersion=" + getMainApplicationVersion() + 
+		return getClass().getCanonicalName() +
+				"[recordVersion=" + getRecordVersion() +
+				", overlayManagerVersion=" + getOverlayManagerVersion() +
+				", orbBasicVersion=" + getOrbBasicVersion() +
+				", modelNumber=" + getModelNumber() +
+				", mainApplicationVersion=" + getMainApplicationVersion() +
 				", hardwareVersion=" + getHardwareVersion() +
-				", bootloaderVersion=" + getBootloaderVersion() + 
+				", bootloaderVersion=" + getBootloaderVersion() +
 				"]";
 	} 
 }

@@ -5,6 +5,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 import se.nicklasgavelin.util.Value;
 
@@ -25,7 +26,7 @@ public class FrontLED extends MacroCommand
 	public FrontLED( float _brightness )
 	{
 		super( MACRO_COMMAND.MAC_FRONT_LED );
-		this.setBrightness( _brightness );
+        this.setBrightness( _brightness );
 	}
 
 	/**
@@ -35,15 +36,15 @@ public class FrontLED extends MacroCommand
 	 */
 	public void setBrightness( float _brightness )
 	{
-		this.brightness = Value.clamp( _brightness, MIN_BRIGHTNESS, MAX_BRIGHTNESS );
+        this.brightness = Value.clamp( _brightness, MIN_BRIGHTNESS, MAX_BRIGHTNESS);
 	}
 
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		ByteArrayBuffer bab = new ByteArrayBuffer( getLength() );
-		bab.append( getCommandID() );
-		bab.append( (int) ( this.brightness * 255.0F ) );
+		ByteArrayBuffer bab = new ByteArrayBuffer(getLength() );
+		bab.append(getCommandID() );
+		bab.append( (int) (this.brightness * 255.0F ) );
 
 		return bab.toByteArray();
 	}

@@ -14,7 +14,7 @@ public class CalibrateResponse extends ResponseMessage
      *
      * @param rh The response header containing the response data
      */
-    public CalibrateResponse( ResponseHeader rh )
+    public CalibrateResponse( ResponseMessage.ResponseHeader rh )
     {
         super( rh );
     }

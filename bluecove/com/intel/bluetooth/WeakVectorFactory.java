@@ -39,21 +39,21 @@ import java.util.WeakHashMap;
  */
 class WeakVectorFactory {
 
-	public static interface WeakVector {
+	public interface WeakVector {
 
-		public void addElement(Object obj);
+		void addElement(Object obj);
 
-		public int size();
+		int size();
 
-		public boolean removeElement(Object obj);
+		boolean removeElement(Object obj);
 
-		public boolean contains(Object elem);
+		boolean contains(Object elem);
 
-		public Object firstElement();
+		Object firstElement();
 
-		public Enumeration elements();
+		Enumeration elements();
 
-		public void removeAllElements();
+		void removeAllElements();
 
 	}
 
@@ -70,11 +70,11 @@ class WeakVectorFactory {
 		private Vector vectorImpl;
 
 		private WeakVectorOnVectorImpl() {
-			vectorImpl = new Vector();
+            vectorImpl = new Vector();
 		}
 
 		public void addElement(Object obj) {
-			vectorImpl.addElement(obj);
+            vectorImpl.addElement(obj);
 		}
 
 		public boolean contains(Object elem) {
@@ -98,7 +98,7 @@ class WeakVectorFactory {
 		}
 
 		public void removeAllElements() {
-			vectorImpl.removeAllElements();
+            vectorImpl.removeAllElements();
 		}
 
 	}
@@ -126,12 +126,12 @@ class WeakVectorFactory {
 		}
 
 		private WeakVectorOnWeakHashMapImpl() {
-			mapImpl = new WeakHashMap();
+            mapImpl = new WeakHashMap();
 
 		}
 
 		public void addElement(Object obj) {
-			mapImpl.put(obj, new Object());
+            mapImpl.put(obj, new Object());
 
 		}
 
@@ -148,7 +148,7 @@ class WeakVectorFactory {
 		}
 
 		public boolean removeElement(Object obj) {
-			return (mapImpl.remove(obj) != null);
+			return mapImpl.remove(obj) != null;
 		}
 
 		public int size() {
@@ -156,7 +156,7 @@ class WeakVectorFactory {
 		}
 
 		public void removeAllElements() {
-			mapImpl.clear();
+            mapImpl.clear();
 		}
 
 	}

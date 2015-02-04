@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 import se.nicklasgavelin.util.Value;
 
@@ -26,7 +27,7 @@ public class SPD2 extends MacroCommand
 	public SPD2( double _speed )
 	{
 		super( MACRO_COMMAND.MAC_SPD2 );
-		this.setSpeed( _speed );
+        this.setSpeed( _speed );
 	}
 
 	/**
@@ -46,15 +47,15 @@ public class SPD2 extends MacroCommand
 	 */
 	public void setSpeed( Double _speed )
 	{
-		this.speed = Value.clamp( _speed, MIN_SPEED, MAX_SPEED );
+        this.speed = Value.clamp( _speed, MIN_SPEED, MAX_SPEED);
 	}
 
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		int speedInt = (int) ( this.speed * 255.0D );
-		ByteArrayBuffer bytes = new ByteArrayBuffer( getLength() );
-		bytes.append( getCommandID() );
+		int speedInt = (int) (this.speed * 255.0D );
+		ByteArrayBuffer bytes = new ByteArrayBuffer(getLength() );
+		bytes.append(getCommandID() );
 		bytes.append( speedInt );
 		return bytes.toByteArray();
 	}

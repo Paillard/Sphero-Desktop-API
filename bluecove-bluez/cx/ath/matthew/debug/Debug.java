@@ -67,7 +67,7 @@ public class Debug
      This interface can be used to provide custom printing filters
      for certain classes.
      */
-   public static interface FilterCommand
+   public interface FilterCommand
    {
       /** 
         Called to print debug messages with a custom filter.
@@ -78,7 +78,7 @@ public class Debug
         @param message The debug message.
         @param lines Other lines of a multiple-line debug message.
        */
-      public void filter(PrintStream output, int level, String location, String extra, String message, String[] lines);
+      void filter(PrintStream output, int level, String location, String extra, String message, String[] lines);
    }
    /** Highest priority messages */
    public static final int CRIT = 1;
@@ -96,15 +96,10 @@ public class Debug
    public static final boolean debug = false;
    /** The current output stream (defaults to System.err) */
    public static PrintStream debugout = System.err;
-   private static Properties prop = null;
-   private static boolean timing = false;
-   private static boolean ttrace = false;
-   private static boolean lines = false;
-   private static boolean hexdump = false;
-   private static long last = 0;
-   private static int balen = 36;
-   private static int bawidth = 80;
-   private static Class saveclass = null;
+   private static Properties prop;
+    private static boolean lines;
+    private static long last;
+    private static Class saveclass;
    //TODO: 1.5 private static Map<Class<? extends Object>, FilterCommand> filterMap = new HashMap<Class<? extends Object>, FilterCommand>();
    private static Map filterMap = new HashMap();
    /**
@@ -147,16 +142,16 @@ public class Debug
    */
    public static void loadConfig(File f) throws IOException
    {
-      prop = new Properties();
-      prop.load(new FileInputStream(f));
+       prop = new Properties();
+       prop.load(new FileInputStream(f));
    }
    /** @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in. */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static boolean debugging(Class c, int loglevel)
    {
       if (debug) {
-         if (null == c) return true;
-         return debugging(c.getName(), loglevel);
+          return null == c || debugging(c.getName(), loglevel);
       }
       return false;
    }
@@ -188,21 +183,20 @@ public class Debug
 
    /**
      Output to the given Stream */
-   public static void setOutput(PrintStream p) throws IOException
-   {
-      debugout = p;
+   public static void setOutput(PrintStream p) {
+       debugout = p;
    }
    /**
      Output to the given file */
    public static void setOutput(String filename) throws IOException
    {
-      debugout = new PrintStream(new FileOutputStream(filename, true));
+       debugout = new PrintStream(new FileOutputStream(filename, true));
    }
 
    /**
      Output to the default debug.log */
    public static void setOutput() throws IOException {
-      setOutput("./debug.log");
+       setOutput("./debug.log");
    }
    /**
       Log at DEBUG
@@ -211,13 +205,13 @@ public class Debug
    {
       if (debug) {
          if (d instanceof String)
-            print(DEBUG, (String) d);
+             print(DEBUG, (String) d);
          else if (d instanceof Throwable)
-            print(DEBUG, (Throwable) d);
+             print(DEBUG, (Throwable) d);
          else if (d instanceof byte[])
-            print(DEBUG, (byte[]) d);
+             print(DEBUG, (byte[]) d);
          else if (d instanceof Map)
-            printMap(DEBUG, (Map) d);
+             printMap(DEBUG, (Map) d);
          else print(DEBUG, d);
       }
    }
@@ -228,14 +222,15 @@ public class Debug
       @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in.
     */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static void print(Object o, Object d)
    {
       if (debug) {
          if (o instanceof Class)
-            saveclass = (Class) o;
+             saveclass = (Class) o;
          else
-            saveclass = o.getClass();
-         print(d);
+             saveclass = o.getClass();
+          print(d);
       }
    }
 
@@ -247,14 +242,15 @@ public class Debug
       @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in.
     */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static void print(Object o, int loglevel, Object d)
    {
       if (debug) {
          if (o instanceof Class)
-            saveclass = (Class) o;
+             saveclass = (Class) o;
          else
-            saveclass = o.getClass();
-         print(loglevel, d);
+             saveclass = o.getClass();
+          print(loglevel, d);
       }
    }
    /**
@@ -265,14 +261,15 @@ public class Debug
       @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in.
     */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static void print(Object o, int loglevel, String s)
    {
       if (debug) {
          if (o instanceof Class)
-            saveclass = (Class) o;
+             saveclass = (Class) o;
          else
-            saveclass = o.getClass();
-         print(loglevel, s);
+             saveclass = o.getClass();
+          print(loglevel, s);
       }
    }
    /**
@@ -283,14 +280,15 @@ public class Debug
       @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in.
     */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static void print(Object o, int loglevel, Throwable t)
    {
       if (debug) {
          if (o instanceof Class)
-            saveclass = (Class) o;
+             saveclass = (Class) o;
          else
-            saveclass = o.getClass();
-         print(loglevel, t);
+             saveclass = o.getClass();
+          print(loglevel, t);
       }
    }
 
@@ -302,11 +300,12 @@ public class Debug
      @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in.
     */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static void print(Class c, int loglevel, Throwable t)
    {
       if (debug) {
-         saveclass = c;
-         print(loglevel, t);
+          saveclass = c;
+          print(loglevel, t);
       }
    }
    /**
@@ -321,19 +320,21 @@ public class Debug
          String timestr = "";
          String[] data = getTraceElements();
          if (debugging(data[0], loglevel)) {
-            if (timing) {
+             boolean timing = true;
+             if (timing) {
                long now = System.currentTimeMillis();
-               timestr = "{" + (now-last) + "} ";
-               last = now;
+               timestr = "{" + (now- last) + "} ";
+                last = now;
             }
             String[] lines = null;
-            if (ttrace) {
+             boolean ttrace = true;
+             if (ttrace) {
                StackTraceElement[] ste = t.getStackTrace();
                lines = new String[ste.length];
                for (int i = 0; i < ste.length; i++)
-                  lines[i] = "\tat "+ste[i].toString();
+                  lines[i] = "\tat "+ ste[i];
             }
-            _print(t.getClass(), loglevel, data[0]+"."+data[1]+"()" + data[2], timestr, t.toString(), lines);
+             _print(t.getClass(), loglevel, data[0] + "." + data[1] + "()" + data[2], timestr, t.toString(), lines);
          }
       }
    }
@@ -351,14 +352,18 @@ public class Debug
          String timestr = "";
          String[] data = getTraceElements();
          if (debugging(data[0], loglevel)) {
-            if (timing) {
+             boolean timing = true;
+             if (timing) {
                long now = System.currentTimeMillis();
-               timestr = "{" + (now-last) + "} ";
-               last = now;
+               timestr = "{" + (now- last) + "} ";
+                last = now;
             }
             String[] lines = null;
-            if (hexdump) {
-               if (balen >= b.length)
+             boolean hexdump = true;
+             if (hexdump) {
+                 int bawidth = 80;
+                 int balen = 36;
+                 if (balen >= b.length)
                   lines = Hexdump.format(b, bawidth).split("\n");
                else {
                   byte[] buf = new byte[balen];
@@ -366,7 +371,7 @@ public class Debug
                   lines = Hexdump.format(buf, bawidth).split("\n");
                }
             }
-            _print(b.getClass(), loglevel, data[0]+"."+data[1]+"()" + data[2], timestr, b.length+" bytes", lines);
+             _print(b.getClass(), loglevel, data[0] + "." + data[1] + "()" + data[2], timestr, b.length + " bytes", lines);
          }
       }
    }
@@ -378,7 +383,7 @@ public class Debug
    public static void print(int loglevel, String s)
    {
       if (debug)
-         print(loglevel, (Object) s);
+          print(loglevel, (Object) s);
    }
    /**
      Log an Object
@@ -388,11 +393,12 @@ public class Debug
      @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in.
     */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static void print(Class c, int loglevel, Object d)
    {
       if (debug) {
-         saveclass = c;
-         print(loglevel, d);
+          saveclass = c;
+          print(loglevel, d);
       }
    }
    /**
@@ -403,19 +409,20 @@ public class Debug
      @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in.
     */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static void print(Class c, int loglevel, String s)
    {
       if (debug) {
-         saveclass = c;
-         print(loglevel, s);
+          saveclass = c;
+          print(loglevel, s);
       }
    }
    private static String[] getTraceElements()
    {
-      String[] data = new String[] { "", "", "" };
+      String[] data = { "", "", "" };
       try {
-         Method m = Thread.class.getMethod("getStackTrace", new Class[0]);
-         StackTraceElement[] stes = (StackTraceElement[]) m.invoke(Thread.currentThread(), new Object[0]);
+         Method m = Thread.class.getMethod("getStackTrace");
+         StackTraceElement[] stes = (StackTraceElement[]) m.invoke(Thread.currentThread());
          for (StackTraceElement ste: stes) {
             if (Debug.class.getName().equals(ste.getClassName())) continue;
             if (Thread.class.getName().equals(ste.getClassName())) continue;
@@ -430,10 +437,9 @@ public class Debug
       } catch (NoSuchMethodException NSMe) {
          if (null != saveclass)
             data[0] = saveclass.getName();
-      } catch (IllegalAccessException IAe) {
-      } catch (InvocationTargetException ITe) {
+      } catch (IllegalAccessException | InvocationTargetException IAe) {
       }
-      return data;
+       return data;
    }
    /**
      Log an Object
@@ -446,12 +452,13 @@ public class Debug
          String timestr = "";
          String[] data = getTraceElements();
          if (debugging(data[0], loglevel)) {
-            if (timing) {
+             boolean timing = true;
+             if (timing) {
                long now = System.currentTimeMillis();
-               timestr = "{" + (now-last) + "} ";
-               last = now;
+               timestr = "{" + (now- last) + "} ";
+                last = now;
             }
-            _print(o.getClass(), loglevel, data[0]+"."+data[1]+"()" + data[2], timestr, o.toString(), null);
+             _print(o.getClass(), loglevel, data[0] + "." + data[1] + "()" + data[2], timestr, o.toString(), null);
          }
       }
    }
@@ -464,14 +471,15 @@ public class Debug
      @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in.
     */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static void printMap(Object o, int loglevel, Map m)
    {
       if (debug) {
          if (o instanceof Class)
-            saveclass = (Class) o;
+             saveclass = (Class) o;
          else
-            saveclass = o.getClass();
-         printMap(loglevel, m);
+             saveclass = o.getClass();
+          printMap(loglevel, m);
       }
    }
    /**
@@ -482,11 +490,12 @@ public class Debug
      @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in.
     */
    //TODO: 1.5 @Deprecated()
+   @Deprecated
    public static void printMap(Class c, int loglevel, Map m)
    {
       if (debug) {
-         saveclass = c;
-         printMap(loglevel, m);
+          saveclass = c;
+          printMap(loglevel, m);
       }
    }
    /**
@@ -495,7 +504,7 @@ public class Debug
     */
    public static void printMap(Map m)
    {
-      printMap(DEBUG, m);
+       printMap(DEBUG, m);
    }
    /**
      Log a Map
@@ -508,10 +517,11 @@ public class Debug
          String timestr = "";
          String[] data = getTraceElements();
          if (debugging(data[0], loglevel)) {
-            if (timing) {
+             boolean timing = true;
+             if (timing) {
                long now = System.currentTimeMillis();
-               timestr = "{" + (now-last) + "} ";
-               last = now;
+               timestr = "{" + (now- last) + "} ";
+                last = now;
             }
             Iterator i = m.keySet().iterator();
             String[] lines = new String[m.size()];
@@ -520,7 +530,7 @@ public class Debug
                Object key = i.next();
                lines[j++] = "\t\t- "+key+" => "+m.get(key);
             }
-            _print(m.getClass(), loglevel, data[0]+"."+data[1]+"()" + data[2], timestr, "Map:", lines);
+             _print(m.getClass(), loglevel, data[0] + "." + data[1] + "()" + data[2], timestr, "Map:", lines);
          }
       }
    }
@@ -529,14 +539,14 @@ public class Debug
     */
    public static void setThrowableTraces(boolean ttrace)
    {
-      Debug.ttrace = ttrace;
+       boolean ttrace1 = ttrace;
    }
    /**
      Enable or disable timing in Debug messages.
     */
    public static void setTiming(boolean timing)
    {
-      Debug.timing = timing;
+       boolean timing1 = timing;
    }
    /**
      Enable or disable line numbers.
@@ -550,7 +560,7 @@ public class Debug
     */
    public static void setHexDump(boolean hexdump)
    {
-      Debug.hexdump = hexdump;
+       boolean hexdump1 = hexdump;
    }
    /**
      Set the size of hexdumps.
@@ -558,7 +568,7 @@ public class Debug
     */
    public static void setByteArrayCount(int count)
    {
-      Debug.balen = count;
+       int balen = count;
    }
    /**
      Set the formatted width of hexdumps.
@@ -566,7 +576,7 @@ public class Debug
     */
    public static void setByteArrayWidth(int width)
    {
-      Debug.bawidth = width;
+       int bawidth = width;
    }
    /**
      Add a filter command for a specific type.
@@ -578,17 +588,17 @@ public class Debug
    public static void addFilterCommand(Class c, FilterCommand f)
       //TODO 1.5: public static void addFilterCommand(Class<? extends Object> c, FilterCommand f)
    {
-      filterMap.put(c, f);
+       filterMap.put(c, f);
    }
    private static void _print(Class c, int level, String loc, String extra, String message, String[] lines)
    {
       //TODO 1.5: FilterCommand f = filterMap.get(c);
       FilterCommand f = (FilterCommand) filterMap.get(c);
       if (null == f) {
-         debugout.println("["+loc+"] " +extra + message);
+          debugout.println("[" + loc + "] " + extra + message);
          if (null != lines)
             for (String s: lines)
-               debugout.println(s);
+                debugout.println(s);
       } else
          f.filter(debugout, level, loc, extra, message, lines);
    }

@@ -2,10 +2,10 @@ package se.nicklasgavelin.util;
 
 public class SensorFilter
 {
-	protected double x = 0.0D;
-	protected double y = 0.0D;
-	protected double z = 0.0D;
-	protected boolean adaptive = false;
+	protected double x;
+	protected double y;
+	protected double z;
+	protected boolean adaptive;
 
 	public double getX()
 	{
@@ -31,6 +31,6 @@ public class SensorFilter
 
 	public float[] getValues()
 	{
-		return new float[] { (float) this.x, (float) this.y, (float) this.z };
+		return new float[] { (float) this.x, (float) this.y, (float) this.z};
 	}
 }

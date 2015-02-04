@@ -33,6 +33,6 @@ class MethodTuple
    }
    public int hashCode()
    {
-      return name.hashCode()+sig.hashCode();
+      return name.hashCode()+ sig.hashCode();
    }
 }

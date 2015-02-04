@@ -65,7 +65,7 @@ abstract class BluetoothRFCommConnection implements StreamConnection, BluetoothC
 	protected BluetoothRFCommConnection(BluetoothStack bluetoothStack, long handle) {
 		this.bluetoothStack = bluetoothStack;
 		this.handle = handle;
-		this.isClosed = false;
+        this.isClosed = false;
 	}
 
 	abstract void closeConnectionHandle(long handle) throws IOException;
@@ -88,15 +88,15 @@ abstract class BluetoothRFCommConnection implements StreamConnection, BluetoothC
 		}
 
 		// Any open streams will cause the connection to be held open
-		if ((in != null) && (!in.isClosed())) {
+		if (this.in != null && !this.in.isClosed()) {
 			return;
 		}
 
-		if ((out != null) && (!out.isClosed())) {
+		if (this.out != null && !this.out.isClosed()) {
 			return;
 		}
 
-		shutdown();
+        shutdown();
 	}
 
 	/*
@@ -111,10 +111,10 @@ abstract class BluetoothRFCommConnection implements StreamConnection, BluetoothC
 			long synchronizedHandle;
 			synchronized (this) {
 				synchronizedHandle = handle;
-				handle = 0;
+                handle = 0;
 			}
 			if (synchronizedHandle != 0) {
-				closeConnectionHandle(synchronizedHandle);
+                closeConnectionHandle(synchronizedHandle);
 			}
 		}
 	}
@@ -137,7 +137,7 @@ abstract class BluetoothRFCommConnection implements StreamConnection, BluetoothC
 			throw new IOException("RFCOMM Connection is already closed");
 		} else {
 			if (in == null) {
-				in = new BluetoothRFCommInputStream(this);
+                in = new BluetoothRFCommInputStream(this);
 				return in;
 			} else if (in.isClosed()) {
 				throw new IOException("Stream cannot be reopened");
@@ -184,7 +184,7 @@ abstract class BluetoothRFCommConnection implements StreamConnection, BluetoothC
 			throw new IOException("RFCOMM Connection is already closed");
 		} else {
 			if (out == null) {
-				out = new BluetoothRFCommOutputStream(this);
+                out = new BluetoothRFCommOutputStream(this);
 				return out;
 			} else if (out.isClosed()) {
 				throw new IOException("Stream cannot be reopened");
@@ -231,13 +231,13 @@ abstract class BluetoothRFCommConnection implements StreamConnection, BluetoothC
 		if (isClosed) {
 			return;
 		}
-		isClosed = true;
-		streamClosed();
+        isClosed = true;
+        streamClosed();
 	}
 
 	protected void finalize() {
 		try {
-			close();
+            close();
 		} catch (IOException e) {
 		}
 	}
@@ -258,7 +258,7 @@ abstract class BluetoothRFCommConnection implements StreamConnection, BluetoothC
 	 */
 	public void markAuthenticated() {
 		if (this.securityOpt == ServiceRecord.NOAUTHENTICATE_NOENCRYPT) {
-			this.securityOpt = ServiceRecord.AUTHENTICATE_NOENCRYPT;
+            this.securityOpt = ServiceRecord.AUTHENTICATE_NOENCRYPT;
 		}
 	}
 
@@ -269,7 +269,7 @@ abstract class BluetoothRFCommConnection implements StreamConnection, BluetoothC
 	 */
 	public int getSecurityOpt() {
 		try {
-			this.securityOpt = bluetoothStack.rfGetSecurityOpt(this.handle, this.securityOpt);
+            this.securityOpt = bluetoothStack.rfGetSecurityOpt(this.handle, this.securityOpt);
 		} catch (IOException notChanged) {
 		}
 		return this.securityOpt;
@@ -287,9 +287,9 @@ abstract class BluetoothRFCommConnection implements StreamConnection, BluetoothC
 		boolean changed = bluetoothStack.rfEncrypt(address, this.handle, on);
 		if (changed) {
 			if (on) {
-				this.securityOpt = ServiceRecord.AUTHENTICATE_ENCRYPT;
+                this.securityOpt = ServiceRecord.AUTHENTICATE_ENCRYPT;
 			} else {
-				this.securityOpt = ServiceRecord.AUTHENTICATE_NOENCRYPT;
+                this.securityOpt = ServiceRecord.AUTHENTICATE_NOENCRYPT;
 			}
 		}
 		return changed;

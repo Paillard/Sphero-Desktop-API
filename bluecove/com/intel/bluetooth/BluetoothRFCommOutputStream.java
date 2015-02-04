@@ -28,7 +28,7 @@ import java.io.OutputStream;
 
 class BluetoothRFCommOutputStream extends OutputStream {
 
-	volatile private BluetoothRFCommConnection conn;
+	private volatile BluetoothRFCommConnection conn;
 
 	public BluetoothRFCommOutputStream(BluetoothRFCommConnection conn) {
 		this.conn = conn;
@@ -50,7 +50,7 @@ class BluetoothRFCommOutputStream extends OutputStream {
 		if (conn == null) {
 			throw new IOException("Stream closed");
 		} else {
-			conn.bluetoothStack.connectionRfWrite(conn.handle, b);
+            conn.bluetoothStack.connectionRfWrite(conn.handle, b);
 		}
 	}
 
@@ -81,7 +81,7 @@ class BluetoothRFCommOutputStream extends OutputStream {
 		if (conn == null) {
 			throw new IOException("Stream closed");
 		} else {
-			conn.bluetoothStack.connectionRfWrite(conn.handle, b, off, len);
+            conn.bluetoothStack.connectionRfWrite(conn.handle, b, off, len);
 		}
 	}
 
@@ -90,7 +90,7 @@ class BluetoothRFCommOutputStream extends OutputStream {
 			throw new IOException("Stream closed");
 		} else {
 			super.flush();
-			conn.bluetoothStack.connectionRfFlush(conn.handle);
+            conn.bluetoothStack.connectionRfFlush(conn.handle);
 		}
     }
 
@@ -108,7 +108,7 @@ class BluetoothRFCommOutputStream extends OutputStream {
 		// Function is not synchronized
 		BluetoothRFCommConnection c = conn;
 		if (c != null) {
-			conn = null;
+            conn = null;
 			c.streamClosed();
 		}
 	}

@@ -28,7 +28,7 @@ import java.io.InputStream;
 
 class BluetoothRFCommInputStream extends InputStream {
 
-	volatile private BluetoothRFCommConnection conn;
+	private volatile BluetoothRFCommConnection conn;
 
 	public BluetoothRFCommInputStream(BluetoothRFCommConnection conn) {
 		this.conn = conn;
@@ -160,7 +160,7 @@ class BluetoothRFCommInputStream extends InputStream {
 		// Function is not synchronized
 		BluetoothRFCommConnection c = conn;
 		if (c != null) {
-			conn = null;
+            conn = null;
 			c.streamClosed();
 		}
 	}

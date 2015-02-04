@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 
 /**
@@ -19,7 +20,7 @@ public class LoopEnd extends MacroCommand {
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		ByteArrayBuffer bytes = new ByteArrayBuffer( getLength() );
+		ByteArrayBuffer bytes = new ByteArrayBuffer(getLength() );
 		bytes.append(getCommandID());
 
 		return bytes.toByteArray();

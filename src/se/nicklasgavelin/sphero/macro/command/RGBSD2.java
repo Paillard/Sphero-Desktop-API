@@ -2,6 +2,7 @@ package se.nicklasgavelin.sphero.macro.command;
 
 import java.awt.Color;
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 import se.nicklasgavelin.util.Value;
 
@@ -28,7 +29,7 @@ public class RGBSD2 extends MacroCommand
 	public RGBSD2( int _red, int _green, int _blue )
 	{
 		super( MACRO_COMMAND.MAC_RGB_SD2 );
-		this.setColor( _red, _green, _blue );
+        this.setColor( _red, _green, _blue );
 	}
 
 	/**
@@ -48,7 +49,7 @@ public class RGBSD2 extends MacroCommand
 	 */
 	public int[] getColorValues()
 	{
-		return new int[] { this.red, this.green, this.blue };
+		return new int[] {this.red, this.green, this.blue};
 	}
 
 	/**
@@ -58,7 +59,7 @@ public class RGBSD2 extends MacroCommand
 	 */
 	public Color getColor()
 	{
-		return new Color( this.red, this.green, this.blue );
+		return new Color(this.red, this.green, this.blue);
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class RGBSD2 extends MacroCommand
 	 */
 	public void setColor( Color c )
 	{
-		this.setColor( c.getRed(), c.getGreen(), c.getBlue() );
+        this.setColor( c.getRed(), c.getGreen(), c.getBlue() );
 	}
 
 	/**
@@ -80,9 +81,9 @@ public class RGBSD2 extends MacroCommand
 	 */
 	public void setColor( int _red, int _green, int _blue )
 	{
-		this.red = Value.clamp( _red, MIN_COLOR, MAX_COLOR );
-		this.green = Value.clamp( _green, MIN_COLOR, MAX_COLOR );
-		this.blue = Value.clamp( _blue, MIN_COLOR, MAX_COLOR );
+        this.red = Value.clamp( _red, MIN_COLOR, MAX_COLOR);
+        this.green = Value.clamp( _green, MIN_COLOR, MAX_COLOR);
+        this.blue = Value.clamp( _blue, MIN_COLOR, MAX_COLOR);
 		// if ( (_red.intValue() >= 0) && (_red.intValue() <= 255) )
 		// {
 		// this.red = _red;
@@ -98,11 +99,11 @@ public class RGBSD2 extends MacroCommand
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		ByteArrayBuffer bytes = new ByteArrayBuffer( getLength() );
-		bytes.append( getCommandID() );
-		bytes.append( this.red );
-		bytes.append( this.green );
-		bytes.append( this.blue );
+		ByteArrayBuffer bytes = new ByteArrayBuffer(getLength() );
+		bytes.append(getCommandID() );
+		bytes.append(this.red);
+		bytes.append(this.green);
+		bytes.append(this.blue);
 
 		return bytes.toByteArray();
 	}

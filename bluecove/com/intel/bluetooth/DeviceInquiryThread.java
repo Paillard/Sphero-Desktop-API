@@ -45,9 +45,9 @@ class DeviceInquiryThread extends Thread {
 
 	private BluetoothStateException startException;
 
-	private boolean started = false;
+	private boolean started;
 
-	private boolean terminated = false;
+	private boolean terminated;
 
 	private Object inquiryStartedEvent = new Object();
 
@@ -71,7 +71,7 @@ class DeviceInquiryThread extends Thread {
 	 */
 	static boolean startInquiry(BluetoothStack stack, DeviceInquiryRunnable inquiryRunnable, int accessCode,
 			DiscoveryListener listener) throws BluetoothStateException {
-		DeviceInquiryThread t = (new DeviceInquiryThread(stack, inquiryRunnable, accessCode, listener));
+		DeviceInquiryThread t = new DeviceInquiryThread(stack, inquiryRunnable, accessCode, listener);
 		// In case the BTStack hangs, exit JVM anyway
 		UtilsJavaSE.threadSetDaemon(t);
 		synchronized (t.inquiryStartedEvent) {
@@ -103,28 +103,28 @@ class DeviceInquiryThread extends Thread {
 			discType = inquiryRunnable.runDeviceInquiry(this, accessCode, listener);
 		} catch (BluetoothStateException e) {
 			DebugLog.debug("runDeviceInquiry throw", e);
-			startException = e;
+            startException = e;
 		} catch (Throwable e) {
 			DebugLog.error("runDeviceInquiry", e);
 			// Fine, If Not started then startInquiry return false
 		} finally {
-			terminated = true;
+            terminated = true;
 			synchronized (inquiryStartedEvent) {
-				inquiryStartedEvent.notifyAll();
+                inquiryStartedEvent.notifyAll();
 			}
 			DebugLog.debug("runDeviceInquiry ends");
 			if (started) {
 				Utils.j2meUsagePatternDellay();
-				listener.inquiryCompleted(discType);
+                listener.inquiryCompleted(discType);
 			}
 		}
 	}
 
 	public void deviceInquiryStartedCallback() {
 		DebugLog.debug("deviceInquiryStartedCallback");
-		started = true;
+        started = true;
 		synchronized (inquiryStartedEvent) {
-			inquiryStartedEvent.notifyAll();
+            inquiryStartedEvent.notifyAll();
 		}
 	}
 

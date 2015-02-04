@@ -33,9 +33,15 @@
 package org.bluez.v4;
 
 import org.bluez.Error;
+import org.bluez.Error.Failed;
+import org.bluez.Error.InvalidArguments;
+import org.bluez.Error.NoSuchAdapter;
+import org.bluez.Error.OutOfMemory;
 import org.bluez.dbus.DBusProperties;
 import org.bluez.dbus.DBusProperties.DBusProperty;
 import org.bluez.dbus.DBusProperties.DBusPropertyAccessType;
+import org.bluez.dbus.DBusProperties.PropertiesAccess;
+import org.bluez.dbus.DBusProperties.PropertyEnum;
 import org.freedesktop.dbus.DBusInterfaceName;
 import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.Path;
@@ -57,9 +63,9 @@ import org.freedesktop.dbus.exceptions.DBusException;
  * Created base on D-Bus API description for BlueZ. bluez-4.32/doc/manager-api.txt
  */
 @DBusInterfaceName("org.bluez.Manager")
-public interface Manager extends org.bluez.Manager, DBusProperties.PropertiesAccess {
+public interface Manager extends org.bluez.Manager, PropertiesAccess {
 
-    public static enum Properties implements DBusProperties.PropertyEnum {
+    enum Properties implements PropertyEnum {
 
         /**
          * List of adapter object paths.
@@ -73,7 +79,7 @@ public interface Manager extends org.bluez.Manager, DBusProperties.PropertiesAcc
      * 
      * @return returns Object Path
      */
-    Path DefaultAdapter() throws Error.InvalidArguments, Error.NoSuchAdapter;
+    Path DefaultAdapter() throws InvalidArguments, NoSuchAdapter;
 
     /**
      * Returns object path for the specified adapter.
@@ -82,20 +88,20 @@ public interface Manager extends org.bluez.Manager, DBusProperties.PropertiesAcc
      *            "hci0" or "00:11:22:33:44:55"
      * @return returns Object Path
      */
-    Path FindAdapter(String pattern) throws Error.InvalidArguments, Error.NoSuchAdapter;
+    Path FindAdapter(String pattern) throws InvalidArguments, NoSuchAdapter;
 
     /**
      * Returns list of adapter object paths under /org/bluez
      * 
      * @return returns Path[]
      */
-    Path[] ListAdapters() throws Error.InvalidArguments, Error.Failed, Error.OutOfMemory;
+    Path[] ListAdapters() throws InvalidArguments, Failed, OutOfMemory;
 
     /**
      * This signal indicates a changed value of the given property.
      */
     @DBusInterfaceName("org.bluez.Manager.AdapterAdded")
-    public class PropertyChanged extends DBusSignal {
+    class PropertyChanged extends DBusSignal {
         public PropertyChanged(String path, String name, Variant<Object> value) throws DBusException {
             super(path);
         }
@@ -105,7 +111,7 @@ public interface Manager extends org.bluez.Manager, DBusProperties.PropertiesAcc
      * Parameter is object path of added adapter.
      */
     @DBusInterfaceName("org.bluez.Manager.AdapterAdded")
-    public class AdapterAdded extends DBusSignal {
+    class AdapterAdded extends DBusSignal {
         public AdapterAdded(String path, Path adapter) throws DBusException {
             super(path, adapter);
         }
@@ -115,7 +121,7 @@ public interface Manager extends org.bluez.Manager, DBusProperties.PropertiesAcc
      * Parameter is object path of removed adapter.
      */
     @DBusInterfaceName("org.bluez.Manager.AdapterAdded")
-    public class AdapterRemoved extends DBusSignal {
+    class AdapterRemoved extends DBusSignal {
         public AdapterRemoved(String path, Path adapter) throws DBusException {
             super(path, adapter);
         }
@@ -129,7 +135,7 @@ public interface Manager extends org.bluez.Manager, DBusProperties.PropertiesAcc
      * selected or available anymore.
      */
     @DBusInterfaceName("org.bluez.Manager.AdapterAdded")
-    public class DefaultAdapterChanged extends DBusSignal {
+    class DefaultAdapterChanged extends DBusSignal {
         public DefaultAdapterChanged(String path, Path adapter) throws DBusException {
             super(path, adapter);
         }

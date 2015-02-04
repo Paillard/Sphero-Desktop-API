@@ -24,6 +24,8 @@
  */
 package com.intel.bluetooth;
 
+import com.intel.bluetooth.UtilsJavaSE.StackTraceLocation;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -67,16 +69,16 @@ public abstract class Utils {
 		return uuidValue;
 	}
 
-	static byte[] UUIDToByteArray(final UUID uuid) {
+	static byte[] UUIDToByteArray(UUID uuid) {
 		return UUIDToByteArray(uuid.toString());
 	}
 
 	public static String UUIDByteArrayToString(byte[] uuidValue) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < uuidValue.length; i++) {
-			buf.append(Integer.toHexString(uuidValue[i] >> 4 & 0xf));
-			buf.append(Integer.toHexString(uuidValue[i] & 0xf));
-		}
+		StringBuilder buf = new StringBuilder();
+        for (byte anUuidValue : uuidValue) {
+            buf.append(Integer.toHexString(anUuidValue >> 4 & 0xf));
+            buf.append(Integer.toHexString(anUuidValue & 0xf));
+        }
 		return buf.toString();
 	}
 
@@ -86,7 +88,7 @@ public abstract class Utils {
 		}
 		String str = uuid.toString().toUpperCase();
 		int shortIdx = str.indexOf(BluetoothConsts.SHORT_UUID_BASE);
-		if ((shortIdx != -1) && (shortIdx + BluetoothConsts.SHORT_UUID_BASE.length() == str.length())) {
+		if (shortIdx != -1 && shortIdx + BluetoothConsts.SHORT_UUID_BASE.length() == str.length()) {
 			// This is short 16-bit or 32-bit UUID
 			return Long.parseLong(str.substring(0, shortIdx), 16);
 		}
@@ -94,7 +96,7 @@ public abstract class Utils {
 	}
 
 	static boolean is32Bit(UUID uuid) {
-		return (UUIDTo32Bit(uuid) != -1);
+		return UUIDTo32Bit(uuid) != -1;
 	}
 
 	public static int securityOpt(boolean authenticate, boolean encrypt) {
@@ -112,7 +114,7 @@ public abstract class Utils {
 	}
 
 	static boolean isStringSet(String str) {
-		return ((str != null) && (str.length() > 0));
+		return str != null && !str.isEmpty();
 	}
 
 	static String loadString(InputStream inputstream) {
@@ -159,7 +161,7 @@ public abstract class Utils {
 		if (value == null) {
 			return null;
 		}
-		int length = ((byte[]) value).length;
+		int length = value.length;
 		byte[] bClone = new byte[length];
 		System.arraycopy(value, 0, bClone, 0, length);
 		return bClone;
@@ -227,7 +229,7 @@ public abstract class Utils {
 	 *
 	 */
 	public static String toHexString(long l) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		String lo = Integer.toHexString((int) l);
 		if (l > 0xffffffffl) {
 			String hi = Integer.toHexString((int) (l >> 32));
@@ -261,7 +263,7 @@ public abstract class Utils {
 		public void run() {
 			try {
 				Thread.sleep(delay);
-				run.run();
+                run.run();
 			} catch (InterruptedException e) {
 			}
 		}
@@ -277,7 +279,7 @@ public abstract class Utils {
 	 * @param run
 	 *            task to be scheduled.
 	 */
-	static TimerThread schedule(final long delay, final Runnable run) {
+	static TimerThread schedule(long delay, Runnable run) {
 		TimerThread t = new TimerThread(delay, run);
 		UtilsJavaSE.threadSetDaemon(t);
 		t.start();
@@ -285,7 +287,7 @@ public abstract class Utils {
 	}
 
 	public static void isLegalAPICall(Vector fqcnSet) throws Error {
-		UtilsJavaSE.StackTraceLocation ste = UtilsJavaSE.getLocation(fqcnSet);
+		StackTraceLocation ste = UtilsJavaSE.getLocation(fqcnSet);
 		if (ste != null) {
 			if (ste.className.startsWith("javax.bluetooth.")) {
 				return;

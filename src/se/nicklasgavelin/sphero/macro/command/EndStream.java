@@ -6,6 +6,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 
 /**
@@ -22,8 +23,8 @@ public class EndStream extends MacroCommand
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		ByteArrayBuffer bab = new ByteArrayBuffer( getLength() );
-		bab.append( getCommandID() );
+		ByteArrayBuffer bab = new ByteArrayBuffer(getLength() );
+		bab.append(getCommandID() );
 
 		return bab.toByteArray();
 	}

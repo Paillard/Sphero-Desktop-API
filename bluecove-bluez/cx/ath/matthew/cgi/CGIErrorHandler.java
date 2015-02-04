@@ -37,5 +37,5 @@ public interface CGIErrorHandler
     * It should handle printing the error message nicely to the user,
     * and then exit gracefully.
     */
-   public void print(boolean headers_sent, Exception e);
+   void print(boolean headers_sent, Exception e);
 }

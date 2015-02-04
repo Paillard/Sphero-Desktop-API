@@ -19,7 +19,7 @@ public class CalibrateCommand extends CommandMessage
 	 */
 	public CalibrateCommand( float heading )
 	{
-		super( COMMAND_MESSAGE_TYPE.CALIBRATE );
+		super( CommandMessage.COMMAND_MESSAGE_TYPE.CALIBRATE );
 		this.heading = heading;
 	}
 

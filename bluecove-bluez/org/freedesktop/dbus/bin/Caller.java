@@ -41,14 +41,14 @@ public class Caller
          BusAddress address = new BusAddress(addr);
          Transport conn = new Transport(address);
 
-         Message m = new MethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "Hello", (byte) 0, null);;
-         conn.mout.writeMessage(m);
+         Message m = new MethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "Hello", (byte) 0, null);
+          conn.mout.writeMessage(m);
 
          if ("".equals(args[2])) args[2] = null;
          if (args.length == 4) 
             m = new MethodCall(args[0], args[1], args[2], args[3], (byte) 0, null);
          else {
-            Vector<Type> lts = new Vector<Type>();
+            Vector<Type> lts = new Vector<>();
             Marshalling.getJavaType(args[4],lts, -1);
             Type[] ts = lts.toArray(new Type[0]);
             Object[] os = new Object[args.length-5];

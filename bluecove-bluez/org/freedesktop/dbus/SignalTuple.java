@@ -33,8 +33,7 @@ class SignalTuple
       if (null == this.object && null != other.object) return false;
       if (null != this.object && !this.object.equals(other.object)) return false;
       if (null == this.source && null != other.source) return false;
-      if (null != this.source && !this.source.equals(other.source)) return false;
-      return true;
+       return !(null != this.source && !this.source.equals(other.source));
    }
    public int hashCode()
    {
@@ -45,7 +44,7 @@ class SignalTuple
    }
    public String toString()
    {
-      return "SignalTuple("+type+","+name+","+object+","+source+")";
+      return "SignalTuple("+ type +","+ name +","+ object +","+ source +")";
    }
 }
 

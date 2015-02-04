@@ -111,6 +111,6 @@ public interface L2CAPConnectionNotifier extends Connection {
      *                be non-connectable.
      * 
      */
-	    public L2CAPConnection  acceptAndOpen() throws IOException;
+    L2CAPConnection  acceptAndOpen() throws IOException;
 	    
 }

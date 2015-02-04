@@ -33,12 +33,10 @@ import java.io.IOException;
  */
 public class UnixIOException extends IOException
 {
-   private int no;
-   private String message;
-   public UnixIOException(int no, String message)
+    public UnixIOException(int no, String message)
    {
       super(message);
-      this.message = message;
-      this.no = no;
+       String message1 = message;
+       int no1 = no;
    }
 }

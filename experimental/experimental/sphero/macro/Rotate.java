@@ -6,6 +6,7 @@
 package experimental.sphero.macro;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 
 /**
  *

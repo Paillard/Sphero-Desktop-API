@@ -50,17 +50,17 @@ public class UtilsJavaSE {
 		public int lineNumber;
 	}
 
-	static interface JavaSE5Features {
+	interface JavaSE5Features {
 
-		public void clearProperty(String propertyName);
+		void clearProperty(String propertyName);
 
 	}
 
 	static final int javaSpecificationVersion = getJavaSpecificationVersion();
 
-	static boolean java13 = false;
+	static boolean java13;
 
-	static boolean java14 = false;
+	static boolean java14;
 
 	static boolean detectJava5Helper = true;
 
@@ -81,29 +81,29 @@ public class UtilsJavaSE {
 		} catch (SecurityException webstart) {
 			return false;
 		}
-		return (ibmJ9config != null) && (ibmJ9config.indexOf("midp") != -1);
+		return ibmJ9config != null && ibmJ9config.contains("midp");
 	}
 
 	private static int getJavaSpecificationVersion() {
 		try {
 			String javaV = System.getProperty("java.specification.version");
-			if ((javaV == null) || (javaV.length() < 3)) {
+			if (javaV == null || javaV.length() < 3) {
 				return 0;
 			}
-			return Integer.valueOf(javaV.substring(2, 3)).intValue();
+			return Integer.valueOf(javaV.substring(2, 3));
 		} catch (Throwable e) {
 			return 0;
 		}
 	}
 
 	private static void detectJava5Helper() {
-		if (java13 || ibmJ9midp || (!detectJava5Helper) || (javaSpecificationVersion < 5)) {
+		if (java13 || ibmJ9midp || !detectJava5Helper || javaSpecificationVersion < 5) {
 			return;
 		}
-		detectJava5Helper = false;
+        detectJava5Helper = false;
 		try {
 			Class klass = Class.forName("com.intel.bluetooth.UtilsJavaSE5");
-			java5Helper = (JavaSE5Features) klass.newInstance();
+            java5Helper = (JavaSE5Features) klass.newInstance();
 			DebugLog.debug("Use java 1.5+ features:", vmInfo());
 		} catch (Throwable e) {
 		}
@@ -117,17 +117,17 @@ public class UtilsJavaSE {
 			if (!java14) {
 				try {
 					Class.forName("java.lang.StackTraceElement");
-					java14 = true;
+                    java14 = true;
 					DebugLog.debug("Java 1.4+ detected:", vmInfo());
 				} catch (ClassNotFoundException e) {
-					java13 = true;
+                    java13 = true;
 					return null;
 				}
 			}
 			try {
 				return getLocationJava14(fqcnSet);
 			} catch (Throwable e) {
-				java13 = true;
+                java13 = true;
 			}
 		}
 		return null;
@@ -143,7 +143,7 @@ public class UtilsJavaSE {
 	}
 
 	private static StackTraceLocation getLocationJava14(Vector fqcnSet) {
-		if (!UtilsJavaSE.javaSECompiledOut) {
+		if (!javaSECompiledOut) {
 			StackTraceElement[] ste = new Throwable().getStackTrace();
 			for (int i = 0; i < ste.length - 1; i++) {
 				if (fqcnSet.contains(ste[i].getClassName())) {
@@ -174,7 +174,7 @@ public class UtilsJavaSE {
 	 */
 	public static void threadSetDaemon(Thread thread) {
 		try {
-			if ((!javaSECompiledOut) && (!ibmJ9midp)) {
+			if (!javaSECompiledOut && !ibmJ9midp) {
 				thread.setDaemon(true);
 			}
 		} catch (Throwable javaJ9) {
@@ -201,7 +201,7 @@ public class UtilsJavaSE {
 	static void runtimeRemoveShutdownHook(Thread thread) {
 		try {
 			// since Java 1.3
-			if ((!javaSECompiledOut) && (!ibmJ9midp)) {
+			if (!javaSECompiledOut && !ibmJ9midp) {
 				Runtime.getRuntime().removeShutdownHook(thread);
 			}
 		} catch (Throwable java12) {
@@ -220,7 +220,7 @@ public class UtilsJavaSE {
 				propertySet = propertyValue.equals(System.getProperty(propertyName));
 			} else {
 				props.remove(propertyName);
-				propertySet = (System.getProperty(propertyName) == null);
+				propertySet = System.getProperty(propertyName) == null;
 			}
 		} catch (SecurityException e) {
 		}
@@ -230,9 +230,9 @@ public class UtilsJavaSE {
 				if (propertyValue != null) {
 					System.setProperty(propertyName, propertyValue);
 				} else {
-					detectJava5Helper();
+                    detectJava5Helper();
 					if (java5Helper != null) {
-						java5Helper.clearProperty(propertyName);
+                        java5Helper.clearProperty(propertyName);
 					}
 				}
 			} catch (Throwable java11) {
@@ -241,7 +241,7 @@ public class UtilsJavaSE {
 	}
 
 	public static Throwable initCause(Throwable throwable, Throwable cause) {
-		if ((!java14) || (cause == null)) {
+		if (!java14 || cause == null) {
 			return throwable;
 		}
 		try {
@@ -256,11 +256,8 @@ public class UtilsJavaSE {
 	 * Support for JBM J9 PPRO 10
 	 */
 	static boolean isCurrentThreadInterrupted() {
-		if (ibmJ9midp) {
-			return false;
-		}
-		return Thread.interrupted();
-	}
+        return !ibmJ9midp && Thread.interrupted();
+    }
 
 	/**
 	 * Support for JBM J9 PPRO 10

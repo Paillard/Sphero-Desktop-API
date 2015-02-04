@@ -184,7 +184,7 @@ abstract class OBEXSessionBase implements Connection, BluetoothConnectionAccess 
         os.flush();
         DebugLog.debug("obex sent (" + this.packetsCountWrite + ") len", len);
 
-        if ((headers != null) && (headers.hasAuthenticationChallenge())) {
+        if (headers != null && headers.hasAuthenticationChallenge()) {
             if (authChallengesSent == null) {
                 authChallengesSent = new Vector();
             }
@@ -209,7 +209,7 @@ abstract class OBEXSessionBase implements Connection, BluetoothConnectionAccess 
         if (lenght == 3) {
             return header;
         }
-        if ((lenght < 3) || (lenght > OBEXOperationCodes.OBEX_MAX_PACKET_LEN)) {
+        if (lenght < 3 || lenght > OBEXOperationCodes.OBEX_MAX_PACKET_LEN) {
             throw new IOException("Invalid packet length " + lenght);
         }
         byte[] data = new byte[lenght];
@@ -222,13 +222,13 @@ abstract class OBEXSessionBase implements Connection, BluetoothConnectionAccess 
     }
 
     private void validateBluetoothConnection() {
-        if ((conn != null) && !(conn instanceof BluetoothConnectionAccess)) {
+        if (this.conn != null && !(conn instanceof BluetoothConnectionAccess)) {
             throw new IllegalArgumentException("Not a Bluetooth connection " + conn.getClass().getName());
         }
     }
 
     void validateAuthenticationResponse(OBEXHeaderSetImpl requestHeaders, OBEXHeaderSetImpl incomingHeaders) throws IOException {
-        if ((requestHeaders != null) && requestHeaders.hasAuthenticationChallenge() && (!incomingHeaders.hasAuthenticationResponses())) {
+        if (requestHeaders != null && requestHeaders.hasAuthenticationChallenge() && !incomingHeaders.hasAuthenticationResponses()) {
             // TODO verify that this appropriate Exception
             throw new IOException("Authentication response is missing");
         }
@@ -240,20 +240,20 @@ abstract class OBEXSessionBase implements Connection, BluetoothConnectionAccess 
             if (authenticator == null) {
                 throw new IOException("Authenticator required for authentication");
             }
-            if ((authChallengesSent == null) && (authChallengesSent.size() == 0)) {
+            if (this.authChallengesSent == null && this.authChallengesSent.isEmpty()) {
                 throw new IOException("Authentication challenges had not been sent");
             }
             boolean authenticated = false;
             try {
                 authenticated = OBEXAuthentication.handleAuthenticationResponse(incomingHeaders, authenticator, serverHandler, authChallengesSent);
             } finally {
-                if ((authenticated) && (authChallengesSent != null)) {
+                if (authenticated && this.authChallengesSent != null) {
                     authChallengesSent.removeAllElements();
                 }
             }
             return authenticated;
         } else {
-            if ((authChallengesSent != null) && (authChallengesSent.size() > 0)) {
+            if (this.authChallengesSent != null && !this.authChallengesSent.isEmpty()) {
                 throw new IOException("Authentication response is missing");
             }
             return true;
@@ -304,11 +304,7 @@ abstract class OBEXSessionBase implements Connection, BluetoothConnectionAccess 
         if (conn == null) {
             return true;
         }
-        if (this.conn instanceof BluetoothConnectionAccess) {
-            return ((BluetoothConnectionAccess) conn).isClosed();
-        } else {
-            return false;
-        }
+        return this.conn instanceof BluetoothConnectionAccess && ((BluetoothConnectionAccess) conn).isClosed();
     }
 
     /*

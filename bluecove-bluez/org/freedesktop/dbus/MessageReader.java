@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.io.BufferedInputStream;
 import java.io.EOFException;
@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import cx.ath.matthew.debug.Debug;
 import cx.ath.matthew.utils.Hexdump;
 
+import org.freedesktop.dbus.Message.MessageType;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.MessageTypeException;
 import org.freedesktop.dbus.exceptions.MessageProtocolVersionException;
@@ -29,10 +30,10 @@ import org.freedesktop.dbus.exceptions.MessageProtocolVersionException;
 public class MessageReader
 {
    private InputStream in;
-   private byte[] buf = null;
-   private byte[] tbuf = null;
-   private byte[] header = null;
-   private byte[] body = null;
+   private byte[] buf;
+   private byte[] tbuf;
+   private byte[] header;
+   private byte[] body;
    private int[] len = new int[4];
    public MessageReader(InputStream in)
    {
@@ -42,16 +43,18 @@ public class MessageReader
    {
       int rv;
       /* Read the 12 byte fixed header, retrying as neccessary */
-      if (null == buf) { buf = new byte[12]; len[0] = 0; }
+      if (null == buf) {
+          buf = new byte[12];
+          len[0] = 0; }
       if (len[0] < 12) {
-         try { rv = in.read(buf, len[0], 12-len[0]); }
+         try { rv = in.read(buf, len[0], 12 - len[0]); }
          catch (SocketTimeoutException STe) { return null; }
-         if (-1 == rv) throw new EOFException(_("Underlying transport returned EOF"));
-         len[0] += rv;
+         if (-1 == rv) throw new EOFException(getResource("Underlying transport returned EOF"));
+          len[0] += rv;
       }
       if (len[0] == 0) return null;
       if (len[0] < 12) {
-         if (Debug.debug) Debug.print(Debug.DEBUG, "Only got "+len[0]+" of 12 bytes of header");
+         if (Debug.debug) Debug.print(Debug.DEBUG, "Only got "+ len[0]+" of 12 bytes of header");
          return null;
       }
 
@@ -60,20 +63,22 @@ public class MessageReader
       byte type = buf[1];
       byte protover = buf[3];
       if (protover > Message.PROTOCOL) {
-         buf = null;
-         throw new MessageProtocolVersionException(MessageFormat.format(_("Protocol version {0} is unsupported"), new Object[] { protover }));
+          buf = null;
+         throw new MessageProtocolVersionException(MessageFormat.format(getResource("Protocol version {0} is unsupported"), protover));
       }
 
       /* Read the length of the variable header */
-      if (null == tbuf) { tbuf = new byte[4]; len[1] = 0; }
+      if (null == tbuf) {
+          tbuf = new byte[4];
+          len[1] = 0; }
       if (len[1] < 4) {
-         try { rv = in.read(tbuf, len[1], 4-len[1]); }
+         try { rv = in.read(tbuf, len[1], 4 - len[1]); }
          catch (SocketTimeoutException STe) { return null; }
-         if (-1 == rv) throw new EOFException(_("Underlying transport returned EOF"));
-         len[1] += rv;
+         if (-1 == rv) throw new EOFException(getResource("Underlying transport returned EOF"));
+          len[1] += rv;
       }
       if (len[1] < 4) {
-         if (Debug.debug) Debug.print(Debug.DEBUG, "Only got "+len[1]+" of 4 bytes of header");
+         if (Debug.debug) Debug.print(Debug.DEBUG, "Only got "+ len[1]+" of 4 bytes of header");
          return null;
       }
 
@@ -82,58 +87,60 @@ public class MessageReader
       if (null == header) {
          headerlen = (int) Message.demarshallint(tbuf, 0, endian, 4);
          if (0 != headerlen % 8)
-            headerlen += 8-(headerlen%8);
+            headerlen += 8- headerlen%8;
       } else
          headerlen = header.length-8;
 
       /* Read the variable header */
       if (null == header) {
-         header = new byte[headerlen+8]; 
+          header = new byte[headerlen+8];
          System.arraycopy(tbuf, 0, header, 0, 4);
-         len[2] = 0; 
+          len[2] = 0;
       }
       if (len[2] < headerlen) {
-         try { rv = in.read(header, 8+len[2], headerlen-len[2]); }
+         try { rv = in.read(header, 8 + len[2], headerlen - len[2]); }
          catch (SocketTimeoutException STe) { return null; }
-         if (-1 == rv) throw new EOFException(_("Underlying transport returned EOF"));
-         len[2] += rv;
+         if (-1 == rv) throw new EOFException(getResource("Underlying transport returned EOF"));
+          len[2] += rv;
       }
       if (len[2] < headerlen) {
-         if (Debug.debug) Debug.print(Debug.DEBUG, "Only got "+len[2]+" of "+headerlen+" bytes of header");
+         if (Debug.debug) Debug.print(Debug.DEBUG, "Only got "+ len[2]+" of "+headerlen+" bytes of header");
          return null;
       }
 
       /* Read the body */
       int bodylen = 0;
       if (null == body) bodylen = (int) Message.demarshallint(buf, 4, endian, 4);
-      if (null == body) { body=new byte[bodylen]; len[3] = 0; }
+      if (null == body) {
+          body =new byte[bodylen];
+          len[3] = 0; }
       if (len[3] < body.length) {
-         try { rv = in.read(body, len[3], body.length-len[3]); }
+         try { rv = in.read(body, len[3], body.length - len[3]); }
          catch (SocketTimeoutException STe) { return null; }
-         if (-1 == rv) throw new EOFException(_("Underlying transport returned EOF"));
-         len[3] += rv;
+         if (-1 == rv) throw new EOFException(getResource("Underlying transport returned EOF"));
+          len[3] += rv;
       }
       if (len[3] < body.length) {
-         if (Debug.debug) Debug.print(Debug.DEBUG, "Only got "+len[3]+" of "+body.length+" bytes of body");
+         if (Debug.debug) Debug.print(Debug.DEBUG, "Only got "+ len[3]+" of "+ body.length+" bytes of body");
          return null;
       }
 
       Message m;
       switch (type) {
-         case Message.MessageType.METHOD_CALL:
+         case MessageType.METHOD_CALL:
             m = new MethodCall();
             break;
-         case Message.MessageType.METHOD_RETURN:
+         case MessageType.METHOD_RETURN:
             m = new MethodReturn();
             break;
-         case Message.MessageType.SIGNAL:
+         case MessageType.SIGNAL:
             m = new DBusSignal();
             break;
-         case Message.MessageType.ERROR:
+         case MessageType.ERROR:
             m = new Error();
             break;
          default:
-            throw new MessageTypeException(MessageFormat.format(_("Message type {0} unsupported"), new Object[] {type}));
+            throw new MessageTypeException(MessageFormat.format(getResource("Message type {0} unsupported"), type));
       }
       if (Debug.debug) {
          Debug.print(Debug.VERBOSE, Hexdump.format(buf));
@@ -143,33 +150,26 @@ public class MessageReader
       }
       try {
          m.populate(buf, header, body);
-      } catch (DBusException DBe) {
+      } catch (DBusException | RuntimeException DBe) {
          if (AbstractConnection.EXCEPTION_DEBUG && Debug.debug) Debug.print(Debug.ERR, DBe);
-         buf = null;
-         tbuf = null;
-         body = null;
-         header = null;
+          buf = null;
+          tbuf = null;
+          body = null;
+          header = null;
          throw DBe;
-      } catch (RuntimeException Re) {
-         if (AbstractConnection.EXCEPTION_DEBUG && Debug.debug) Debug.print(Debug.ERR, Re);
-         buf = null;
-         tbuf = null;
-         body = null;
-         header = null;
-         throw Re;
       }
-      if (Debug.debug) {
+       if (Debug.debug) {
          Debug.print(Debug.INFO, "=> "+m);
       }
-      buf = null;
-      tbuf = null;
-      body = null;
-      header = null;
+       buf = null;
+       tbuf = null;
+       body = null;
+       header = null;
       return m;
    }
    public void close() throws IOException
    {
       if (Debug.debug) Debug.print(Debug.INFO, "Closing Message Reader");
-      in.close();
+       in.close();
    }
 }

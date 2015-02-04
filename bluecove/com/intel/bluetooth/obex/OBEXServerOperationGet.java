@@ -39,11 +39,11 @@ class OBEXServerOperationGet extends OBEXServerOperation implements OBEXOperatio
 			boolean finalPacket) throws IOException {
 		super(session, receivedHeaders);
 		if (finalPacket) {
-			requestEnded = true;
-			finalPacketReceived = true;
+            requestEnded = true;
+            finalPacketReceived = true;
 		}
-		this.inputStream = new OBEXOperationInputStream(this);
-		processIncommingData(receivedHeaders, finalPacket);
+        this.inputStream = new OBEXOperationInputStream(this);
+        processIncommingData(receivedHeaders, finalPacket);
 	}
 
 	/*
@@ -58,7 +58,7 @@ class OBEXServerOperationGet extends OBEXServerOperation implements OBEXOperatio
 		if (inputStreamOpened) {
 			throw new IOException("input stream already open");
 		}
-		this.inputStreamOpened = true;
+        this.inputStreamOpened = true;
 		return this.inputStream;
 	}
 
@@ -74,10 +74,10 @@ class OBEXServerOperationGet extends OBEXServerOperation implements OBEXOperatio
 		if (outputStream != null) {
 			throw new IOException("output stream already open");
 		}
-		requestEnded = true;
-		outputStream = new OBEXOperationOutputStream(session.mtu, this);
-		session.writePacket(OBEXOperationCodes.OBEX_RESPONSE_CONTINUE, sendHeaders);
-		sendHeaders = null;
+        requestEnded = true;
+        outputStream = new OBEXOperationOutputStream(session.mtu, this);
+        session.writePacket(OBEXOperationCodes.OBEX_RESPONSE_CONTINUE, sendHeaders);
+        sendHeaders = null;
 		return outputStream;
 	}
 
@@ -88,38 +88,38 @@ class OBEXServerOperationGet extends OBEXServerOperation implements OBEXOperatio
 	 */
 	public void close() throws IOException {
 		if (outputStream != null) {
-			outputStream.close();
-			outputStream = null;
+            outputStream.close();
+            outputStream = null;
 		}
-		inputStream.close();
+        inputStream.close();
 		super.close();
 	}
 
 	protected boolean readRequestPacket() throws IOException {
 		byte[] b = session.readPacket();
 		int opcode = b[0] & 0xFF;
-		boolean finalPacket = ((opcode & OBEXOperationCodes.FINAL_BIT) != 0);
+		boolean finalPacket = (opcode & OBEXOperationCodes.FINAL_BIT) != 0;
 		if (finalPacket) {
 			DebugLog.debug("server operation got final packet");
-			finalPacketReceived = true;
+            finalPacketReceived = true;
 		}
 		switch (opcode) {
 		case OBEXOperationCodes.GET_FINAL:
 		case OBEXOperationCodes.GET:
 			if (finalPacket) {
-				requestEnded = true;
+                requestEnded = true;
 			}
 			HeaderSet requestHeaders = OBEXHeaderSetImpl.readHeaders(b[0], b, 3);
 			OBEXHeaderSetImpl.appendHeaders(this.receivedHeaders, requestHeaders);
-			processIncommingData(requestHeaders, finalPacket);
+            processIncommingData(requestHeaders, finalPacket);
 			break;
 		case OBEXOperationCodes.ABORT:
-			processAbort();
+            processAbort();
 			break;
 		default:
-			errorReceived = true;
+            errorReceived = true;
 			DebugLog.debug0x("server operation invalid request", OBEXUtils.toStringObexResponseCodes(opcode), opcode);
-			session.writePacket(ResponseCodes.OBEX_HTTP_BAD_REQUEST, null);
+            session.writePacket(ResponseCodes.OBEX_HTTP_BAD_REQUEST, null);
 		}
 		return finalPacket;
 	}
@@ -131,13 +131,13 @@ class OBEXServerOperationGet extends OBEXServerOperation implements OBEXOperatio
 	 */
 	public void receiveData(OBEXOperationInputStream is) throws IOException {
 		if (requestEnded || errorReceived) {
-			this.inputStream.appendData(null, true);
+            this.inputStream.appendData(null, true);
 			return;
 		}
 		DebugLog.debug("server operation reply continue");
-		session.writePacket(OBEXOperationCodes.OBEX_RESPONSE_CONTINUE, sendHeaders);
-		sendHeaders = null;
-		readRequestPacket();
+        session.writePacket(OBEXOperationCodes.OBEX_RESPONSE_CONTINUE, sendHeaders);
+        sendHeaders = null;
+        readRequestPacket();
 	}
 
 	/*
@@ -148,7 +148,7 @@ class OBEXServerOperationGet extends OBEXServerOperation implements OBEXOperatio
 	public void deliverPacket(boolean finalPacket, byte[] buffer) throws IOException {
 		if (session.requestSent) {
 			// TODO Consider moving readRequestPacket() to the begging of the function
-			readRequestPacket();
+            readRequestPacket();
 			if (session.requestSent) {
 				throw new IOException("Client not requesting data");
 			}
@@ -163,18 +163,18 @@ class OBEXServerOperationGet extends OBEXServerOperation implements OBEXOperatio
 		dataHeaders.setHeader(dataHeaderID, buffer);
 		if (sendHeaders != null) {
 			OBEXHeaderSetImpl.appendHeaders(dataHeaders, sendHeaders);
-			sendHeaders = null;
+            sendHeaders = null;
 		}
-		session.writePacket(opcode, dataHeaders);
-		readRequestPacket();
+        session.writePacket(opcode, dataHeaders);
+        readRequestPacket();
 	}
 
 	private void processAbort() throws IOException {
 		// TODO proper abort + UnitTests
-		finalPacketReceived = true;
-		requestEnded = true;
-		isAborted = true;
-		session.writePacket(OBEXOperationCodes.OBEX_RESPONSE_SUCCESS, null);
+        finalPacketReceived = true;
+        requestEnded = true;
+        isAborted = true;
+        session.writePacket(OBEXOperationCodes.OBEX_RESPONSE_SUCCESS, null);
 		throw new IOException("Operation aborted");
 	}
 

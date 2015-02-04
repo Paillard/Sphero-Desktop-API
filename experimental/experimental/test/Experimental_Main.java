@@ -7,10 +7,7 @@ package experimental.test;
 
 import experimental.sensor.AccelerometerSensorData;
 import experimental.sensor.TouchSensor;
-import java.awt.Color;
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import experimental.sensor.TouchSensor.TouchListener;
 import se.nicklasgavelin.bluetooth.Bluetooth;
 import se.nicklasgavelin.bluetooth.Bluetooth.EVENT;
 import se.nicklasgavelin.bluetooth.BluetoothDevice;
@@ -19,24 +16,32 @@ import se.nicklasgavelin.log.Logging;
 import se.nicklasgavelin.sphero.Robot;
 import se.nicklasgavelin.sphero.RobotListener;
 import se.nicklasgavelin.sphero.command.CommandMessage;
-import se.nicklasgavelin.sphero.command.RawMotorCommand;
+import se.nicklasgavelin.sphero.command.RawMotorCommand.MOTOR_MODE;
 import se.nicklasgavelin.sphero.command.SetDataStreamingCommand;
+import se.nicklasgavelin.sphero.command.SetDataStreamingCommand.DATA_STREAMING_MASKS.GYRO.ALL;
 import se.nicklasgavelin.sphero.exception.InvalidRobotAddressException;
 import se.nicklasgavelin.sphero.exception.RobotBluetoothException;
-import se.nicklasgavelin.sphero.macro.command.Delay;
 import se.nicklasgavelin.sphero.macro.MacroObject;
+import se.nicklasgavelin.sphero.macro.MacroObject.MacroObjectMode;
+import se.nicklasgavelin.sphero.macro.command.Delay;
+import se.nicklasgavelin.sphero.macro.command.Fade;
+import se.nicklasgavelin.sphero.macro.command.RGB;
 import se.nicklasgavelin.sphero.macro.command.RawMotor;
-import se.nicklasgavelin.sphero.macro.command.*;
+import se.nicklasgavelin.sphero.response.InformationResponseMessage;
 import se.nicklasgavelin.sphero.response.ResponseMessage;
 import se.nicklasgavelin.sphero.response.information.DataResponse;
-import se.nicklasgavelin.sphero.response.InformationResponseMessage;
+
+import java.awt.*;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Nicklas Gavelin, nicklas.gavelin@gmail.com, Luleå University of
  * Technology
  */
-public class Experimental_Main implements BluetoothDiscoveryListener, RobotListener, TouchSensor.TouchListener
+public class Experimental_Main implements BluetoothDiscoveryListener, RobotListener, TouchListener
 {
     /**
      * Main method for experimental stuff
@@ -68,7 +73,7 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
             checksum += by;
         }
 
-        return ( byte ) (checksum ^ 0xFFFFFFFF);
+        return ( byte ) ~checksum;
     }
     private int delay = 25;
     private int steps = 100;
@@ -92,7 +97,7 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
             Logger.getLogger( Experimental_Main.class.getName() ).log( Level.INFO, "Connected to robot" );
 
             s = new TouchSensor( r );
-            s.addTouchListener( this );
+            s.addTouchListener(this);
             startStream( r );
 
 //            MacroObject mo = new MacroObject();
@@ -135,7 +140,7 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
 
     private int calcspeed( double f, float maxSpeed )
     {
-        return ( int ) (Math.sin( (f % (Math.PI / 2)) + (Math.PI / 2) ) * maxSpeed);
+        return ( int ) (Math.sin( f % (Math.PI / 2) + Math.PI / 2) * maxSpeed);
     }
 
 
@@ -145,10 +150,10 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
         int n = nSteps;
         int delay = dDelay;
         double PI = Math.PI;
-        double maxValue = 2 * PI + (PI / 2);
-        double incVal = (maxValue / n);
+        double maxValue = 2 * PI + PI / 2;
+        double incVal = maxValue / n;
 
-        RawMotorCommand.MOTOR_MODE mm = RawMotorCommand.MOTOR_MODE.FORWARD; // : RawMotorCommand.MOTOR_MODE.REVERSE );
+        MOTOR_MODE mm = MOTOR_MODE.FORWARD; // : RawMotorCommand.MOTOR_MODE.REVERSE );
         MacroObject mo = new MacroObject();
 
         for ( int i = 0; i < n; i++ )
@@ -159,10 +164,10 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
                 switch ( mm )
                 {
                     case FORWARD:
-                        mm = RawMotorCommand.MOTOR_MODE.REVERSE;
+                        mm = MOTOR_MODE.REVERSE;
                         break;
                     case REVERSE:
-                        mm = RawMotorCommand.MOTOR_MODE.FORWARD;
+                        mm = MOTOR_MODE.FORWARD;
                         break;
                 }
             }
@@ -171,7 +176,7 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
             mo.addCommand( new Delay( delay ) );
         }
 
-        mo.addCommand( new RawMotor( RawMotorCommand.MOTOR_MODE.FORWARD, 0, RawMotorCommand.MOTOR_MODE.FORWARD, 0 ) );
+        mo.addCommand( new RawMotor( MOTOR_MODE.FORWARD, 0, MOTOR_MODE.FORWARD, 0 ) );
 
         return mo;
     }
@@ -205,7 +210,7 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
     public void responseReceived( Robot r, ResponseMessage response, CommandMessage dc )
     {
     }
-    private int p = 0;
+    private int p;
 
 
     @Override
@@ -240,10 +245,10 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
 
     private void startStream( Robot r )
     {
-        SetDataStreamingCommand sds = new SetDataStreamingCommand( 4, 1, SetDataStreamingCommand.DATA_STREAMING_MASKS.GYRO.ALL.RAW, 100 ); //new SetDataStreamingCommand( 1, 1, SetDataStreamingCommand.DATA_STREAMING_MASKS.ACCELEROMETER.ALL.RAW, 65534 );
+        SetDataStreamingCommand sds = new SetDataStreamingCommand( 4, 1, ALL.RAW, 100 ); //new SetDataStreamingCommand( 1, 1, SetDataStreamingCommand.DATA_STREAMING_MASKS.ACCELEROMETER.ALL.RAW, 65534 );
         r.sendCommand( sds );
     }
-    private int co = 0;
+    private int co;
 
 
     @Override
@@ -253,7 +258,7 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
         {
             co++;
 
-            if ( co > 90 )
+            if (co > 90 )
             {
                 startStream( r );
                 co = 0;
@@ -262,12 +267,12 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
             DataResponse dr = ( DataResponse ) response;
             byte[] data = dr.getSensorData();
 
-            int x = (data[1] | (data[0] << 8));
-            int y = (data[3] | (data[2] << 8));
-            int z = (data[5] | (data[4] << 8));
+            int x = data[1] | data[0] << 8;
+            int y = data[3] | data[2] << 8;
+            int z = data[5] | data[4] << 8;
 
 //            System.out.println( "X=" + x + ", Y=" + y + ", Z=" + z );
-            s.addData( new AccelerometerSensorData( x, y, z ) );
+            s.addData(new AccelerometerSensorData(x, y, z));
         }
     }
 
@@ -277,7 +282,7 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
     {
         int d = 500, k = 250;
         MacroObject mo = new MacroObject();
-        mo.setMode( MacroObject.MacroObjectMode.CachedStreaming );
+        mo.setMode( MacroObjectMode.CachedStreaming );
         mo.addCommand( new RGB( Color.WHITE, 0 ) );
         mo.addCommand( new Fade( 255, 0, 0, k ) );
         mo.addCommand( new Delay( d ) );

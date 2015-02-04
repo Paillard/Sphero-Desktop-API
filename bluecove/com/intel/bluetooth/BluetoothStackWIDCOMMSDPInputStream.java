@@ -51,7 +51,7 @@ class BluetoothStackWIDCOMMSDPInputStream extends InputStream {
     private long readLong(int size) throws IOException {
         long result = 0;
         for (int i = 0; i < size; i++) {
-            result += ((long) read()) << (8 * i);
+            result += (long) read() << 8 * i;
         }
         return result;
     }
@@ -63,7 +63,7 @@ class BluetoothStackWIDCOMMSDPInputStream extends InputStream {
             if (debug) {
                 DebugLog.debug("readLong data[" + i + "]", data);
             }
-            result += ((long) data) << (8 * i);
+            result += (long) data << 8 * i;
         }
         return result;
     }
@@ -81,10 +81,10 @@ class BluetoothStackWIDCOMMSDPInputStream extends InputStream {
     }
 
     static String hexString(byte[] b) {
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < b.length; i++) {
-            buf.append(Integer.toHexString(b[i] >> 4 & 0xf));
-            buf.append(Integer.toHexString(b[i] & 0xf));
+        StringBuilder buf = new StringBuilder();
+        for (byte aB : b) {
+            buf.append(Integer.toHexString(aB >> 4 & 0xf));
+            buf.append(Integer.toHexString(aB & 0xf));
         }
         return buf.toString();
     }
@@ -111,7 +111,7 @@ class BluetoothStackWIDCOMMSDPInputStream extends InputStream {
 
     static final int MAX_ATTR_LEN_OLD = 256;
 
-    private int valueSize = 0;
+    private int valueSize;
 
     private void readVersionInfo() throws IOException {
         valueSize = readInt();
@@ -135,7 +135,7 @@ class BluetoothStackWIDCOMMSDPInputStream extends InputStream {
             }
             int type = readInt();
             int length = readInt();
-            boolean start_of_seq = (readInt() != 0);
+            boolean start_of_seq = readInt() != 0;
             if (debug) {
                 DebugLog.debug("type", type);
                 DebugLog.debug("length", length);
@@ -245,7 +245,7 @@ class BluetoothStackWIDCOMMSDPInputStream extends InputStream {
                 result = dataElement;
             }
 
-            if ((i < (elements - 1)) && (skip(valueSize - length) != (valueSize - length))) {
+            if (i < elements - 1 && skip(this.valueSize - length) != this.valueSize - length) {
                 throw new IOException("Unexpected end of data");
             }
         }

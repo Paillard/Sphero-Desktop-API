@@ -58,8 +58,7 @@ class BluetoothConnectionParams {
 	public int timeout = DEFAULT_CONNECT_TIMEOUT;
 
 	public BluetoothConnectionParams(long address, int channel, boolean authenticate, boolean encrypt) {
-		super();
-		this.address = address;
+        this.address = address;
 		this.channel = channel;
 		this.authenticate = authenticate;
 		this.encrypt = encrypt;

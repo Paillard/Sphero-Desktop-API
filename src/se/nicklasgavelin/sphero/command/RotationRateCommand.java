@@ -1,5 +1,6 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
 import se.nicklasgavelin.util.Value;
 
 /**
@@ -37,7 +38,7 @@ public class RotationRateCommand extends CommandMessage
 	protected byte[] getPacketData()
 	{
 		byte[] data = new byte[ 1 ];
-		data[0] = (byte) (int) ( this.rate * 255.0D );
+		data[0] = (byte) (int) (this.rate * 255.0D );
 
 		return data;
 	}

@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus.viewer;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -25,7 +25,7 @@ class SaveFileAction extends TabbedSaveAction implements ChangeListener
 {
 	private class SelectedTabIterator implements Iterator<TextFile>
 	{
-		boolean iterated = false;
+		boolean iterated;
 		/** {@inheritDoc} */
 		public boolean hasNext()
 		{
@@ -37,9 +37,9 @@ class SaveFileAction extends TabbedSaveAction implements ChangeListener
 		{
 			if (iterated)
 			{
-				throw new NoSuchElementException(_("Already iterated"));
+				throw new NoSuchElementException(getResource("Already iterated"));
 			}
-			iterated = true;
+            iterated = true;
 			return getTextFile(tabbedPane.getSelectedIndex());
 		}
 
@@ -54,8 +54,8 @@ class SaveFileAction extends TabbedSaveAction implements ChangeListener
 	SaveFileAction(JTabbedPane tabbedPane)
 	{
 		super(tabbedPane);
-		
-		enableAndSetName();
+
+        enableAndSetName();
 		
 		tabbedPane.addChangeListener(this);
 	}
@@ -63,7 +63,7 @@ class SaveFileAction extends TabbedSaveAction implements ChangeListener
 	/** {@inheritDoc} */
 	public void stateChanged(ChangeEvent e)
 	{
-		enableAndSetName();
+        enableAndSetName();
 	}
 
 	/**
@@ -73,8 +73,8 @@ class SaveFileAction extends TabbedSaveAction implements ChangeListener
 	{
 		int selectedIndex = tabbedPane.getSelectedIndex();
 		boolean enabled = selectedIndex > -1;
-		putValue(Action.NAME, _("Save ") + getFileName(selectedIndex) + "...");
-		setEnabled(enabled);
+        putValue(Action.NAME, getResource("Save ") + getFileName(selectedIndex) + "...");
+        setEnabled(enabled);
 	}
 
 	/** {@inheritDoc} */

@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.Value;
 
 /**
@@ -20,7 +21,7 @@ public class WaitUntilStop extends MacroCommand
 	public WaitUntilStop( int delay )
 	{
 		super( MACRO_COMMAND.MAC_WAIT_UNTIL_STOP );
-		this.setDelay( delay );
+        this.setDelay( delay );
 	}
 
 	/**
@@ -30,16 +31,16 @@ public class WaitUntilStop extends MacroCommand
 	 */
 	public void setDelay( int delay )
 	{
-		this.mDelay = Value.clamp( delay, MIN_DELAY, MAX_DELAY );
+        this.mDelay = Value.clamp( delay, MIN_DELAY, MAX_DELAY);
 	}
 
 	@Override
 	public byte[] getByteRepresentation()
 	{
-		byte[] macro = new byte[ getLength() ];
+		byte[] macro = new byte[getLength() ];
 		macro[0] = getCommandID();
-		macro[1] = (byte) ( this.mDelay >> 8 );
-		macro[2] = (byte) ( this.mDelay & 0xFF );
+		macro[1] = (byte) (this.mDelay >> 8 );
+		macro[2] = (byte) (this.mDelay & 0xFF );
 
 		return macro;
 	}

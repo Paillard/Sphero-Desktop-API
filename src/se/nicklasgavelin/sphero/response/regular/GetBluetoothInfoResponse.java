@@ -2,6 +2,7 @@ package se.nicklasgavelin.sphero.response.regular;
 
 import java.io.UnsupportedEncodingException;
 import se.nicklasgavelin.sphero.response.ResponseMessage;
+import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader;
 
 /**
  * A response for the GetBluetoothInfoCommand. Will be created
@@ -30,15 +31,15 @@ public class GetBluetoothInfoResponse extends ResponseMessage
 		if( !isCorrupt() )
 		{
 			byte[] data = this.getPacketPayload();
-			if( data == null || ( data.length != INFO_DATA_LENGTH && data.length != OLD_INFO_DATA_LENGTH ) )
+			if( data == null || data.length != INFO_DATA_LENGTH && data.length != OLD_INFO_DATA_LENGTH)
 			{
 				System.err.println( "Data is corrupt" );
-				setCorrupt( true );
+                setCorrupt( true );
 			}
 			else
 			{
 				// Data is ok, continue reading bluetooth information
-				int name_data_length = ( data.length == INFO_DATA_LENGTH ? INFO_NAME_LENGTH : OLD_INFO_NAME_LENGTH );
+				int name_data_length = data.length == INFO_DATA_LENGTH ? INFO_NAME_LENGTH : OLD_INFO_NAME_LENGTH;
 				int name_length = name_data_length;
 
 				// Check for the end of the name
@@ -65,16 +66,16 @@ public class GetBluetoothInfoResponse extends ResponseMessage
 				try
 				{
 					// Try to set the name and address
-					this.name = new String( data, 0, name_length, "UTF-8" );
-					this.address = new String( data, name_data_length, address_length, "US-ASCII" );
+                    this.name = new String( data, 0, name_length, "UTF-8" );
+                    this.address = new String( data, name_data_length, address_length, "US-ASCII" );
 				}
 				catch( UnsupportedEncodingException e )
 				{
 					System.err.println( "Encoding not supported" );
 
 					// Encoding not supported
-					this.name = null;
-					this.address = null;
+                    this.name = null;
+                    this.address = null;
 				}
 			}
 		}

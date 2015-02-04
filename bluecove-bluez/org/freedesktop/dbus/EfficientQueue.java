@@ -23,25 +23,25 @@ class EfficientQueue
    private int init_size;
    public EfficientQueue(int initial_size)
    {
-      init_size = initial_size;
-      shrink();
+       init_size = initial_size;
+       shrink();
    }
    private void grow()
    {
       if (Debug.debug) Debug.print(Debug.DEBUG, "Growing");
       // create new vectors twice as long
       Message[] oldmv = mv;
-      mv = new Message[oldmv.length*2];
+       mv = new Message[oldmv.length*2];
 
       // copy start->length to the start of the new vector
-      System.arraycopy(oldmv,start,mv,0,oldmv.length-start);
+      System.arraycopy(oldmv, start, mv,0,oldmv.length- start);
       // copy 0->end to the next part of the new vector
-      if (end != (oldmv.length-1)) {
-         System.arraycopy(oldmv,0,mv,oldmv.length-start,end+1);
+      if (end != oldmv.length-1) {
+         System.arraycopy(oldmv,0, mv,oldmv.length- start, end +1);
       }
       // reposition pointers
-      start = 0;
-      end = oldmv.length;
+       start = 0;
+       end = oldmv.length;
    }
    // create a new vector with just the valid keys in and return it
    public Message[] getKeys()
@@ -49,14 +49,14 @@ class EfficientQueue
       if (start == end) return new Message[0];
       Message[] lv;
       if (start < end) {
-         int size = end-start;
+         int size = end - start;
          lv = new Message[size];
          System.arraycopy(mv, start, lv, 0, size);
       } else {
-         int size = mv.length-start+end;
+         int size = mv.length- start + end;
          lv = new Message[size];
-         System.arraycopy(mv, start, lv, 0, mv.length-start);
-         System.arraycopy(mv, 0, lv, mv.length-start, end);
+         System.arraycopy(mv, start, lv, 0, mv.length- start);
+         System.arraycopy(mv, 0, lv, mv.length- start, end);
       }
       return lv;
    }
@@ -65,17 +65,17 @@ class EfficientQueue
       if (Debug.debug) Debug.print(Debug.DEBUG, "Shrinking");
       if (null != mv && mv.length == init_size) return;
       // reset to original size
-      mv = new Message[init_size];
-      start = 0;
-      end = 0;
+       mv = new Message[init_size];
+       start = 0;
+       end = 0;
    }
    public void add(Message m)
    {
       if (Debug.debug) Debug.print(Debug.DEBUG, "Enqueueing Message "+m);
       // put this at the end
-      mv[end] = m;
+       mv[end] = m;
       // move the end
-      if (end == (mv.length-1)) end = 0; else end++;
+      if (end == this.mv.length-1) end = 0; else end++;
       // if we are out of space, grow.
       if (end == start) grow();
    }
@@ -87,8 +87,8 @@ class EfficientQueue
       // get the value
       Message m = mv[pos];
       // set it as unused
-      mv[pos] = null;
-      if (start == (mv.length-1)) start = 0; else start++;
+       mv[pos] = null;
+      if (start == this.mv.length-1) start = 0; else start++;
       if (Debug.debug) Debug.print(Debug.DEBUG, "Dequeueing "+m);
       return m;
    }
@@ -100,8 +100,8 @@ class EfficientQueue
    public int size()
    {
       if (end >= start)
-         return end-start;
+         return end - start;
       else
-         return mv.length-start+end;
+         return mv.length- start + end;
    }
 }

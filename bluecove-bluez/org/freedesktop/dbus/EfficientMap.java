@@ -22,40 +22,40 @@ class EfficientMap
    private int init_size;
    public EfficientMap(int initial_size)
    {
-      init_size = initial_size;
-      shrink();
+       init_size = initial_size;
+       shrink();
    }
    private void grow()
    {
       // create new vectors twice as long
       long[] oldkv = kv;
-      kv = new long[oldkv.length*2];
+       kv = new long[oldkv.length*2];
       MethodCall[] oldvv = vv;
-      vv = new MethodCall[oldvv.length*2];
+       vv = new MethodCall[oldvv.length*2];
 
       // copy start->length to the start of the new vector
-      System.arraycopy(oldkv,start,kv,0,oldkv.length-start);
-      System.arraycopy(oldvv,start,vv,0,oldvv.length-start);
+      System.arraycopy(oldkv, start, kv,0,oldkv.length- start);
+      System.arraycopy(oldvv, start, vv,0,oldvv.length- start);
       // copy 0->end to the next part of the new vector
-      if (end != (oldkv.length-1)) {
-         System.arraycopy(oldkv,0,kv,oldkv.length-start,end+1);
-         System.arraycopy(oldvv,0,vv,oldvv.length-start,end+1);
+      if (end != oldkv.length-1) {
+         System.arraycopy(oldkv,0, kv,oldkv.length- start, end +1);
+         System.arraycopy(oldvv,0, vv,oldvv.length- start, end +1);
       }
       // reposition pointers
-      start = 0;
-      end = oldkv.length;
+       start = 0;
+       end = oldkv.length;
    }
    // create a new vector with just the valid keys in and return it
    public long[] getKeys()
    {
       int size;
-      if (start < end) size = end-start;
-      else size = kv.length-(start-end);
+      if (start < end) size = end - start;
+      else size = kv.length-(start - end);
       long[] lv = new long[size];
       int copya;
-      if (size > kv.length-start) copya = kv.length-start;
+      if (size > kv.length- start) copya = kv.length- start;
       else copya = size;
-      System.arraycopy(kv,start,lv,0,copya);
+      System.arraycopy(kv, start,lv,0,copya);
       if (copya < size) {
          System.arraycopy(kv,0,lv,copya,size-copya);
       }
@@ -65,18 +65,18 @@ class EfficientMap
    {
       if (null != kv && kv.length == init_size) return;
       // reset to original size
-      kv = new long[init_size];
-      vv = new MethodCall[init_size];
-      start = 0;
-      end = 0;
+       kv = new long[init_size];
+       vv = new MethodCall[init_size];
+       start = 0;
+       end = 0;
    }
    public void put(long l, MethodCall m)
    {
       // put this at the end
-      kv[end] = l;
-      vv[end] = m;
+       kv[end] = l;
+       vv[end] = m;
       // move the end
-      if (end == (kv.length-1)) end = 0; else end++;
+      if (end == kv.length-1) end = 0; else end++;
       // if we are out of space, grow.
       if (end == start) grow();
    }
@@ -89,13 +89,14 @@ class EfficientMap
       // get the value
       MethodCall m = vv[pos];
       // set it as unused
-      vv[pos] = null;
-      kv[pos] = -1;
+       vv[pos] = null;
+       kv[pos] = -1;
       // move the pointer to the first full element
       while (-1 == kv[start]) {
-         if (start == (kv.length-1)) start = 0; else start++;
+         if (start == kv.length-1) start = 0; else start++;
          // if we have emptied the list, shrink it
-         if (start == end) { shrink(); break; }
+         if (start == end) {
+             shrink(); break; }
       }
       return m;
    }
@@ -109,7 +110,7 @@ class EfficientMap
    {
       int i = start;
       while (i != end && kv[i] != l)
-         if (i == (kv.length-1)) i = 0; else i++;
+         if (i == kv.length-1) i = 0; else i++;
       if (i == end) return -1;
       return i;
    }

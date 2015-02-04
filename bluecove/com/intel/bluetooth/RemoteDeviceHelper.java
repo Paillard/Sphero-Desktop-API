@@ -24,6 +24,8 @@
  */
 package com.intel.bluetooth;
 
+import com.intel.bluetooth.WeakVectorFactory.WeakVector;
+
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -34,8 +36,6 @@ import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.Connection;
-
-import com.intel.bluetooth.WeakVectorFactory.WeakVector;
 
 /**
  * Implementation of RemoteDevice.
@@ -138,7 +138,7 @@ public abstract class RemoteDeviceHelper {
         }
 
         public String toString() {
-            return super.getBluetoothAddress();
+            return this.getBluetoothAddress();
         }
 
         int connectionsCount() {
@@ -149,7 +149,7 @@ public abstract class RemoteDeviceHelper {
         }
 
         boolean hasConnections() {
-            return (connectionsCount() != 0);
+            return connectionsCount() != 0;
         }
 
         /**
@@ -250,10 +250,7 @@ public abstract class RemoteDeviceHelper {
             if (((BluetoothConnectionAccess) conn).getRemoteAddress() != this.addressLong) {
                 throw new IllegalArgumentException("Connection is not to this device");
             }
-            if ((((BluetoothConnectionAccess) conn).getSecurityOpt() == ServiceRecord.AUTHENTICATE_ENCRYPT) == on) {
-                return true;
-            }
-            return ((BluetoothConnectionAccess) conn).encrypt(this.addressLong, on);
+            return (((BluetoothConnectionAccess) conn).getSecurityOpt() == ServiceRecord.AUTHENTICATE_ENCRYPT) == on || ((BluetoothConnectionAccess) conn).encrypt(this.addressLong, on);
         }
 
         /*
@@ -268,7 +265,7 @@ public abstract class RemoteDeviceHelper {
             }
             Boolean authenticated = bluetoothStack.isRemoteDeviceAuthenticated(addressLong);
             if (authenticated != null) {
-                return authenticated.booleanValue();
+                return authenticated;
             }
             synchronized (connections) {
                 // Find first authenticated connection
@@ -313,7 +310,7 @@ public abstract class RemoteDeviceHelper {
             if (trusted == null) {
                 return paired;
             } else {
-                return trusted.booleanValue();
+                return trusted;
             }
         }
     }
@@ -334,7 +331,7 @@ public abstract class RemoteDeviceHelper {
     }
 
     private static RemoteDeviceWithExtendedInfo getCashedDeviceWithExtendedInfo(BluetoothStack bluetoothStack, long address) {
-        Object key = new Long(address);
+        Object key = address;
         return (RemoteDeviceWithExtendedInfo) devicesCashed(bluetoothStack).get(key);
     }
 
@@ -343,7 +340,7 @@ public abstract class RemoteDeviceHelper {
     }
 
     static RemoteDevice getStackBoundDevice(BluetoothStack bluetoothStack, RemoteDevice device) {
-        if ((device instanceof RemoteDeviceWithExtendedInfo) && (((RemoteDeviceWithExtendedInfo)device).bluetoothStack == bluetoothStack)) {
+        if (device instanceof RemoteDeviceWithExtendedInfo && ((RemoteDeviceWithExtendedInfo)device).bluetoothStack == bluetoothStack) {
             return device;
         }
         return createRemoteDevice(bluetoothStack, getAddress(device), null, false);
@@ -361,7 +358,7 @@ public abstract class RemoteDeviceHelper {
                     BlueCoveImpl.setThreadBluetoothStackID(saveID);
                 }
             }
-            devicesCashed(bluetoothStack).put(new Long(address), dev);
+            devicesCashed(bluetoothStack).put(address, dev);
             DebugLog.debug0x("new devicesCashed", address);
         } else if (!Utils.isStringSet(dev.name)) {
             // name found
@@ -641,7 +638,7 @@ public abstract class RemoteDeviceHelper {
             device = createRemoteDevice(null, device);
         }
         String name = ((RemoteDeviceWithExtendedInfo) device).name;
-        if (alwaysAsk || (name == null)) {
+        if (alwaysAsk || name == null) {
             name = ((RemoteDeviceWithExtendedInfo) device).bluetoothStack.getRemoteDeviceFriendlyName(address);
             if (name != null) {
                 ((RemoteDeviceWithExtendedInfo) device).name = name;
@@ -677,7 +674,7 @@ public abstract class RemoteDeviceHelper {
      * @see javax.bluetooth.DiscoveryAgent#retrieveDevices(int)
      */
     public static RemoteDevice[] implRetrieveDevices(BluetoothStack bluetoothStack, int option) {
-        if ((option != DiscoveryAgent.PREKNOWN) && (option != DiscoveryAgent.CACHED)) {
+        if (option != DiscoveryAgent.PREKNOWN && option != DiscoveryAgent.CACHED) {
             throw new IllegalArgumentException("invalid option");
         }
         RemoteDevice[] impl = bluetoothStack.retrieveDevices(option);
@@ -693,7 +690,7 @@ public abstract class RemoteDeviceHelper {
         Hashtable devicesCashed = devicesCashed(bluetoothStack);
         switch (option) {
         case DiscoveryAgent.PREKNOWN:
-            if (devicesCashed.size() == 0) {
+            if (devicesCashed.isEmpty()) {
                 // Spec: null if no devices meet the criteria
                 return null;
             }
@@ -704,13 +701,13 @@ public abstract class RemoteDeviceHelper {
                     devicesPaired.addElement(d);
                 }
             }
-            if (devicesPaired.size() == 0) {
+            if (devicesPaired.isEmpty()) {
                 // Spec: null if no devices meet the criteria
                 return null;
             }
             return remoteDeviceListToArray(devicesPaired);
         case DiscoveryAgent.CACHED:
-            if (devicesCashed.size() == 0) {
+            if (devicesCashed.isEmpty()) {
                 // Spec: null if no devices meet the criteria
                 return null;
             }

@@ -208,7 +208,7 @@ public class DiscoveryAgent {
 		if (listener == null) {
 			throw new NullPointerException("DiscoveryListener is null");
 		}
-		if ((accessCode != LIAC) && (accessCode != GIAC) && ((accessCode < 0x9E8B00) || (accessCode > 0x9E8B3F))) {
+		if (accessCode != LIAC && accessCode != GIAC && (accessCode < 0x9E8B00 || accessCode > 0x9E8B3F)) {
 			throw new IllegalArgumentException("Invalid accessCode " + accessCode);
 		}
 		return this.bluetoothStack.startInquiry(accessCode, listener);
@@ -316,7 +316,7 @@ public class DiscoveryAgent {
 			}
 			for (int u2 = u1 + 1; u2 < uuidSet.length; u2++) {
 				if (uuidSet[u1].equals(uuidSet[u2])) {
-					throw new IllegalArgumentException("uuidSet has duplicate values " + uuidSet[u1].toString());
+					throw new IllegalArgumentException("uuidSet has duplicate values " + uuidSet[u1]);
 				}
 			}
 		}
@@ -409,7 +409,7 @@ public class DiscoveryAgent {
      *                <code>ServiceRecord.AUTHENTICATE_ENCRYPT</code>
      */
 	public String selectService(UUID uuid, int security, boolean master) throws BluetoothStateException {
-		return (new SelectServiceHandler(this)).selectService(uuid, security, master);
+		return new SelectServiceHandler(this).selectService(uuid, security, master);
 	}
 
 }

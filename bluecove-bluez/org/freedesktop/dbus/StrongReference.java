@@ -26,7 +26,7 @@ public class StrongReference<T> extends WeakReference<T>
    }
    public void clear()
    {
-      referant = null;
+       referant = null;
    }
    public boolean enqueue()
    {

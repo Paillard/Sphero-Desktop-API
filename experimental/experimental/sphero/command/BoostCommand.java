@@ -1,6 +1,7 @@
 package experimental.sphero.command;
 
 import se.nicklasgavelin.sphero.command.CommandMessage;
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
 import se.nicklasgavelin.util.Value;
 
 /**
@@ -9,6 +10,7 @@ import se.nicklasgavelin.util.Value;
  * @author Nicklas Gavelin, nicklas.gavelin@gmail.com, Luleå University of
  * Technology
  */
+@Deprecated
 public class BoostCommand extends CommandMessage
 {
     private float heading;
@@ -23,9 +25,9 @@ public class BoostCommand extends CommandMessage
      */
     public BoostCommand( int duration, float heading )
     {
-        super( CommandMessage.COMMAND_MESSAGE_TYPE.BOOST); //DEVICE_COMMAND.BOOST );// SpheroCommandBoost, SpheroDeviceId );
+        super( COMMAND_MESSAGE_TYPE.BOOST); //DEVICE_COMMAND.BOOST );// SpheroCommandBoost, SpheroDeviceId );
         this.time = Value.clamp( duration, 0, 255 );
-        this.heading = (( int ) heading % 360);
+        this.heading = ( int ) heading % 360;
     }
 
 
@@ -56,7 +58,7 @@ public class BoostCommand extends CommandMessage
     {
         byte[] data = new byte[ 3 ];
 
-        data[0] = ( byte ) (this.time);
+        data[0] = ( byte ) this.time;
         data[1] = ( byte ) (( int ) this.heading >> 8);
         data[2] = ( byte ) ( int ) this.heading;
 

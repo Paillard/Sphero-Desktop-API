@@ -23,6 +23,7 @@
  */
 package com.intel.bluetooth;
 
+import javax.bluetooth.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,21 +31,11 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.bluetooth.BluetoothStateException;
-import javax.bluetooth.DataElement;
-import javax.bluetooth.DeviceClass;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.DiscoveryListener;
-import javax.bluetooth.RemoteDevice;
-import javax.bluetooth.ServiceRecord;
-import javax.bluetooth.ServiceRegistrationException;
-import javax.bluetooth.UUID;
-
 class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 
-	private static BluetoothStackWIDCOMM singleInstance = null;
+	private static BluetoothStackWIDCOMM singleInstance;
 
-	private boolean initialized = false;
+	private boolean initialized;
 
 	private Vector deviceDiscoveryListeners = new Vector/* <DiscoveryListener> */();
 
@@ -53,28 +44,28 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	private Hashtable deviceDiscoveryListenerReportedDevices = new Hashtable();
 
 	// TODO what is the real number for Attributes retrievable ?
-	private final static int ATTR_RETRIEVABLE_MAX = 256;
+    private static final int ATTR_RETRIEVABLE_MAX = 256;
 
-	private final static int RECEIVE_MTU_MAX = 1024;
+	private static final int RECEIVE_MTU_MAX = 1024;
 
 	// from WIDCOMM BtIfDefinitions.h
-	final static short NULL_DESC_TYPE = 0;
+    static final short NULL_DESC_TYPE = 0;
 
-	final static short UINT_DESC_TYPE = 1;
+	static final short UINT_DESC_TYPE = 1;
 
-	final static short TWO_COMP_INT_DESC_TYPE = 2;
+	static final short TWO_COMP_INT_DESC_TYPE = 2;
 
-	final static short UUID_DESC_TYPE = 3;
+	static final short UUID_DESC_TYPE = 3;
 
-	final static short TEXT_STR_DESC_TYPE = 4;
+	static final short TEXT_STR_DESC_TYPE = 4;
 
-	final static short BOOLEAN_DESC_TYPE = 5;
+	static final short BOOLEAN_DESC_TYPE = 5;
 
-	final static short DATA_ELE_SEQ_DESC_TYPE = 6;
+	static final short DATA_ELE_SEQ_DESC_TYPE = 6;
 
-	final static short DATA_ELE_ALT_DESC_TYPE = 7;
+	static final short DATA_ELE_ALT_DESC_TYPE = 7;
 
-	final static short URL_DESC_TYPE = 8;
+	static final short URL_DESC_TYPE = 8;
 
 	BluetoothStackWIDCOMM() {
 	}
@@ -96,7 +87,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	 */
 	public int getFeatureSet() {
 	    int nativeBuildFeaturs = nativeBuildFeatures();
-		return FEATURE_SERVICE_ATTRIBUTES | FEATURE_L2CAP | FEATURE_ASSIGN_SERVER_PSM | ((nativeBuildFeaturs>0)?FEATURE_RSSI:0);
+		return BluetoothStack.FEATURE_SERVICE_ATTRIBUTES | BluetoothStack.FEATURE_L2CAP | BluetoothStack.FEATURE_ASSIGN_SERVER_PSM | (nativeBuildFeaturs>0 ? BluetoothStack.FEATURE_RSSI :0);
 	}
 
 	// ---------------------- Library initialization
@@ -113,8 +104,8 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	 * 
 	 * @see com.intel.bluetooth.BluetoothStack#requireNativeLibraries()
 	 */
-	public LibraryInformation[] requireNativeLibraries() {
-		return LibraryInformation.library(BlueCoveImpl.NATIVE_LIB_WIDCOMM);
+	public BluetoothStack.LibraryInformation[] requireNativeLibraries() {
+		return BluetoothStack.LibraryInformation.library(BlueCoveImpl.NATIVE_LIB_WIDCOMM);
 	}
 
 	public native int getLibraryVersion();
@@ -130,8 +121,8 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 		if (!initializeImpl()) {
 			throw new RuntimeException("WIDCOMM BluetoothStack not found");
 		}
-		initialized = true;
-		singleInstance = this;
+        initialized = true;
+        singleInstance = this;
 	}
 
 	public native boolean initializeImpl();
@@ -143,15 +134,15 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 			throw new RuntimeException("Destroy invalid instance");
 		}
 		if (initialized) {
-			uninitialize();
-			initialized = false;
+            uninitialize();
+            initialized = false;
 			DebugLog.debug("WIDCOMM destroyed");
 		}
-		singleInstance = null;
+        singleInstance = null;
 	}
 
 	protected void finalize() {
-		destroy();
+        destroy();
 	}
 
 	public native String getLocalDeviceBluetoothAddress() throws BluetoothStateException;
@@ -184,12 +175,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	 *         specified in <code>mode</code>
 	 */
 	public boolean setLocalDeviceDiscoverable(int mode) throws BluetoothStateException {
-		int curentMode = getLocalDeviceDiscoverable();
-		if (curentMode == mode) {
-			return true;
-		} else {
-			return false;
-		}
+        return getLocalDeviceDiscoverable() == mode;
 	}
 
 	private native boolean isStackServerUp();
@@ -341,7 +327,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	 * @see com.intel.bluetooth.BluetoothStack#removeAuthenticationWithRemoteDevice (long)
 	 */
 	public void removeAuthenticationWithRemoteDevice(long address) throws IOException {
-		removeAuthenticationWithRemoteDeviceImpl(address);
+        removeAuthenticationWithRemoteDeviceImpl(address);
 	}
 
 	// --- Some testing functions accessible by LocalDevice.getProperty
@@ -364,11 +350,11 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 			int accessCode, DiscoveryListener listener) throws BluetoothStateException;
 
 	public boolean startInquiry(int accessCode, DiscoveryListener listener) throws BluetoothStateException {
-		deviceDiscoveryListeners.addElement(listener);
+        deviceDiscoveryListeners.addElement(listener);
 		if (BlueCoveImpl.getConfigProperty(BlueCoveConfigProperties.PROPERTY_INQUIRY_REPORT_ASAP, false)) {
-			deviceDiscoveryListenerFoundDevices.put(listener, new Hashtable());
+            deviceDiscoveryListenerFoundDevices.put(listener, new Hashtable());
 		}
-		deviceDiscoveryListenerReportedDevices.put(listener, new Vector());
+        deviceDiscoveryListenerReportedDevices.put(listener, new Vector());
 		DeviceInquiryRunnable inquiryRunnable = new DeviceInquiryRunnable() {
 			public int runDeviceInquiry(DeviceInquiryThread startedNotify, int accessCode, DiscoveryListener listener)
 					throws BluetoothStateException {
@@ -386,7 +372,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 								}
 								reported.addElement(remoteDevice);
 								Integer deviceClassInt = (Integer) previouslyFound.get(remoteDevice);
-								DeviceClass deviceClass = new DeviceClass(deviceClassInt.intValue());
+								DeviceClass deviceClass = new DeviceClass(deviceClassInt);
 								listener.deviceDiscovered(remoteDevice, deviceClass);
 								// If cancelInquiry has been called
 								if (!deviceDiscoveryListeners.contains(listener)) {
@@ -397,9 +383,9 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 					}
 					return discType;
 				} finally {
-					deviceDiscoveryListeners.removeElement(listener);
-					deviceDiscoveryListenerFoundDevices.remove(listener);
-					deviceDiscoveryListenerReportedDevices.remove(listener);
+                    deviceDiscoveryListeners.removeElement(listener);
+                    deviceDiscoveryListenerFoundDevices.remove(listener);
+                    deviceDiscoveryListenerReportedDevices.remove(listener);
 				}
 			}
 
@@ -417,7 +403,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 				RemoteDevice remoteDevice = RemoteDeviceHelper.createRemoteDevice(BluetoothStackWIDCOMM.this,
 						deviceAddr, deviceName, paired);
 				Vector reported = (Vector) deviceDiscoveryListenerReportedDevices.get(listener);
-				if (reported == null || (reported.contains(remoteDevice))) {
+				if (reported == null || reported.contains(remoteDevice)) {
 					return;
 				}
 				// See -Dbluecove.inquiry.report_asap=false
@@ -425,9 +411,9 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 				if (previouslyFound != null) {
 					Integer deviceClassInt = (Integer) previouslyFound.get(remoteDevice);
 					if (deviceClassInt == null) {
-						previouslyFound.put(remoteDevice, new Integer(deviceClass));
+						previouslyFound.put(remoteDevice, deviceClass);
 					} else if (deviceClass != 0) {
-						previouslyFound.put(remoteDevice, new Integer(deviceClass));
+						previouslyFound.put(remoteDevice, deviceClass);
 					}
 				} else {
 					DeviceClass cod = new DeviceClass(deviceClass);
@@ -444,12 +430,9 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	private native boolean deviceInquiryCancelImpl();
 
 	public boolean cancelInquiry(DiscoveryListener listener) {
-		// no further deviceDiscovered() events will occur for this inquiry
-		if (!deviceDiscoveryListeners.removeElement(listener)) {
-			return false;
-		}
-		return deviceInquiryCancelImpl();
-	}
+        // no further deviceDiscovered() events will occur for this inquiry
+        return deviceDiscoveryListeners.removeElement(listener) && deviceInquiryCancelImpl();
+    }
 
 	native String getRemoteDeviceFriendlyName(long address, int majorDeviceClass, int minorDeviceClass)
 			throws IOException;
@@ -463,7 +446,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	native String peekRemoteDeviceFriendlyName(long address);
 
 	public String getRemoteDeviceFriendlyName(long address) throws IOException {
-		if (deviceDiscoveryListeners.size() != 0) {
+		if (!this.deviceDiscoveryListeners.isEmpty()) {
 			// discovery running
 			return peekRemoteDeviceFriendlyName(address);
 		} else {
@@ -471,7 +454,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 			DiscoveryListener listener = new DiscoveryListenerAdapter();
 			if (startInquiry(DiscoveryAgent.GIAC, listener)) {
 				String name = peekRemoteDeviceFriendlyName(address);
-				cancelInquiry(listener);
+                cancelInquiry(listener);
 				return name;
 			}
 		}
@@ -486,89 +469,85 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	public int searchServices(int[] attrSet, UUID[] uuidSet, RemoteDevice device, DiscoveryListener listener)
 			throws BluetoothStateException {
 
-		SearchServicesRunnable searchRunnable = new SearchServicesRunnable() {
+		SearchServicesRunnable searchRunnable = (sst, attrSet1, uuidSet1, device1, listener1) -> {
+            // Retrieve all Records, Filter here in Java
+            synchronized (BluetoothStackWIDCOMM.class) {
+                byte[] uuidValue = Utils.UUIDToByteArray(BluetoothConsts.L2CAP_PROTOCOL_UUID);
+                for (int u = 0; u < uuidSet1.length; u++) {
+                    if (uuidSet1[u].equals(BluetoothConsts.L2CAP_PROTOCOL_UUID)) {
+                        continue;
+                    } else if (uuidSet1[u].equals(BluetoothConsts.RFCOMM_PROTOCOL_UUID)) {
+                        uuidValue = Utils.UUIDToByteArray(uuidSet1[u]);
+                        continue;
+                    } else {
+                        // Look for the most specific UUID
+                        uuidValue = Utils.UUIDToByteArray(uuidSet1[u]);
+                        break;
+                    }
+                }
+                long[] handles;
+                try {
+                    handles = runSearchServicesImpl(sst, uuidValue, RemoteDeviceHelper.getAddress(device1));
+                } catch (SearchServicesTerminatedException e) {
+                    DebugLog.debug("SERVICE_SEARCH_TERMINATED");
+                    return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
+                }
+                if (handles == null) {
+                    DebugLog.debug("SERVICE_SEARCH_ERROR");
+                    return DiscoveryListener.SERVICE_SEARCH_ERROR;
+                } else if (handles.length > 0) {
+                    Vector records = new Vector();
+                    int[] uuidFilerAttrIDs = { BluetoothConsts.ServiceClassIDList,
+                            BluetoothConsts.ProtocolDescriptorList };
+                    int[] requiredAttrIDs = { BluetoothConsts.ServiceRecordHandle,
+                            BluetoothConsts.ServiceRecordState, BluetoothConsts.ServiceID };
+                    nextRecord: for (int i = 0; i < handles.length; i++) {
+                        ServiceRecordImpl sr = new ServiceRecordImpl(this, device1, handles[i]);
+                        try {
+                            sr.populateRecord(uuidFilerAttrIDs);
+                            // Apply JSR-82 filter, all UUID should be present
+                            for (int u = 0; u < uuidSet1.length; u++) {
+                                if (!(sr.hasServiceClassUUID(uuidSet1[u]) || sr.hasProtocolClassUUID(uuidSet1[u]))) {
+                                    if (BluetoothStackWIDCOMMSDPInputStream.debug) {
+                                        DebugLog.debug("filtered ServiceRecord (" + i + ")", sr);
+                                    }
+                                    continue nextRecord;
+                                }
+                            }
+                            if (BluetoothStackWIDCOMMSDPInputStream.debug) {
+                                DebugLog.debug("accepted ServiceRecord (" + i + ")", sr);
+                            }
+                            if (!isServiceRecordDiscoverable(RemoteDeviceHelper.getAddress(device1), sr.getHandle())) {
+                                continue;
+                            }
 
-			public int runSearchServices(SearchServicesThread sst, int[] attrSet, UUID[] uuidSet, RemoteDevice device,
-					DiscoveryListener listener) throws BluetoothStateException {
-				// Retrieve all Records, Filter here in Java
-				synchronized (BluetoothStackWIDCOMM.class) {
-					byte[] uuidValue = Utils.UUIDToByteArray(BluetoothConsts.L2CAP_PROTOCOL_UUID);
-					for (int u = 0; u < uuidSet.length; u++) {
-						if (uuidSet[u].equals(BluetoothConsts.L2CAP_PROTOCOL_UUID)) {
-							continue;
-						} else if (uuidSet[u].equals(BluetoothConsts.RFCOMM_PROTOCOL_UUID)) {
-							uuidValue = Utils.UUIDToByteArray(uuidSet[u]);
-							continue;
-						} else {
-							// Look for the most specific UUID
-							uuidValue = Utils.UUIDToByteArray(uuidSet[u]);
-							break;
-						}
-					}
-					long[] handles;
-					try {
-						handles = runSearchServicesImpl(sst, uuidValue, RemoteDeviceHelper.getAddress(device));
-					} catch (SearchServicesTerminatedException e) {
-						DebugLog.debug("SERVICE_SEARCH_TERMINATED");
-						return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
-					}
-					if (handles == null) {
-						DebugLog.debug("SERVICE_SEARCH_ERROR");
-						return DiscoveryListener.SERVICE_SEARCH_ERROR;
-					} else if (handles.length > 0) {
-						Vector records = new Vector();
-						int[] uuidFilerAttrIDs = new int[] { BluetoothConsts.ServiceClassIDList,
-								BluetoothConsts.ProtocolDescriptorList };
-						int[] requiredAttrIDs = new int[] { BluetoothConsts.ServiceRecordHandle,
-								BluetoothConsts.ServiceRecordState, BluetoothConsts.ServiceID };
-						nextRecord: for (int i = 0; i < handles.length; i++) {
-							ServiceRecordImpl sr = new ServiceRecordImpl(BluetoothStackWIDCOMM.this, device, handles[i]);
-							try {
-								sr.populateRecord(uuidFilerAttrIDs);
-								// Apply JSR-82 filter, all UUID should be present
-								for (int u = 0; u < uuidSet.length; u++) {
-									if (!((sr.hasServiceClassUUID(uuidSet[u]) || sr.hasProtocolClassUUID(uuidSet[u])))) {
-										if (BluetoothStackWIDCOMMSDPInputStream.debug) {
-											DebugLog.debug("filtered ServiceRecord (" + i + ")", sr);
-										}
-										continue nextRecord;
-									}
-								}
-								if (BluetoothStackWIDCOMMSDPInputStream.debug) {
-									DebugLog.debug("accepted ServiceRecord (" + i + ")", sr);
-								}
-								if (!isServiceRecordDiscoverable(RemoteDeviceHelper.getAddress(device), sr.getHandle())) {
-									continue;
-								}
-
-								records.addElement(sr);
-								sr.populateRecord(requiredAttrIDs);
-								if (attrSet != null) {
-									sr.populateRecord(attrSet);
-								}
-								DebugLog.debug("ServiceRecord (" + i + ") sr.handle", handles[i]);
-								DebugLog.debug("ServiceRecord (" + i + ")", sr);
-							} catch (Exception e) {
-								DebugLog.debug("populateRecord error", e);
-							}
-							if (sst.isTerminated()) {
-								DebugLog.debug("SERVICE_SEARCH_TERMINATED");
-								return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
-							}
-						}
-						if (records.size() != 0) {
-							DebugLog.debug("SERVICE_SEARCH_COMPLETED");
-							ServiceRecord[] fileteredRecords = (ServiceRecord[]) Utils.vector2toArray(records,
-									new ServiceRecord[records.size()]);
-							listener.servicesDiscovered(sst.getTransID(), fileteredRecords);
-							return DiscoveryListener.SERVICE_SEARCH_COMPLETED;
-						}
-					}
-					DebugLog.debug("SERVICE_SEARCH_NO_RECORDS");
-					return DiscoveryListener.SERVICE_SEARCH_NO_RECORDS;
-				}
-			}
-		};
+                            records.addElement(sr);
+                            sr.populateRecord(requiredAttrIDs);
+                            if (attrSet1 != null) {
+                                sr.populateRecord(attrSet1);
+                            }
+                            DebugLog.debug("ServiceRecord (" + i + ") sr.handle", handles[i]);
+                            DebugLog.debug("ServiceRecord (" + i + ")", sr);
+                        } catch (Exception e) {
+                            DebugLog.debug("populateRecord error", e);
+                        }
+                        if (sst.isTerminated()) {
+                            DebugLog.debug("SERVICE_SEARCH_TERMINATED");
+                            return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
+                        }
+                    }
+                    if (!records.isEmpty()) {
+                        DebugLog.debug("SERVICE_SEARCH_COMPLETED");
+                        ServiceRecord[] fileteredRecords = (ServiceRecord[]) Utils.vector2toArray(records,
+                                new ServiceRecord[records.size()]);
+                        listener1.servicesDiscovered(sst.getTransID(), fileteredRecords);
+                        return DiscoveryListener.SERVICE_SEARCH_COMPLETED;
+                    }
+                }
+                DebugLog.debug("SERVICE_SEARCH_NO_RECORDS");
+                return DiscoveryListener.SERVICE_SEARCH_NO_RECORDS;
+            }
+        };
 		return SearchServicesThread.startSearchServices(this, searchRunnable, attrSet, uuidSet, device, listener);
 	}
 
@@ -583,7 +562,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 			synchronized (this) {
 				if (!sst.isTerminated()) {
 					sst.setTerminated();
-					cancelServiceSearchImpl();
+                    cancelServiceSearchImpl();
 					return true;
 				}
 			}
@@ -601,44 +580,43 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 			throw new IllegalArgumentException();
 		}
 		boolean anyRetrived = false;
-		for (int i = 0; i < attrIDs.length; i++) {
-			int id = attrIDs[i];
-			try {
-				byte[] sdpStruct = getServiceAttribute(id, serviceRecord.getHandle());
-				if (sdpStruct != null) {
-					if (BluetoothStackWIDCOMMSDPInputStream.debug) {
-						DebugLog.debug("decode attribute " + id + " Ox" + Integer.toHexString(id));
-					}
-					DataElement element = (new BluetoothStackWIDCOMMSDPInputStream(new ByteArrayInputStream(sdpStruct)))
-							.readElement();
+        for (int id : attrIDs) {
+            try {
+                byte[] sdpStruct = getServiceAttribute(id, serviceRecord.getHandle());
+                if (sdpStruct != null) {
+                    if (BluetoothStackWIDCOMMSDPInputStream.debug) {
+                        DebugLog.debug("decode attribute " + id + " Ox" + Integer.toHexString(id));
+                    }
+                    DataElement element = new BluetoothStackWIDCOMMSDPInputStream(new ByteArrayInputStream(sdpStruct))
+                            .readElement();
 
-					// Do special case conversion for only one element in the
-					// list.
-					if (id == BluetoothConsts.ProtocolDescriptorList) {
-						Enumeration protocolsSeqEnum = (Enumeration) element.getValue();
-						if (protocolsSeqEnum.hasMoreElements()) {
-							DataElement protocolElement = (DataElement) protocolsSeqEnum.nextElement();
-							if (protocolElement.getDataType() != DataElement.DATSEQ) {
-								DataElement newMainSeq = new DataElement(DataElement.DATSEQ);
-								newMainSeq.addElement(element);
-								element = newMainSeq;
-							}
-						}
-					}
+                    // Do special case conversion for only one element in the
+                    // list.
+                    if (id == BluetoothConsts.ProtocolDescriptorList) {
+                        Enumeration protocolsSeqEnum = (Enumeration) element.getValue();
+                        if (protocolsSeqEnum.hasMoreElements()) {
+                            DataElement protocolElement = (DataElement) protocolsSeqEnum.nextElement();
+                            if (protocolElement.getDataType() != DataElement.DATSEQ) {
+                                DataElement newMainSeq = new DataElement(DataElement.DATSEQ);
+                                newMainSeq.addElement(element);
+                                element = newMainSeq;
+                            }
+                        }
+                    }
 
-					serviceRecord.populateAttributeValue(id, element);
-					anyRetrived = true;
-				} else {
-					if (BluetoothStackWIDCOMMSDPInputStream.debug) {
-						DebugLog.debug("no data for attribute " + id + " Ox" + Integer.toHexString(id));
-					}
-				}
-			} catch (Throwable e) {
-				if (BluetoothStackWIDCOMMSDPInputStream.debug) {
-					DebugLog.error("error populate attribute " + id + " Ox" + Integer.toHexString(id), e);
-				}
-			}
-		}
+                    serviceRecord.populateAttributeValue(id, element);
+                    anyRetrived = true;
+                } else {
+                    if (BluetoothStackWIDCOMMSDPInputStream.debug) {
+                        DebugLog.debug("no data for attribute " + id + " Ox" + Integer.toHexString(id));
+                    }
+                }
+            } catch (Throwable e) {
+                if (BluetoothStackWIDCOMMSDPInputStream.debug) {
+                    DebugLog.error("error populate attribute " + id + " Ox" + Integer.toHexString(id), e);
+                }
+            }
+        }
 		return anyRetrived;
 	}
 
@@ -648,7 +626,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 			boolean encrypt, int timeout) throws IOException;
 
 	public long connectionRfOpenClientConnection(BluetoothConnectionParams params) throws IOException {
-		verifyDeviceReady();
+        verifyDeviceReady();
 		return connectionRfOpenClientConnectionImpl(params.address, params.channel, params.authenticate,
 				params.encrypt, params.timeout);
 	}
@@ -656,7 +634,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	private native void closeRfCommPortImpl(long handle) throws IOException;
 
 	public void connectionRfCloseClientConnection(long handle) throws IOException {
-		closeRfCommPortImpl(handle);
+        closeRfCommPortImpl(handle);
 	}
 
 	public native long getConnectionRfRemoteAddress(long handle) throws IOException;
@@ -672,14 +650,14 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	public void connectionRfWrite(long handle, int b) throws IOException {
 		byte buf[] = new byte[1];
 		buf[0] = (byte) (b & 0xFF);
-		connectionRfWriteImpl(handle, buf, 0, 1);
+        connectionRfWriteImpl(handle, buf, 0, 1);
 	}
 
 	public void connectionRfWrite(long handle, byte[] b, int off, int len) throws IOException {
 		// Max in WIDCOMM is 64K that will cause ACCESS_VIOLATION.
-		final int maxNativeBuffer = 0x10000 - 1;
+		int maxNativeBuffer = 0x10000 - 1;
 		if (len < maxNativeBuffer) {
-			connectionRfWriteImpl(handle, b, off, len);
+            connectionRfWriteImpl(handle, b, off, len);
 		} else {
 			int done = 0;
 			while (done < len) {
@@ -687,7 +665,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 				if (l > maxNativeBuffer) {
 					l = maxNativeBuffer;
 				}
-				connectionRfWriteImpl(handle, b, off + done, l);
+                connectionRfWriteImpl(handle, b, off + done, l);
 				done += maxNativeBuffer;
 			}
 		}
@@ -710,14 +688,14 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 		return false;
 	}
 
-	private native synchronized long rfServerOpenImpl(byte[] uuidValue, byte[] uuidValue2, boolean obexSrv,
+	private synchronized native long rfServerOpenImpl(byte[] uuidValue, byte[] uuidValue2, boolean obexSrv,
 			String name, boolean authenticate, boolean encrypt) throws IOException;
 
 	private native int rfServerSCN(long handle) throws IOException;
 
 	public long rfServerOpen(BluetoothConnectionNotifierParams params, ServiceRecordImpl serviceRecord)
 			throws IOException {
-		verifyDeviceReady();
+        verifyDeviceReady();
 		byte[] uuidValue = Utils.UUIDToByteArray(params.uuid);
 		byte[] uuidValue2 = params.obex ? null : Utils.UUIDToByteArray(BluetoothConsts.SERIAL_PORT_UUID);
 		long handle = rfServerOpenImpl(uuidValue, uuidValue2, params.obex, params.name, params.authenticate,
@@ -746,7 +724,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 
 	public void rfServerUpdateServiceRecord(long handle, ServiceRecordImpl serviceRecord, boolean acceptAndOpen)
 			throws ServiceRegistrationException {
-		sdpServiceUpdateServiceRecord(handle, 'r', serviceRecord);
+        sdpServiceUpdateServiceRecord(handle, 'r', serviceRecord);
 	}
 
 	private byte[] sdpServiceSequenceAttribute(Enumeration en) throws ServiceRegistrationException {
@@ -768,7 +746,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	private void sdpServiceUpdateServiceRecord(long handle, char handleType, ServiceRecordImpl serviceRecord)
 			throws ServiceRegistrationException {
 		int[] ids = serviceRecord.getAttributeIDs();
-		if ((ids == null) || (ids.length == 0)) {
+		if (ids == null || ids.length == 0) {
 			return;
 		}
 		// Update the records that can be update only once
@@ -785,86 +763,85 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 			}
 			uuids.add(u.getValue());
 		}
-		if (uuids.size() > 0) {
+		if (!uuids.isEmpty()) {
 			byte[][] uuidValues = new byte[uuids.size()][];
 			for (int u = 0; u < uuidValues.length; u++) {
 				uuidValues[u] = Utils.UUIDToByteArray((UUID) uuids.elementAt(u));
 			}
-			sdpServiceAddServiceClassIdList(handle, handleType, uuidValues);
+            sdpServiceAddServiceClassIdList(handle, handleType, uuidValues);
 		}
 
 		// Update all other records
-		for (int i = 0; i < ids.length; i++) {
-			int id = ids[i];
-			switch (id) {
-			case BluetoothConsts.ServiceRecordHandle:
-			case BluetoothConsts.ServiceClassIDList:
-			case BluetoothConsts.ProtocolDescriptorList:
-			case BluetoothConsts.AttributeIDServiceName:
-				continue;
-			}
+        for (int id : ids) {
+            switch (id) {
+                case BluetoothConsts.ServiceRecordHandle:
+                case BluetoothConsts.ServiceClassIDList:
+                case BluetoothConsts.ProtocolDescriptorList:
+                case BluetoothConsts.AttributeIDServiceName:
+                    continue;
+            }
 
-			DataElement d = serviceRecord.getAttributeValue(id);
-			switch (d.getDataType()) {
-			case DataElement.U_INT_1:
-				sdpServiceAddAttribute(handle, handleType, id, UINT_DESC_TYPE, long2byte(d.getLong(), 1));
-				break;
-			case DataElement.U_INT_2:
-				sdpServiceAddAttribute(handle, handleType, id, UINT_DESC_TYPE, long2byte(d.getLong(), 2));
-				break;
-			case DataElement.U_INT_4:
-				sdpServiceAddAttribute(handle, handleType, id, UINT_DESC_TYPE, long2byte(d.getLong(), 4));
-				break;
-			case DataElement.U_INT_8:
-			case DataElement.U_INT_16:
-				sdpServiceAddAttribute(handle, handleType, id, UINT_DESC_TYPE, (byte[]) d.getValue());
-				break;
-			case DataElement.INT_1:
-				sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, long2byte(d.getLong(), 1));
-				break;
-			case DataElement.INT_2:
-				sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, long2byte(d.getLong(), 2));
-				break;
-			case DataElement.INT_4:
-				sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, long2byte(d.getLong(), 4));
-				break;
-			case DataElement.INT_8:
-				sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, long2byte(d.getLong(), 8));
-				break;
-			case DataElement.INT_16:
-				sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, (byte[]) d.getValue());
-				break;
-			case DataElement.URL:
-				sdpServiceAddAttribute(handle, handleType, id, URL_DESC_TYPE, Utils.getASCIIBytes(d.getValue()
-						.toString()));
-				break;
-			case DataElement.STRING:
-				sdpServiceAddAttribute(handle, handleType, id, TEXT_STR_DESC_TYPE, Utils.getUTF8Bytes(d.getValue()
-						.toString()));
-				break;
-			case DataElement.NULL:
-				sdpServiceAddAttribute(handle, handleType, id, NULL_DESC_TYPE, null);
-				break;
-			case DataElement.BOOL:
-				sdpServiceAddAttribute(handle, handleType, id, BOOLEAN_DESC_TYPE,
-						new byte[] { (byte) (d.getBoolean() ? 1 : 0) });
-				break;
-			case DataElement.UUID:
-				sdpServiceAddAttribute(handle, handleType, id, UUID_DESC_TYPE, BluetoothStackWIDCOMMSDPInputStream
-						.getUUIDHexBytes((UUID) d.getValue()));
-				break;
-			case DataElement.DATSEQ:
-				sdpServiceAddAttribute(handle, handleType, id, DATA_ELE_SEQ_DESC_TYPE,
-						sdpServiceSequenceAttribute((Enumeration) d.getValue()));
-				break;
-			case DataElement.DATALT:
-				sdpServiceAddAttribute(handle, handleType, id, DATA_ELE_ALT_DESC_TYPE,
-						sdpServiceSequenceAttribute((Enumeration) d.getValue()));
-				break;
-			default:
-				throw new ServiceRegistrationException("Invalid " + d.getDataType());
-			}
-		}
+            DataElement d = serviceRecord.getAttributeValue(id);
+            switch (d.getDataType()) {
+                case DataElement.U_INT_1:
+                    sdpServiceAddAttribute(handle, handleType, id, UINT_DESC_TYPE, long2byte(d.getLong(), 1));
+                    break;
+                case DataElement.U_INT_2:
+                    sdpServiceAddAttribute(handle, handleType, id, UINT_DESC_TYPE, long2byte(d.getLong(), 2));
+                    break;
+                case DataElement.U_INT_4:
+                    sdpServiceAddAttribute(handle, handleType, id, UINT_DESC_TYPE, long2byte(d.getLong(), 4));
+                    break;
+                case DataElement.U_INT_8:
+                case DataElement.U_INT_16:
+                    sdpServiceAddAttribute(handle, handleType, id, UINT_DESC_TYPE, (byte[]) d.getValue());
+                    break;
+                case DataElement.INT_1:
+                    sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, long2byte(d.getLong(), 1));
+                    break;
+                case DataElement.INT_2:
+                    sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, long2byte(d.getLong(), 2));
+                    break;
+                case DataElement.INT_4:
+                    sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, long2byte(d.getLong(), 4));
+                    break;
+                case DataElement.INT_8:
+                    sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, long2byte(d.getLong(), 8));
+                    break;
+                case DataElement.INT_16:
+                    sdpServiceAddAttribute(handle, handleType, id, TWO_COMP_INT_DESC_TYPE, (byte[]) d.getValue());
+                    break;
+                case DataElement.URL:
+                    sdpServiceAddAttribute(handle, handleType, id, URL_DESC_TYPE, Utils.getASCIIBytes(d.getValue()
+                            .toString()));
+                    break;
+                case DataElement.STRING:
+                    sdpServiceAddAttribute(handle, handleType, id, TEXT_STR_DESC_TYPE, Utils.getUTF8Bytes(d.getValue()
+                            .toString()));
+                    break;
+                case DataElement.NULL:
+                    sdpServiceAddAttribute(handle, handleType, id, NULL_DESC_TYPE, null);
+                    break;
+                case DataElement.BOOL:
+                    sdpServiceAddAttribute(handle, handleType, id, BOOLEAN_DESC_TYPE,
+                            new byte[]{(byte) (d.getBoolean() ? 1 : 0)});
+                    break;
+                case DataElement.UUID:
+                    sdpServiceAddAttribute(handle, handleType, id, UUID_DESC_TYPE, BluetoothStackWIDCOMMSDPInputStream
+                            .getUUIDHexBytes((UUID) d.getValue()));
+                    break;
+                case DataElement.DATSEQ:
+                    sdpServiceAddAttribute(handle, handleType, id, DATA_ELE_SEQ_DESC_TYPE,
+                            sdpServiceSequenceAttribute((Enumeration) d.getValue()));
+                    break;
+                case DataElement.DATALT:
+                    sdpServiceAddAttribute(handle, handleType, id, DATA_ELE_ALT_DESC_TYPE,
+                            sdpServiceSequenceAttribute((Enumeration) d.getValue()));
+                    break;
+                default:
+                    throw new ServiceRegistrationException("Invalid " + d.getDataType());
+            }
+        }
 	}
 
 	public native long rfServerAcceptAndOpenRfServerConnection(long handle) throws IOException;
@@ -874,7 +851,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	private native void rfServerCloseImpl(long handle) throws IOException;
 
 	public void rfServerClose(long handle, ServiceRecordImpl serviceRecord) throws IOException {
-		rfServerCloseImpl(handle);
+        rfServerCloseImpl(handle);
 	}
 
 	// ---------------------- Client and Server L2CAP connections
@@ -910,8 +887,8 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	 */
 	public long l2OpenClientConnection(BluetoothConnectionParams params, int receiveMTU, int transmitMTU)
 			throws IOException {
-		verifyDeviceReady();
-		validateMTU(receiveMTU, transmitMTU);
+        verifyDeviceReady();
+        validateMTU(receiveMTU, transmitMTU);
 		return l2OpenClientConnectionImpl(params.address, params.channel, params.authenticate, params.encrypt,
 				receiveMTU, transmitMTU, params.timeout);
 	}
@@ -923,7 +900,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	 */
 	public native void l2CloseClientConnection(long handle) throws IOException;
 
-	private native synchronized long l2ServerOpenImpl(byte[] uuidValue, boolean authenticate, boolean encrypt,
+	private synchronized native long l2ServerOpenImpl(byte[] uuidValue, boolean authenticate, boolean encrypt,
 			String name, int receiveMTU, int transmitMTU, int assignPsm) throws IOException;
 
 	public native int l2ServerPSM(long handle) throws IOException;
@@ -936,8 +913,8 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	 */
 	public long l2ServerOpen(BluetoothConnectionNotifierParams params, int receiveMTU, int transmitMTU,
 			ServiceRecordImpl serviceRecord) throws IOException {
-		verifyDeviceReady();
-		validateMTU(receiveMTU, transmitMTU);
+        verifyDeviceReady();
+        validateMTU(receiveMTU, transmitMTU);
 		byte[] uuidValue = Utils.UUIDToByteArray(params.uuid);
 		long handle = l2ServerOpenImpl(uuidValue, params.authenticate, params.encrypt, params.name, receiveMTU,
 				transmitMTU, params.bluecove_ext_psm);
@@ -959,7 +936,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	 */
 	public void l2ServerUpdateServiceRecord(long handle, ServiceRecordImpl serviceRecord, boolean acceptAndOpen)
 			throws ServiceRegistrationException {
-		sdpServiceUpdateServiceRecord(handle, 'l', serviceRecord);
+        sdpServiceUpdateServiceRecord(handle, 'l', serviceRecord);
 	}
 
 	/*
@@ -984,7 +961,7 @@ class BluetoothStackWIDCOMM implements BluetoothStack, BluetoothStackExtension {
 	 * @see com.intel.bluetooth.BluetoothStack#l2ServerClose(long, com.intel.bluetooth.ServiceRecordImpl)
 	 */
 	public void l2ServerClose(long handle, ServiceRecordImpl serviceRecord) throws IOException {
-		l2ServerCloseImpl(handle);
+        l2ServerCloseImpl(handle);
 	}
 
 	/*

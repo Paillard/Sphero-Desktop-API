@@ -22,30 +22,25 @@ import java.util.Vector;
 
 import java.text.Collator;
 
-import org.freedesktop.dbus.CallbackHandler;
-import org.freedesktop.dbus.DBusAsyncReply;
-import org.freedesktop.dbus.DBusCallInfo;
-import org.freedesktop.dbus.DBusConnection;
-import org.freedesktop.dbus.DBusInterface;
-import org.freedesktop.dbus.DBusSigHandler;
-import org.freedesktop.dbus.DBusSignal;
-import org.freedesktop.dbus.Marshalling;
-import org.freedesktop.dbus.Path;
-import org.freedesktop.dbus.UInt16;
-import org.freedesktop.dbus.UInt32;
-import org.freedesktop.dbus.UInt64;
-import org.freedesktop.dbus.Variant;
+import org.freedesktop.DBus.Error.MatchRuleInvalid;
+import org.freedesktop.DBus.Error.ServiceUnknown;
+import org.freedesktop.DBus.Error.UnknownObject;
+import org.freedesktop.DBus.Introspectable;
+import org.freedesktop.DBus.Local.Disconnected;
+import org.freedesktop.DBus.Peer;
+import org.freedesktop.DBus.Properties;
+import org.freedesktop.dbus.*;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import org.freedesktop.dbus.exceptions.NotConnected;
 
 import org.freedesktop.DBus;
-import org.freedesktop.DBus.Error.MatchRuleInvalid;
-import org.freedesktop.DBus.Error.ServiceUnknown;
-import org.freedesktop.DBus.Error.UnknownObject;
-import org.freedesktop.DBus.Peer;
-import org.freedesktop.DBus.Introspectable;
-import org.freedesktop.DBus.Properties;
+import org.freedesktop.dbus.test.TestSignalInterface.EmptySignal;
+import org.freedesktop.dbus.test.TestSignalInterface.TestArraySignal;
+import org.freedesktop.dbus.test.TestSignalInterface.TestObjectSignal;
+import org.freedesktop.dbus.test.TestSignalInterface.TestPathSignal;
+import org.freedesktop.dbus.test.TestSignalInterface.TestSignal;
+import org.freedesktop.dbus.test.TestSignalInterface2.TestRenamedSignal;
 
 class testnewclass implements TestNewInterface
 {
@@ -104,12 +99,12 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
    public <A> TestTuple<String, List<Integer>, Boolean> show(A in)
    {
       System.out.println("Showing Stuff: "+in.getClass()+"("+in+")");
-      if (!(in instanceof Integer) || ((Integer) in).intValue() != 234)
+      if (!(in instanceof Integer) || (Integer) in != 234)
          test.fail("show received the wrong arguments");
-      DBusCallInfo info = DBusConnection.getCallInfo();
-      List<Integer> l = new Vector<Integer>();
+      DBusCallInfo info = AbstractConnection.getCallInfo();
+      List<Integer> l = new Vector<>();
       l.add(1953);
-      return new TestTuple<String,List<Integer>, Boolean>(info.getSource(), l, true);
+      return new TestTuple<>(info.getSource(), l, true);
    }
    @SuppressWarnings("unchecked")
    public <T> T dostuff(TestStruct foo)
@@ -123,7 +118,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
             !"bar".equals(foo.a) ||
             foo.b.intValue() != 52 ||
             !(foo.c.getValue() instanceof Boolean) ||
-            ((Boolean) foo.c.getValue()).booleanValue() != true)
+              (Boolean) foo.c.getValue() != true)
          test.fail("dostuff received the wrong arguments");
       return (T) foo.c.getValue();
    }
@@ -146,10 +141,10 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
       for (Integer i: is)
          System.out.println("--"+i);
       if (is.length != 4 ||
-            is[0].intValue() != 1 ||
-            is[1].intValue() != 5 ||
-            is[2].intValue() != 7 ||
-            is[3].intValue() != 9)
+              is[0] != 1 ||
+              is[1] != 5 ||
+              is[2] != 7 ||
+              is[3] != 9)
          test.fail("sampleArray, Integer array contents incorrect");
       System.out.println("Got an array:");
       for (long l: ls)
@@ -160,7 +155,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
             ls[2] != 8 ||
             ls[3] != 12)
          test.fail("sampleArray, Integer array contents incorrect");
-      Vector<Integer> v = new Vector<Integer>();
+      Vector<Integer> v = new Vector<>();
       v.add(-1);
       v.add(-5);
       v.add(-7);
@@ -193,7 +188,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
          test.fail("List has wrong contents");
       if (!(v instanceof Integer))
          test.fail("v not an Integer");
-      if (((Integer) v) != 13)
+      if ((Integer) v != 13)
          test.fail("v is incorrect");
       if (null == m)
          test.fail("Map was null");
@@ -206,11 +201,11 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
          test.fail("Sub-Map was null");
       if (mus.size() != 3)
          test.fail("Sub-Map was wrong size");
-      if (!(new Short((short)5).equals(mus.get(new UInt16(4)))))
+      if (!new Short((short)5).equals(mus.get(new UInt16(4))))
          test.fail("Sub-Map has wrong contents");
-      if (!(new Short((short)6).equals(mus.get(new UInt16(5)))))
+      if (!new Short((short)6).equals(mus.get(new UInt16(5))))
          test.fail("Sub-Map has wrong contents");
-      if (!(new Short((short)7).equals(mus.get(new UInt16(6)))))
+      if (!new Short((short)7).equals(mus.get(new UInt16(6))))
          test.fail("Sub-Map has wrong contents");
       return -5;
    }
@@ -230,7 +225,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
       if (  b != 12
          || i != 13
          || !(s.getInt() == 1)
-         || !(s.getString().equals("woo"))
+         || !s.getString().equals("woo")
          || !(s.getVector().size() == 3)
          || !(s.getVector().get(0) == 1)
          || !(s.getVector().get(1) == 2)
@@ -258,7 +253,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
    }
    public int overload()
    {
-      DBusCallInfo info = DBusConnection.getCallInfo();
+      DBusCallInfo info = AbstractConnection.getCallInfo();
       if ("org.freedesktop.dbus.test.AlternateTestInterface".equals(info.getInterface()))
          return 3;
       else if ("org.freedesktop.dbus.test.TestRemoteInterface".equals(info.getInterface()))
@@ -274,7 +269,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
    {
       testnewclass n = new testnewclass();
       try {
-         conn.exportObject("/new", n);
+          conn.exportObject("/new", n);
       } catch (DBusException DBe) 
       { throw new DBusExecutionException(DBe.getMessage()); }
       return n;
@@ -291,7 +286,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
          test.fail("Didn't send types correctly");
    }
    @SuppressWarnings("unchecked")
-   public void complexv(Variant<? extends Object> v)
+   public void complexv(Variant<?> v)
    {
       if (!"a{ss}".equals(v.getSig())
          || ! (v.getValue() instanceof Map)
@@ -311,7 +306,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
 		return (A) new Path("/nonexistant/path");
 	}
 	public <A> void Set (String interface_name, String property_name, A value)  {}
-	public Map<String, Variant> GetAll (String interface_name) { return new HashMap<String,Variant>(); }
+	public Map<String, Variant> GetAll (String interface_name) { return new HashMap<>(); }
    public Path pathrv(Path a) { return a; }
    public List<Path> pathlistrv(List<Path> a) { return a; }
    public Map<Path,Path> pathmaprv(Map<Path,Path> a) { return a; }
@@ -320,10 +315,10 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
 /**
  * Typed signal handler for renamed signal
  */
-class renamedsignalhandler implements DBusSigHandler<TestSignalInterface2.TestRenamedSignal>
+class renamedsignalhandler implements DBusSigHandler<TestRenamedSignal>
 {
    /** Handling a signal */
-   public void handle(TestSignalInterface2.TestRenamedSignal t)
+   public void handle(TestRenamedSignal t)
    {
       if (false == test.done5) {
          test.done5 = true;
@@ -332,7 +327,7 @@ class renamedsignalhandler implements DBusSigHandler<TestSignalInterface2.TestRe
       }
       System.out.println("SignalHandler R Running");
       System.out.println("string("+t.value+") int("+t.number+")");
-      if (!"Bar".equals(t.value) || !(new UInt32(42)).equals(t.number))
+      if (!"Bar".equals(t.value) || !new UInt32(42).equals(t.number))
          test.fail("Incorrect TestRenamedSignal parameters");
    }
 }
@@ -340,10 +335,10 @@ class renamedsignalhandler implements DBusSigHandler<TestSignalInterface2.TestRe
 /**
  * Empty signal handler
  */
-class emptysignalhandler implements DBusSigHandler<TestSignalInterface.EmptySignal>
+class emptysignalhandler implements DBusSigHandler<EmptySignal>
 {
    /** Handling a signal */
-   public void handle(TestSignalInterface.EmptySignal t)
+   public void handle(EmptySignal t)
    {
       if (false == test.done7) {
          test.done7 = true;
@@ -356,7 +351,7 @@ class emptysignalhandler implements DBusSigHandler<TestSignalInterface.EmptySign
 /**
  * Disconnect handler
  */
-class disconnecthandler implements DBusSigHandler<DBus.Local.Disconnected>
+class disconnecthandler implements DBusSigHandler<Disconnected>
 {
 	private DBusConnection conn;
 	private renamedsignalhandler sh;
@@ -366,13 +361,13 @@ class disconnecthandler implements DBusSigHandler<DBus.Local.Disconnected>
 		this.sh = sh;
 	}
    /** Handling a signal */
-   public void handle(DBus.Local.Disconnected t)
+   public void handle(Disconnected t)
    {
       if (false == test.done6) {
          test.done6 = true;
 			System.out.println("Handling disconnect, unregistering handler");
 			try {
-				conn.removeSigHandler(TestSignalInterface2.TestRenamedSignal.class, sh);
+                conn.removeSigHandler(TestRenamedSignal.class, sh);
 			} catch (DBusException DBe) {
 				DBe.printStackTrace();
 				test.fail("Disconnect handler threw an exception: "+DBe);
@@ -385,10 +380,10 @@ class disconnecthandler implements DBusSigHandler<DBus.Local.Disconnected>
 /**
  * Typed signal handler
  */
-class pathsignalhandler implements DBusSigHandler<TestSignalInterface.TestPathSignal>
+class pathsignalhandler implements DBusSigHandler<TestPathSignal>
 {
    /** Handling a signal */
-   public void handle(TestSignalInterface.TestPathSignal t)
+   public void handle(TestPathSignal t)
    {
       System.out.println("Path sighandler: "+t);
    }
@@ -397,10 +392,10 @@ class pathsignalhandler implements DBusSigHandler<TestSignalInterface.TestPathSi
 /**
  * Typed signal handler
  */
-class signalhandler implements DBusSigHandler<TestSignalInterface.TestSignal>
+class signalhandler implements DBusSigHandler<TestSignal>
 {
    /** Handling a signal */
-   public void handle(TestSignalInterface.TestSignal t)
+   public void handle(TestSignal t)
    {
       if (false == test.done1) {
          test.done1 = true;
@@ -409,7 +404,7 @@ class signalhandler implements DBusSigHandler<TestSignalInterface.TestSignal>
       }
       System.out.println("SignalHandler 1 Running");
       System.out.println("string("+t.value+") int("+t.number+")");
-      if (!"Bar".equals(t.value) || !(new UInt32(42)).equals(t.number))
+      if (!"Bar".equals(t.value) || !new UInt32(42).equals(t.number))
          test.fail("Incorrect TestSignal parameters");
    }
 }
@@ -417,10 +412,10 @@ class signalhandler implements DBusSigHandler<TestSignalInterface.TestSignal>
 /**
  * Untyped signal handler
  */
-class arraysignalhandler implements DBusSigHandler<TestSignalInterface.TestArraySignal>
+class arraysignalhandler implements DBusSigHandler<TestArraySignal>
 {
    /** Handling a signal */
-   public void handle(TestSignalInterface.TestArraySignal t)
+   public void handle(TestArraySignal t)
    {
       try {
          if (false == test.done2) {
@@ -462,9 +457,9 @@ class arraysignalhandler implements DBusSigHandler<TestSignalInterface.TestArray
 /**
  * Object path signal handler
  */
-class objectsignalhandler implements DBusSigHandler<TestSignalInterface.TestObjectSignal>
+class objectsignalhandler implements DBusSigHandler<TestObjectSignal>
 {
-   public void handle(TestSignalInterface.TestObjectSignal s)
+   public void handle(TestObjectSignal s)
    {
       if (false == test.done3) {
          test.done3 = true;
@@ -522,35 +517,35 @@ class callbackhandler implements CallbackHandler<String>
  */
 public class test
 {
-   public static boolean done1 = false;
-   public static boolean done2 = false;
-   public static boolean done3 = false;
-   public static boolean done4 = false;
-   public static boolean done5 = false;
-   public static boolean done6 = false;
-   public static boolean done7 = false;
-   public static boolean done8 = false;
+   public static boolean done1;
+   public static boolean done2;
+   public static boolean done3;
+   public static boolean done4;
+   public static boolean done5;
+   public static boolean done6;
+   public static boolean done7;
+   public static boolean done8;
    public static void fail(String message)
    {
       System.out.println("Test Failed: "+message);
       System.err.println("Test Failed: "+message);
-      if (null != serverconn) serverconn.disconnect();
-      if (null != clientconn) clientconn.disconnect();
+      if (null != test.serverconn) test.serverconn.disconnect();
+      if (null != test.clientconn) test.clientconn.disconnect();
       System.exit(1);
    }
-   static DBusConnection serverconn = null;
-   static DBusConnection clientconn = null;
+   static DBusConnection serverconn;
+   static DBusConnection clientconn;
    @SuppressWarnings("unchecked")
    public static void main(String[] args) 
    { try {
       System.out.println("Creating Connection");
-      serverconn = DBusConnection.getConnection(DBusConnection.SESSION);
-      clientconn = DBusConnection.getConnection(DBusConnection.SESSION);
-      serverconn.setWeakReferences(true);
-      clientconn.setWeakReferences(true);
+       serverconn = DBusConnection.getConnection(DBusConnection.SESSION);
+       clientconn = DBusConnection.getConnection(DBusConnection.SESSION);
+       serverconn.setWeakReferences(true);
+       clientconn.setWeakReferences(true);
       
       System.out.println("Registering Name");
-      serverconn.requestBusName("foo.bar.Test");
+       serverconn.requestBusName("foo.bar.Test");
       
       /** This gets a remote object matching our bus name and exported object path. */
       Peer peer = clientconn.getRemoteObject("foo.bar.Test", "/Test", Peer.class);
@@ -561,35 +556,33 @@ public class test
 		renamedsignalhandler rsh = new renamedsignalhandler();
       try {
          /** This registers an instance of the test class as the signal handler for the TestSignal class. */
-         clientconn.addSigHandler(TestSignalInterface.EmptySignal.class, new emptysignalhandler());
-         clientconn.addSigHandler(TestSignalInterface.TestSignal.class, sigh);
-         clientconn.addSigHandler(TestSignalInterface2.TestRenamedSignal.class, rsh);
-         clientconn.addSigHandler(DBus.Local.Disconnected.class, new disconnecthandler(clientconn, rsh));
+          clientconn.addSigHandler(EmptySignal.class, new emptysignalhandler());
+          clientconn.addSigHandler(TestSignal.class, sigh);
+          clientconn.addSigHandler(TestRenamedSignal.class, rsh);
+          clientconn.addSigHandler(Disconnected.class, new disconnecthandler(clientconn, rsh));
          String source = dbus.GetNameOwner("foo.bar.Test");
-         clientconn.addSigHandler(TestSignalInterface.TestArraySignal.class, source, peer, new arraysignalhandler());
-         clientconn.addSigHandler(TestSignalInterface.TestObjectSignal.class, new objectsignalhandler());
-         clientconn.addSigHandler(TestSignalInterface.TestPathSignal.class, new pathsignalhandler());
-         badarraysignalhandler<TestSignalInterface.TestSignal> bash = new badarraysignalhandler<TestSignalInterface.TestSignal>();
-         clientconn.addSigHandler(TestSignalInterface.TestSignal.class, bash);
-         clientconn.removeSigHandler(TestSignalInterface.TestSignal.class, bash);
+          clientconn.addSigHandler(TestArraySignal.class, source, peer, new arraysignalhandler());
+          clientconn.addSigHandler(TestObjectSignal.class, new objectsignalhandler());
+          clientconn.addSigHandler(TestPathSignal.class, new pathsignalhandler());
+         badarraysignalhandler<TestSignal> bash = new badarraysignalhandler<>();
+          clientconn.addSigHandler(TestSignal.class, bash);
+          clientconn.removeSigHandler(TestSignal.class, bash);
          System.out.println("done");
-      } catch (MatchRuleInvalid MRI) {
-         test.fail("Failed to add handlers: "+MRI.getMessage());
-      } catch (DBusException DBe) {
-         test.fail("Failed to add handlers: "+DBe.getMessage());
+      } catch (MatchRuleInvalid | DBusException MRI) {
+         fail("Failed to add handlers: " + MRI.getMessage());
       }
-      
-      System.out.println("Listening for Method Calls");
+
+       System.out.println("Listening for Method Calls");
       testclass tclass = new testclass(serverconn);
       testclass tclass2 = new testclass(serverconn);
       /** This exports an instance of the test class as the object /Test. */
-      serverconn.exportObject("/Test", tclass);
-      serverconn.exportObject("/BadTest", tclass);
-      serverconn.exportObject("/BadTest2", tclass2);
-      serverconn.addFallback("/FallbackTest", tclass);
+       serverconn.exportObject("/Test", tclass);
+       serverconn.exportObject("/BadTest", tclass);
+       serverconn.exportObject("/BadTest2", tclass2);
+       serverconn.addFallback("/FallbackTest", tclass);
 
       // explicitly unexport object
-      serverconn.unExportObject("/BadTest");
+       serverconn.unExportObject("/BadTest");
       // implicitly unexport object
       tclass2 = null;
       System.gc();
@@ -601,9 +594,9 @@ public class test
       
       System.out.println("Sending Signal");
       /** This creates an instance of the Test Signal, with the given object path, signal name and parameters, and broadcasts in on the Bus. */
-      serverconn.sendSignal(new TestSignalInterface.TestSignal("/foo/bar/Wibble", "Bar", new UInt32(42)));
-      serverconn.sendSignal(new TestSignalInterface.EmptySignal("/foo/bar/Wibble"));
-      serverconn.sendSignal(new TestSignalInterface2.TestRenamedSignal("/foo/bar/Wibble", "Bar", new UInt32(42)));
+       serverconn.sendSignal(new TestSignal("/foo/bar/Wibble", "Bar", new UInt32(42)));
+       serverconn.sendSignal(new EmptySignal("/foo/bar/Wibble"));
+       serverconn.sendSignal(new TestRenamedSignal("/foo/bar/Wibble", "Bar", new UInt32(42)));
 
       System.out.println("These things are on the bus:");
       String[] names = dbus.ListNames();
@@ -622,15 +615,15 @@ public class test
       /** Get introspection data */
       data = intro.Introspect();
       if (null == data || !data.startsWith("<!DOCTYPE"))
-         fail("Introspection data invalid");
+          fail("Introspection data invalid");
       System.out.println("Got Introspection Data: \n"+data);
       
  		// setup bus name set 
 		Set<String> peers = serverconn.new PeerSet();
 		peers.add("org.freedesktop.DBus");
-		clientconn.requestBusName("test.testclient");
+       clientconn.requestBusName("test.testclient");
 		peers.add("test.testclient");
-		clientconn.releaseBusName("test.testclient");
+       clientconn.releaseBusName("test.testclient");
 
 		System.out.println("Pinging ourselves");
       /** Call ping. */
@@ -651,17 +644,17 @@ public class test
 
       Path path = new Path("/nonexistantwooooooo");
       Path p = tri.pathrv(path);
-      System.out.println(path.toString()+" => "+p.toString());
+      System.out.println(path +" => "+ p);
       if (!path.equals(p)) fail("pathrv incorrect");
-      List<Path> paths = new Vector<Path>();
+      List<Path> paths = new Vector<>();
       paths.add(path);
       List<Path> ps = tri.pathlistrv(paths);
-      System.out.println(paths.toString()+" => "+ps.toString());
+      System.out.println(paths +" => "+ ps);
       if (!paths.equals(ps)) fail("pathlistrv incorrect");
-      Map<Path, Path> pathm = new HashMap<Path, Path>();
+      Map<Path, Path> pathm = new HashMap<>();
       pathm.put(path, path);
       Map<Path, Path> pm = tri.pathmaprv(pathm);
-      System.out.println(pathm.toString()+" => "+pm.toString());
+      System.out.println(pathm +" => "+ pm);
       System.out.println(pm.containsKey(path)+" "+pm.get(path)+" "+path.equals(pm.get(path)));
       System.out.println(pm.containsKey(p)+" "+pm.get(p)+" "+p.equals(pm.get(p)));
       for (Path q: pm.keySet()) {
@@ -670,69 +663,69 @@ public class test
       }
       if (!pm.containsKey(path) || !path.equals(pm.get(path))) fail("pathmaprv incorrect");
 
-      serverconn.sendSignal(new TestSignalInterface.TestPathSignal("/Test", path, paths, pathm));
+       serverconn.sendSignal(new TestPathSignal("/Test", path, paths, pathm));
 
       Collator col = Collator.getInstance();
       col.setDecomposition(Collator.FULL_DECOMPOSITION);
       col.setStrength(Collator.PRIMARY);
       if (0 != col.compare("This Is A UTF-8 Name: ﺱ !!", rname))
-         fail("getName return value incorrect");
+          fail("getName return value incorrect");
       System.out.println("sending it to sleep");
       tri.waitawhile();
       System.out.println("testing floats");
       if (17.093f != tri.testfloat(new float[] { 17.093f, -23f, 0.0f, 31.42f }))
-         fail("testfloat returned the wrong thing");
+          fail("testfloat returned the wrong thing");
       System.out.println("Structs of Structs");
-      List<List<Integer>> lli = new Vector<List<Integer>>();
-      List<Integer> li = new Vector<Integer>();
+      List<List<Integer>> lli = new Vector<>();
+      List<Integer> li = new Vector<>();
       li.add(1);
       li.add(2);
       li.add(3);
       lli.add(li);
       lli.add(li);
       lli.add(li);
-      TestStruct3 ts3 = new TestStruct3(new TestStruct2(new Vector<String>(), new Variant<Integer>(0)), lli);
+      TestStruct3 ts3 = new TestStruct3(new TestStruct2(new Vector<>(), new Variant<>(0)), lli);
       int[][] out = tri.teststructstruct(ts3);
-      if (out.length != 3) fail("teststructstruct returned the wrong thing: "+Arrays.deepToString(out));
+      if (out.length != 3) fail("teststructstruct returned the wrong thing: " + Arrays.deepToString(out));
       for (int[] o: out)
          if (o.length != 3
            ||o[0] != 1
            ||o[1] != 2
-           ||o[2] != 3) fail("teststructstruct returned the wrong thing: "+Arrays.deepToString(out));
+           ||o[2] != 3) fail("teststructstruct returned the wrong thing: " + Arrays.deepToString(out));
 
       System.out.println("frobnicating");
-      List<Long> ls = new Vector<Long>();
+      List<Long> ls = new Vector<>();
       ls.add(2L);
       ls.add(5L);
       ls.add(71L);
-      Map<UInt16,Short> mus = new HashMap<UInt16,Short>();
+      Map<UInt16,Short> mus = new HashMap<>();
       mus.put(new UInt16(4), (short) 5);
       mus.put(new UInt16(5), (short) 6);
       mus.put(new UInt16(6), (short) 7);
-      Map<String,Map<UInt16,Short>> msmus = new HashMap<String,Map<UInt16,Short>>();
+      Map<String,Map<UInt16,Short>> msmus = new HashMap<>();
       msmus.put("stuff", mus);
       int rint = tri.frobnicate(ls, msmus, 13);
       if (-5 != rint)
-         fail("frobnicate return value incorrect");
+          fail("frobnicate return value incorrect");
  
       System.out.println("Doing stuff asynchronously with callback");
-      clientconn.callWithCallback(tri, "getName", new callbackhandler());
+       clientconn.callWithCallback(tri, "getName", new callbackhandler());
       System.out.println("Doing stuff asynchronously with callback, which throws an error");
-      clientconn.callWithCallback(tri, "getNameAndThrow", new callbackhandler());
+       clientconn.callWithCallback(tri, "getNameAndThrow", new callbackhandler());
 
       /** call something that throws */
       try {
          System.out.println("Throwing stuff");
          tri.throwme();
-         test.fail("Method Execution should have failed");
+         fail("Method Execution should have failed");
       } catch (TestException Te) {
          System.out.println("Remote Method Failed with: "+Te.getClass().getName()+" "+Te.getMessage());
          if (!Te.getMessage().equals("test"))
-            test.fail("Error message was not correct");
+            fail("Error message was not correct");
       }
 
       /* Test type signatures */
-      Vector<Type> ts = new Vector<Type>();
+      Vector<Type> ts = new Vector<>();
       Marshalling.getJavaType("ya{si}", ts, -1);
       tri.sig(ts.toArray(new Type[0]));
 
@@ -743,7 +736,7 @@ public class test
          System.out.println("Calling Method2");
          tri = clientconn.getRemoteObject("foo.bar.NotATest", "/Moofle", TestRemoteInterface.class);
          System.out.println("Got Remote Name: "+tri.getName());
-         test.fail("Method Execution should have failed");
+         fail("Method Execution should have failed");
       } catch (ServiceUnknown SU) {
          System.out.println("Remote Method Failed with: "+SU.getClass().getName()+" "+SU.getMessage());
       }
@@ -753,7 +746,7 @@ public class test
          System.out.println("Calling Method3");
          tri = clientconn.getRemoteObject("foo.bar.Test", "/Moofle", TestRemoteInterface.class);
          System.out.println("Got Remote Name: "+tri.getName());
-         test.fail("Method Execution should have failed");
+         fail("Method Execution should have failed");
       } catch (UnknownObject UO) {
          System.out.println("Remote Method Failed with: "+UO.getClass().getName()+" "+UO.getMessage());
       }
@@ -763,7 +756,7 @@ public class test
          System.out.println("Calling Method4");
          tri = clientconn.getRemoteObject("foo.bar.Test", "/BadTest", TestRemoteInterface.class);
          System.out.println("Got Remote Name: "+tri.getName());
-         test.fail("Method Execution should have failed");
+         fail("Method Execution should have failed");
       } catch (UnknownObject UO) {
          System.out.println("Remote Method Failed with: "+UO.getClass().getName()+" "+UO.getMessage());
       }
@@ -773,7 +766,7 @@ public class test
          System.out.println("Calling Method5");
          tri = clientconn.getRemoteObject("foo.bar.Test", "/BadTest2", TestRemoteInterface.class);
          System.out.println("Got Remote Name: "+tri.getName());
-         test.fail("Method Execution should have failed");
+         fail("Method Execution should have failed");
       } catch (UnknownObject UO) {
          System.out.println("Remote Method Failed with: "+UO.getClass().getName()+" "+UO.getMessage());
       }
@@ -786,7 +779,7 @@ public class test
 
       System.out.println("Testing Properties returning Paths");
       Properties prop = clientconn.getRemoteObject("foo.bar.Test", "/Test", Properties.class);
-		Path prv = (Path) prop.Get("foo.bar", "foo");
+		Path prv = prop.Get("foo.bar", "foo");
       System.out.println("Got path "+prv);
       System.out.println("Calling Method7--9");
       /** This gets a remote object matching our bus name and exported object path. */
@@ -795,7 +788,7 @@ public class test
       String intro2 = tri2.Introspect();
       System.out.println(intro2);
       if (0 != col.compare("Not XML", intro2))
-         fail("Introspect return value incorrect");
+          fail("Introspect return value incorrect");
 
       /** Call the remote object and get a response. */
       TestTuple<String,List<Integer>,Boolean> rv = tri2.show(234);
@@ -803,16 +796,16 @@ public class test
       if (!serverconn.getUniqueName().equals(rv.a) ||
             1 != rv.b.size() ||
             1953 != rv.b.get(0) ||
-            true != rv.c.booleanValue())
-         fail("show return value incorrect ("+rv.a+","+rv.b+","+rv.c+")");
+            true != rv.c)
+          fail("show return value incorrect (" + rv.a + "," + rv.b + "," + rv.c + ")");
       
       System.out.println("Doing stuff asynchronously");
-      DBusAsyncReply<Boolean> stuffreply = (DBusAsyncReply<Boolean>) clientconn.callMethodAsync(tri2, "dostuff", new TestStruct("bar", new UInt32(52), new Variant<Boolean>(new Boolean(true))));
+      DBusAsyncReply<Boolean> stuffreply = (DBusAsyncReply<Boolean>) clientconn.callMethodAsync(tri2, "dostuff", new TestStruct("bar", new UInt32(52), new Variant<>(true)));
 
       System.out.println("Checking bools");
       if (tri2.check()) fail("bools are broken");
          
-      List<String> l = new Vector<String>();
+      List<String> l = new Vector<>();
       l.add("hi");
       l.add("hello");
       l.add("hej");
@@ -824,39 +817,39 @@ public class test
       for (Integer i: is)
          System.out.println("--"+i);
       if (is.size() != 5 ||
-            is.get(0).intValue() != -1 ||
-            is.get(1).intValue() != -5 ||
-            is.get(2).intValue() != -7 ||
-            is.get(3).intValue() != -12 ||
-            is.get(4).intValue() != -18)
-         fail("sampleArray return value incorrect");
+              is.get(0) != -1 ||
+              is.get(1) != -5 ||
+              is.get(2) != -7 ||
+              is.get(3) != -12 ||
+              is.get(4) != -18)
+          fail("sampleArray return value incorrect");
 
       System.out.println("Get This");
       if (!tclass.equals(tri2.getThis(tri2)))
-         fail("Didn't get the correct this");
+          fail("Didn't get the correct this");
       
       Boolean b = stuffreply.getReply();
       System.out.println("Do stuff replied "+b);
-      if (true != b.booleanValue())
-         fail("dostuff return value incorrect");
+      if (true != b)
+          fail("dostuff return value incorrect");
       
       System.out.print("Sending Array Signal...");
       /** This creates an instance of the Test Signal, with the given object path, signal name and parameters, and broadcasts in on the Bus. */
-      List<TestStruct2> tsl = new Vector<TestStruct2>();
-      tsl.add(new TestStruct2(l, new Variant<UInt64>(new UInt64(567))));
-      Map<UInt32, TestStruct2> tsm = new HashMap<UInt32, TestStruct2>();
-      tsm.put(new UInt32(1), new TestStruct2(l, new Variant<UInt64>(new UInt64(678))));
-      tsm.put(new UInt32(42), new TestStruct2(l, new Variant<UInt64>(new UInt64(789))));
-      serverconn.sendSignal(new TestSignalInterface.TestArraySignal("/Test", tsl, tsm));
+      List<TestStruct2> tsl = new Vector<>();
+      tsl.add(new TestStruct2(l, new Variant<>(new UInt64(567))));
+      Map<UInt32, TestStruct2> tsm = new HashMap<>();
+      tsm.put(new UInt32(1), new TestStruct2(l, new Variant<>(new UInt64(678))));
+      tsm.put(new UInt32(42), new TestStruct2(l, new Variant<>(new UInt64(789))));
+       serverconn.sendSignal(new TestArraySignal("/Test", tsl, tsm));
       
       System.out.println("done");
 
       System.out.print("testing custom serialization...");
-      Vector<Integer> v = new Vector<Integer>();
+      Vector<Integer> v = new Vector<>();
       v.add(1);
       v.add(2);
       v.add(3);
-      TestSerializable<String> s = new TestSerializable<String>(1, "woo", v);
+      TestSerializable<String> s = new TestSerializable<>(1, "woo", v);
       s = tri2.testSerializable((byte) 12, s, 13);
       System.out.print("returned: "+s);
       if (s.getInt() != 1 || 
@@ -865,7 +858,7 @@ public class test
           s.getVector().get(0) != 1 ||
           s.getVector().get(1) != 2 ||
           s.getVector().get(2) != 3)
-         fail("Didn't get back the same TestSerializable");
+          fail("Didn't get back the same TestSerializable");
       
       System.out.println("done");
 
@@ -883,10 +876,10 @@ public class test
 
       System.out.print("testing method overloading...");
       tri = clientconn.getRemoteObject("foo.bar.Test", "/Test", TestRemoteInterface.class);
-      if (1 != tri2.overload("foo")) test.fail("wrong overloaded method called");
-      if (2 != tri2.overload((byte) 0)) test.fail("wrong overloaded method called");
-      if (3 != tri2.overload()) test.fail("wrong overloaded method called");
-      if (4 != tri.overload()) test.fail("wrong overloaded method called");
+      if (1 != tri2.overload("foo")) fail("wrong overloaded method called");
+      if (2 != tri2.overload((byte) 0)) fail("wrong overloaded method called");
+      if (3 != tri2.overload()) fail("wrong overloaded method called");
+      if (4 != tri.overload()) fail("wrong overloaded method called");
       System.out.println("done");
 
 		System.out.print("reg13291...");
@@ -897,15 +890,15 @@ public class test
 		System.out.println("done");
 
       System.out.print("Testing nested lists...");
-      lli = new Vector<List<Integer>>();
-      li = new Vector<Integer>();
+      lli = new Vector<>();
+      li = new Vector<>();
       li.add(1);
       lli.add(li);
       List<List<Integer>> reti = tri2.checklist(lli);
       if (reti.size() != 1 ||
           reti.get(0).size() != 1 ||
           reti.get(0).get(0) != 1)
-         test.fail("Failed to check nested lists");
+         fail("Failed to check nested lists");
       System.out.println("done");
 
       System.out.print("Testing dynamic object creation...");
@@ -914,14 +907,14 @@ public class test
       System.out.println("done");
 
       /* send an object in a signal */
-      serverconn.sendSignal(new TestSignalInterface.TestObjectSignal("/foo/bar/Wibble", tclass));
+       serverconn.sendSignal(new TestObjectSignal("/foo/bar/Wibble", tclass));
 
       /** Pause while we wait for the DBus messages to go back and forth. */
       Thread.sleep(1000);
 
 		// check that bus name set has been trimmed
 		if (peers.size() != 1) fail("peers hasn't been trimmed");
-		if (!peers.contains("org.freedesktop.DBus")) fail ("peers contains the wrong name");
+		if (!peers.contains("org.freedesktop.DBus")) fail("peers contains the wrong name");
 
       System.out.println("Checking for outstanding errors");
       DBusExecutionException DBEe = serverconn.getError();
@@ -931,23 +924,23 @@ public class test
     
       System.out.println("Disconnecting");
       /** Disconnect from the bus. */
-      clientconn.disconnect();
-      serverconn.disconnect();
+       clientconn.disconnect();
+       serverconn.disconnect();
 
       System.out.println("Trying to do things after disconnection");
 
 		/** Remove sig handler */
-		clientconn.removeSigHandler(TestSignalInterface.TestSignal.class, sigh);
+       clientconn.removeSigHandler(TestSignal.class, sigh);
 
 		/** Call a method when disconnected */
 		try {
 			System.out.println("getName() suceeded and returned: "+tri.getName());
-			fail("Should not succeed when disconnected");
+            fail("Should not succeed when disconnected");
 		} catch (NotConnected NC) {
 			System.out.println("getName() failed with exception "+NC);
 		}
-      clientconn = null;
-      serverconn = null;
+       clientconn = null;
+       serverconn = null;
 
       if (!done1) fail("Signal handler 1 failed to be run");
       if (!done2) fail("Signal handler 2 failed to be run");
@@ -960,6 +953,6 @@ public class test
       
    } catch (Exception e) {
       e.printStackTrace();
-      fail("Unexpected Exception Occurred: "+e);
+       fail("Unexpected Exception Occurred: " + e);
    }}
 }

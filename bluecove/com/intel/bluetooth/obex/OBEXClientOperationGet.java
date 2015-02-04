@@ -42,13 +42,13 @@ class OBEXClientOperationGet extends OBEXClientOperation {
 	 * @see javax.microedition.io.InputConnection#openInputStream()
 	 */
 	public InputStream openInputStream() throws IOException {
-		validateOperationIsOpen();
+        validateOperationIsOpen();
 		if (this.inputStreamOpened) {
 			throw new IOException("input stream already open");
 		}
 		DebugLog.debug("openInputStream");
-		this.inputStreamOpened = true;
-		endRequestPhase();
+        this.inputStreamOpened = true;
+        endRequestPhase();
 		return this.inputStream;
 	}
 
@@ -58,15 +58,15 @@ class OBEXClientOperationGet extends OBEXClientOperation {
 	 * @see javax.microedition.io.OutputConnection#openOutputStream()
 	 */
 	public OutputStream openOutputStream() throws IOException {
-		validateOperationIsOpen();
+        validateOperationIsOpen();
 		if (outputStreamOpened) {
 			throw new IOException("output already open");
 		}
 		if (this.requestEnded) {
 			throw new IOException("the request phase has already ended");
 		}
-		this.outputStreamOpened = true;
-		this.outputStream = new OBEXOperationOutputStream(session.mtu, this);
+        this.outputStreamOpened = true;
+        this.outputStream = new OBEXOperationOutputStream(session.mtu, this);
 		return this.outputStream;
 	}
 

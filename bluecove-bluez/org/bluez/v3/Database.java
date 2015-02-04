@@ -33,6 +33,11 @@
 package org.bluez.v3;
 
 import org.bluez.Error;
+import org.bluez.Error.DoesNotExist;
+import org.bluez.Error.Failed;
+import org.bluez.Error.InvalidArguments;
+import org.bluez.Error.NotAuthorized;
+import org.bluez.Error.NotAvailable;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
 import org.freedesktop.dbus.UInt32;
@@ -85,19 +90,19 @@ public interface Database extends DBusInterface {
     /**
      * Adds a new service record and returns the assigned record handle.
      */
-    UInt32 AddServiceRecord(byte[] b) throws Error.InvalidArguments, Error.Failed;
+    UInt32 AddServiceRecord(byte[] b) throws InvalidArguments, Failed;
 
     /**
      * Adds a new service record and returns the assigned record handle.
      */
-    UInt32 AddServiceRecordFromXML(String record) throws Error.InvalidArguments, Error.Failed;
+    UInt32 AddServiceRecordFromXML(String record) throws InvalidArguments, Failed;
 
     /**
      * Updates a given service record.
      * 
      * @since BlueZ 3.10
      */
-    void UpdateServiceRecord(UInt32 handle, byte[] sdprecord) throws Error.InvalidArguments, Error.NotAvailable, Error.Failed;
+    void UpdateServiceRecord(UInt32 handle, byte[] sdprecord) throws InvalidArguments, NotAvailable, Failed;
 
     /**
      * Updates a given service record provided in the XML format.
@@ -105,7 +110,7 @@ public interface Database extends DBusInterface {
      * @param handle
      * @param record
      */
-    void UpdateServiceRecordFromXML(UInt32 handle, String sdprecordXML) throws Error.InvalidArguments, Error.NotAvailable, Error.Failed;
+    void UpdateServiceRecordFromXML(UInt32 handle, String sdprecordXML) throws InvalidArguments, NotAvailable, Failed;
 
     /**
      * Remove a service record identified by its handle.
@@ -115,7 +120,7 @@ public interface Database extends DBusInterface {
      * 
      * @param handle
      */
-    void RemoveServiceRecord(UInt32 handle) throws Error.InvalidArguments, Error.NotAuthorized, Error.DoesNotExist, Error.Failed;
+    void RemoveServiceRecord(UInt32 handle) throws InvalidArguments, NotAuthorized, DoesNotExist, Failed;
 
     /**
      * This method gets called when a service wants to check if a remote device is

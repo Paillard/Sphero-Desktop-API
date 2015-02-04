@@ -54,7 +54,7 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 	private static final Vector fqcnSet = new Vector();
 
 	static {
-		fqcnSet.addElement(FQCN);
+        fqcnSet.addElement(FQCN);
 	}
 
 	/**
@@ -67,9 +67,9 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 			Error {
 		super(conn, obexConnectionParams);
 		Utils.isLegalAPICall(fqcnSet);
-		this.requestSent = false;
-		this.isConnected = false;
-		this.operation = null;
+        this.requestSent = false;
+        this.isConnected = false;
+        this.operation = null;
 	}
 
 	public HeaderSet createHeaderSet() {
@@ -86,7 +86,7 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 	}
 
 	private HeaderSet connectImpl(HeaderSet headers, boolean retry) throws IOException {
-		validateCreatedHeaderSet(headers);
+        OBEXSessionBase.validateCreatedHeaderSet(headers);
 		if (isConnected) {
 			throw new IOException("Session already connected");
 		}
@@ -95,7 +95,7 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 		connectRequest[1] = 0; /* Flags */
 		connectRequest[2] = OBEXUtils.hiByte(obexConnectionParams.mtu);
 		connectRequest[3] = OBEXUtils.loByte(obexConnectionParams.mtu);
-		writePacketWithFlags(OBEXOperationCodes.CONNECT, connectRequest, (OBEXHeaderSetImpl) headers);
+        writePacketWithFlags(OBEXOperationCodes.CONNECT, connectRequest, (OBEXHeaderSetImpl) headers);
 
 		byte[] b = readPacket();
 		if (b.length < 6) {
@@ -109,7 +109,7 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 			throw new IOException("Invalid MTU " + serverMTU);
 		}
 		if (serverMTU < this.mtu) {
-			this.mtu = serverMTU;
+            this.mtu = serverMTU;
 		}
 		DebugLog.debug("mtu selected", this.mtu);
 
@@ -117,35 +117,35 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 
 		Object connID = responseHeaders.getHeader(OBEXHeaderSetImpl.OBEX_HDR_CONNECTION);
 		if (connID != null) {
-			this.connectionID = ((Long) connID).longValue();
+            this.connectionID = (Long) connID;
 		}
 
-		validateAuthenticationResponse((OBEXHeaderSetImpl) headers, responseHeaders);
-		if ((!retry) && (responseHeaders.getResponseCode() == ResponseCodes.OBEX_HTTP_UNAUTHORIZED)
-				&& (responseHeaders.hasAuthenticationChallenge())) {
+        validateAuthenticationResponse((OBEXHeaderSetImpl) headers, responseHeaders);
+		if (!retry && responseHeaders.getResponseCode() == ResponseCodes.OBEX_HTTP_UNAUTHORIZED
+				&& responseHeaders.hasAuthenticationChallenge()) {
 			HeaderSet replyHeaders = OBEXHeaderSetImpl.cloneHeaders(headers);
-			handleAuthenticationChallenge(responseHeaders, (OBEXHeaderSetImpl) replyHeaders);
+            handleAuthenticationChallenge(responseHeaders, (OBEXHeaderSetImpl) replyHeaders);
 			return connectImpl(replyHeaders, true);
 
 		}
 		if (responseHeaders.getResponseCode() == ResponseCodes.OBEX_HTTP_OK) {
-			this.isConnected = true;
+            this.isConnected = true;
 		}
 		return responseHeaders;
 	}
 
 	public HeaderSet disconnect(HeaderSet headers) throws IOException {
-		validateCreatedHeaderSet(headers);
-		canStartOperation();
+        OBEXSessionBase.validateCreatedHeaderSet(headers);
+        canStartOperation();
 		if (!isConnected) {
 			throw new IOException("Session not connected");
 		}
-		writePacket(OBEXOperationCodes.DISCONNECT, (OBEXHeaderSetImpl) headers);
+        writePacket(OBEXOperationCodes.DISCONNECT, (OBEXHeaderSetImpl) headers);
 		byte[] b = readPacket();
-		this.isConnected = false;
+        this.isConnected = false;
 		if (this.operation != null) {
-			this.operation.close();
-			this.operation = null;
+            this.operation.close();
+            this.operation = null;
 		}
 		return OBEXHeaderSetImpl.readHeaders(b[0], b, 3);
 	}
@@ -154,7 +154,7 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 		if (id < 0 || id > 0xffffffffl) {
 			throw new IllegalArgumentException("Invalid connectionID " + id);
 		}
-		this.connectionID = id;
+        this.connectionID = id;
 	}
 
 	public long getConnectionID() {
@@ -169,13 +169,13 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 			if (!this.operation.isClosed()) {
 				throw new IOException("Client is already in an operation");
 			}
-			this.operation = null;
+            this.operation = null;
 		}
 	}
 
 	public HeaderSet setPath(HeaderSet headers, boolean backup, boolean create) throws IOException {
-		validateCreatedHeaderSet(headers);
-		canStartOperation();
+        OBEXSessionBase.validateCreatedHeaderSet(headers);
+        canStartOperation();
 		return setPathImpl(headers, backup, create, false);
 	}
 
@@ -185,15 +185,15 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 		request[0] = (byte) ((backup ? 1 : 0) | (create ? 0 : 2));
 		request[1] = 0;
 		// DebugLog.debug("setPath b[3]", request[0]);
-		writePacketWithFlags(OBEXOperationCodes.SETPATH_FINAL, request, (OBEXHeaderSetImpl) headers);
+        writePacketWithFlags(OBEXOperationCodes.SETPATH_FINAL, request, (OBEXHeaderSetImpl) headers);
 
 		byte[] b = readPacket();
 		OBEXHeaderSetImpl responseHeaders = OBEXHeaderSetImpl.readHeaders(b[0], b, 3);
-		validateAuthenticationResponse((OBEXHeaderSetImpl) headers, responseHeaders);
-		if (!authentRetry && (responseHeaders.getResponseCode() == ResponseCodes.OBEX_HTTP_UNAUTHORIZED)
-				&& (responseHeaders.hasAuthenticationChallenge())) {
+        validateAuthenticationResponse((OBEXHeaderSetImpl) headers, responseHeaders);
+		if (!authentRetry && responseHeaders.getResponseCode() == ResponseCodes.OBEX_HTTP_UNAUTHORIZED
+				&& responseHeaders.hasAuthenticationChallenge()) {
 			OBEXHeaderSetImpl retryHeaders = OBEXHeaderSetImpl.cloneHeaders(headers);
-			handleAuthenticationChallenge(responseHeaders, retryHeaders);
+            handleAuthenticationChallenge(responseHeaders, retryHeaders);
 			return setPathImpl(retryHeaders, backup, create, true);
 		} else {
 			return responseHeaders;
@@ -201,34 +201,34 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 	}
 
 	public Operation get(HeaderSet headers) throws IOException {
-		validateCreatedHeaderSet(headers);
-		canStartOperation();
-		this.operation = new OBEXClientOperationGet(this, (OBEXHeaderSetImpl) headers);
+        OBEXSessionBase.validateCreatedHeaderSet(headers);
+        canStartOperation();
+        this.operation = new OBEXClientOperationGet(this, (OBEXHeaderSetImpl) headers);
 		return this.operation;
 	}
 
 	public Operation put(HeaderSet headers) throws IOException {
-		validateCreatedHeaderSet(headers);
-		canStartOperation();
-		this.operation = new OBEXClientOperationPut(this, (OBEXHeaderSetImpl) headers);
+        OBEXSessionBase.validateCreatedHeaderSet(headers);
+        canStartOperation();
+        this.operation = new OBEXClientOperationPut(this, (OBEXHeaderSetImpl) headers);
 		return this.operation;
 	}
 
 	public HeaderSet delete(HeaderSet headers) throws IOException {
-		validateCreatedHeaderSet(headers);
-		canStartOperation();
+        OBEXSessionBase.validateCreatedHeaderSet(headers);
+        canStartOperation();
 		return deleteImp(headers, false);
 	}
 
 	HeaderSet deleteImp(HeaderSet headers, boolean authentRetry) throws IOException {
-		writePacket(OBEXOperationCodes.PUT_FINAL, (OBEXHeaderSetImpl) headers);
+        writePacket(OBEXOperationCodes.PUT_FINAL, (OBEXHeaderSetImpl) headers);
 		byte[] b = readPacket();
 		OBEXHeaderSetImpl responseHeaders = OBEXHeaderSetImpl.readHeaders(b[0], b, 3);
-		validateAuthenticationResponse((OBEXHeaderSetImpl) headers, responseHeaders);
-		if (!authentRetry && (responseHeaders.getResponseCode() == ResponseCodes.OBEX_HTTP_UNAUTHORIZED)
-				&& (responseHeaders.hasAuthenticationChallenge())) {
+        validateAuthenticationResponse((OBEXHeaderSetImpl) headers, responseHeaders);
+		if (!authentRetry && responseHeaders.getResponseCode() == ResponseCodes.OBEX_HTTP_UNAUTHORIZED
+				&& responseHeaders.hasAuthenticationChallenge()) {
 			OBEXHeaderSetImpl retryHeaders = OBEXHeaderSetImpl.cloneHeaders(headers);
-			handleAuthenticationChallenge(responseHeaders, retryHeaders);
+            handleAuthenticationChallenge(responseHeaders, retryHeaders);
 			return deleteImp(retryHeaders, true);
 		} else {
 			return responseHeaders;
@@ -239,7 +239,7 @@ public class OBEXClientSessionImpl extends OBEXSessionBase implements ClientSess
 		if (auth == null) {
 			throw new NullPointerException("auth is null");
 		}
-		this.authenticator = auth;
+        this.authenticator = auth;
 	}
 
 	public void close() throws IOException {

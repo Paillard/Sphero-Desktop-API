@@ -53,12 +53,12 @@ interface DeviceInquiryRunnable {
 	 * Common synchronous method called by DeviceInquiryThread. Should throw
 	 * BluetoothStateException only if it can't start Inquiry
 	 */
-	public int runDeviceInquiry(DeviceInquiryThread startedNotify, int accessCode, DiscoveryListener listener)
+    int runDeviceInquiry(DeviceInquiryThread startedNotify, int accessCode, DiscoveryListener listener)
 			throws BluetoothStateException;
 
 	/**
 	 * Convenience method called from native code
 	 */
-	public void deviceDiscoveredCallback(DiscoveryListener listener, long deviceAddr, int deviceClass,
-			String deviceName, boolean paired);
+    void deviceDiscoveredCallback(DiscoveryListener listener, long deviceAddr, int deviceClass,
+                                  String deviceName, boolean paired);
 }

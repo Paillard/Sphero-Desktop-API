@@ -24,34 +24,30 @@
  */
 package org.bluez.v3;
 
+import com.intel.bluetooth.BlueCoveImpl;
+import com.intel.bluetooth.BluetoothConsts;
+import com.intel.bluetooth.BluetoothConsts.DeviceClassConsts;
+import com.intel.bluetooth.DebugLog;
+import org.bluez.BlueZAPI;
+import org.bluez.Error;
+import org.bluez.v3.Adapter.DiscoveryCompleted;
+import org.bluez.v3.Adapter.DiscoveryStarted;
+import org.bluez.v3.Adapter.RemoteClassUpdated;
+import org.bluez.v3.Adapter.RemoteDeviceFound;
+import org.bluez.v3.Adapter.RemoteNameUpdated;
+import org.freedesktop.DBus;
+import org.freedesktop.DBus.Error.NoReply;
+import org.freedesktop.dbus.*;
+import org.freedesktop.dbus.exceptions.DBusException;
+import org.freedesktop.dbus.exceptions.DBusExecutionException;
+
+import javax.bluetooth.DiscoveryAgent;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import javax.bluetooth.DiscoveryAgent;
-
-import org.bluez.BlueZAPI;
-import org.bluez.Error.Canceled;
-import org.bluez.Error.Failed;
-import org.bluez.Error.InvalidArguments;
-import org.bluez.Error.NoSuchAdapter;
-import org.bluez.Error.NotReady;
-import org.bluez.Error.Rejected;
-import org.freedesktop.DBus;
-import org.freedesktop.dbus.DBusConnection;
-import org.freedesktop.dbus.DBusSigHandler;
-import org.freedesktop.dbus.DBusSignal;
-import org.freedesktop.dbus.Path;
-import org.freedesktop.dbus.UInt32;
-import org.freedesktop.dbus.exceptions.DBusException;
-import org.freedesktop.dbus.exceptions.DBusExecutionException;
-
-import com.intel.bluetooth.BlueCoveImpl;
-import com.intel.bluetooth.BluetoothConsts;
-import com.intel.bluetooth.DebugLog;
 
 /**
  * 
@@ -68,7 +64,7 @@ public class BlueZAPIV3 implements BlueZAPI {
 
     private Path adapterPath;
 
-    private long lastDeviceDiscoveryTime = 0;
+    private long lastDeviceDiscoveryTime;
 
     public BlueZAPIV3(DBusConnection dbusConn, Manager dbusManager) {
         this.dbusConn = dbusConn;
@@ -80,11 +76,11 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#findAdapter(java.lang.String)
      */
-    public Path findAdapter(String pattern) throws InvalidArguments {
+    public Path findAdapter(String pattern) throws Error.InvalidArguments {
         String path;
         try {
             path = dbusManager.FindAdapter(pattern);
-        } catch (NoSuchAdapter e) {
+        } catch (Error.NoSuchAdapter e) {
             return null;
         }
         if (path == null) {
@@ -99,11 +95,11 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#defaultAdapter()
      */
-    public Path defaultAdapter() throws InvalidArguments {
+    public Path defaultAdapter() throws Error.InvalidArguments {
         String path;
         try {
             path = dbusManager.DefaultAdapter();
-        } catch (NoSuchAdapter e) {
+        } catch (Error.NoSuchAdapter e) {
             return null;
         }
         if (path == null) {
@@ -123,7 +119,7 @@ public class BlueZAPIV3 implements BlueZAPI {
         if (adapters == null) {
             throw null;
         }
-        if ((number < 0) || (number >= adapters.length)) {
+        if (number < 0 || number >= adapters.length) {
             throw null;
         }
         return new Path(String.valueOf(adapters[number]));
@@ -135,12 +131,12 @@ public class BlueZAPIV3 implements BlueZAPI {
      * @see org.bluez.BlueZAPI#listAdapters()
      */
     public List<String> listAdapters() {
-        List<String> v = new Vector<String>();
+        List<String> v = new Vector<>();
         String[] adapters = dbusManager.ListAdapters();
         if (adapters != null) {
-            for (int i = 0; i < adapters.length; i++) {
-                String adapterId = String.valueOf(adapters[i]);
-                final String bluezPath = "/org/bluez/";
+            for (String adapter1 : adapters) {
+                String adapterId = String.valueOf(adapter1);
+                String bluezPath = "/org/bluez/";
                 if (adapterId.startsWith(bluezPath)) {
                     adapterId = adapterId.substring(bluezPath.length());
                 }
@@ -176,7 +172,7 @@ public class BlueZAPIV3 implements BlueZAPI {
      * @see org.bluez.BlueZAPI#getAdapterID()
      */
     public String getAdapterID() {
-        final String bluezPath = "/org/bluez/";
+        String bluezPath = "/org/bluez/";
         if (adapterPath.getPath().startsWith(bluezPath)) {
             return adapterPath.getPath().substring(bluezPath.length());
         } else {
@@ -194,53 +190,71 @@ public class BlueZAPIV3 implements BlueZAPI {
         String major = adapter.GetMajorClass();
 
         if ("computer".equals(major)) {
-            record |= BluetoothConsts.DeviceClassConsts.MAJOR_COMPUTER;
+            record |= DeviceClassConsts.MAJOR_COMPUTER;
         } else {
             DebugLog.debug("Unknown MajorClass", major);
         }
 
         String minor = adapter.GetMinorClass();
-        if (minor.equals("uncategorized")) {
-            record |= BluetoothConsts.DeviceClassConsts.COMPUTER_MINOR_UNCLASSIFIED;
-        } else if (minor.equals("desktop")) {
-            record |= BluetoothConsts.DeviceClassConsts.COMPUTER_MINOR_DESKTOP;
-        } else if (minor.equals("server")) {
-            record |= BluetoothConsts.DeviceClassConsts.COMPUTER_MINOR_SERVER;
-        } else if (minor.equals("laptop")) {
-            record |= BluetoothConsts.DeviceClassConsts.COMPUTER_MINOR_LAPTOP;
-        } else if (minor.equals("handheld")) {
-            record |= BluetoothConsts.DeviceClassConsts.COMPUTER_MINOR_HANDHELD;
-        } else if (minor.equals("palm")) {
-            record |= BluetoothConsts.DeviceClassConsts.COMPUTER_MINOR_PALM;
-        } else if (minor.equals("wearable")) {
-            record |= BluetoothConsts.DeviceClassConsts.COMPUTER_MINOR_WEARABLE;
-        } else {
-            DebugLog.debug("Unknown MinorClass", minor);
-            record |= BluetoothConsts.DeviceClassConsts.COMPUTER_MINOR_UNCLASSIFIED;
+        switch (minor) {
+            case "uncategorized":
+                record |= DeviceClassConsts.COMPUTER_MINOR_UNCLASSIFIED;
+                break;
+            case "desktop":
+                record |= DeviceClassConsts.COMPUTER_MINOR_DESKTOP;
+                break;
+            case "server":
+                record |= DeviceClassConsts.COMPUTER_MINOR_SERVER;
+                break;
+            case "laptop":
+                record |= DeviceClassConsts.COMPUTER_MINOR_LAPTOP;
+                break;
+            case "handheld":
+                record |= DeviceClassConsts.COMPUTER_MINOR_HANDHELD;
+                break;
+            case "palm":
+                record |= DeviceClassConsts.COMPUTER_MINOR_PALM;
+                break;
+            case "wearable":
+                record |= DeviceClassConsts.COMPUTER_MINOR_WEARABLE;
+                break;
+            default:
+                DebugLog.debug("Unknown MinorClass", minor);
+                record |= DeviceClassConsts.COMPUTER_MINOR_UNCLASSIFIED;
+                break;
         }
 
         String[] srvc = adapter.GetServiceClasses();
         if (srvc != null) {
-            for (int s = 0; s < srvc.length; s++) {
-                String serviceClass = srvc[s];
-                if (serviceClass.equals("positioning")) {
-                    record |= BluetoothConsts.DeviceClassConsts.POSITIONING_SERVICE;
-                } else if (serviceClass.equals("networking")) {
-                    record |= BluetoothConsts.DeviceClassConsts.NETWORKING_SERVICE;
-                } else if (serviceClass.equals("rendering")) {
-                    record |= BluetoothConsts.DeviceClassConsts.RENDERING_SERVICE;
-                } else if (serviceClass.equals("capturing")) {
-                    record |= BluetoothConsts.DeviceClassConsts.CAPTURING_SERVICE;
-                } else if (serviceClass.equals("object transfer")) {
-                    record |= BluetoothConsts.DeviceClassConsts.OBJECT_TRANSFER_SERVICE;
-                } else if (serviceClass.equals("audio")) {
-                    record |= BluetoothConsts.DeviceClassConsts.AUDIO_SERVICE;
-                } else if (serviceClass.equals("telephony")) {
-                    record |= BluetoothConsts.DeviceClassConsts.TELEPHONY_SERVICE;
-                } else if (serviceClass.equals("information")) {
-                    record |= BluetoothConsts.DeviceClassConsts.INFORMATION_SERVICE;
-                } else {
-                    DebugLog.debug("Unknown ServiceClasses", serviceClass);
+            for (String serviceClass : srvc) {
+                switch (serviceClass) {
+                    case "positioning":
+                        record |= DeviceClassConsts.POSITIONING_SERVICE;
+                        break;
+                    case "networking":
+                        record |= DeviceClassConsts.NETWORKING_SERVICE;
+                        break;
+                    case "rendering":
+                        record |= DeviceClassConsts.RENDERING_SERVICE;
+                        break;
+                    case "capturing":
+                        record |= DeviceClassConsts.CAPTURING_SERVICE;
+                        break;
+                    case "object transfer":
+                        record |= DeviceClassConsts.OBJECT_TRANSFER_SERVICE;
+                        break;
+                    case "audio":
+                        record |= DeviceClassConsts.AUDIO_SERVICE;
+                        break;
+                    case "telephony":
+                        record |= DeviceClassConsts.TELEPHONY_SERVICE;
+                        break;
+                    case "information":
+                        record |= DeviceClassConsts.INFORMATION_SERVICE;
+                        break;
+                    default:
+                        DebugLog.debug("Unknown ServiceClasses", serviceClass);
+                        break;
                 }
             }
         }
@@ -256,9 +270,9 @@ public class BlueZAPIV3 implements BlueZAPI {
     public String getAdapterName() {
         try {
             return adapter.GetName();
-        } catch (NotReady e) {
+        } catch (Error.NotReady e) {
             return null;
-        } catch (Failed e) {
+        } catch (Error.Failed e) {
             return null;
         }
     }
@@ -299,7 +313,7 @@ public class BlueZAPIV3 implements BlueZAPI {
             modeStr = "limited";
             break;
         default:
-            if ((0x9E8B00 <= mode) && (mode <= 0x9E8B3F)) {
+            if (0x9E8B00 <= mode && mode <= 0x9E8B3F) {
                 // system does not support the access mode specified
                 return false;
             }
@@ -365,50 +379,34 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#deviceInquiry(org.bluez.BlueZAPI.DeviceInquiryListener )
      */
-    public void deviceInquiry(final DeviceInquiryListener listener) throws DBusException, InterruptedException {
+    public void deviceInquiry(BlueZAPI.DeviceInquiryListener listener) throws DBusException, InterruptedException {
 
-        final Object discoveryCompletedEvent = new Object();
+        Object discoveryCompletedEvent = new Object();
 
-        DBusSigHandler<Adapter.DiscoveryCompleted> discoveryCompleted = new DBusSigHandler<Adapter.DiscoveryCompleted>() {
-            public void handle(Adapter.DiscoveryCompleted s) {
-                DebugLog.debug("discoveryCompleted.handle()");
-                synchronized (discoveryCompletedEvent) {
-                    discoveryCompletedEvent.notifyAll();
-                }
+        DBusSigHandler<DiscoveryCompleted> discoveryCompleted = s -> {
+            DebugLog.debug("discoveryCompleted.handle()");
+            synchronized (discoveryCompletedEvent) {
+                discoveryCompletedEvent.notifyAll();
             }
         };
 
-        DBusSigHandler<Adapter.DiscoveryStarted> discoveryStarted = new DBusSigHandler<Adapter.DiscoveryStarted>() {
-            public void handle(Adapter.DiscoveryStarted s) {
-                DebugLog.debug("device discovery procedure has been started.");
-                //TODO
-            }
+        DBusSigHandler<DiscoveryStarted> discoveryStarted = s -> {
+            DebugLog.debug("device discovery procedure has been started.");
+            //TODO
         };
 
-        DBusSigHandler<Adapter.RemoteDeviceFound> remoteDeviceFound = new DBusSigHandler<Adapter.RemoteDeviceFound>() {
-            public void handle(Adapter.RemoteDeviceFound s) {
-                listener.deviceDiscovered(s.getDeviceAddress(), null, s.getDeviceClass().intValue(), hasBonding(s.getDeviceAddress()));
-            }
-        };
+        DBusSigHandler<RemoteDeviceFound> remoteDeviceFound = s -> listener.deviceDiscovered(s.getDeviceAddress(), null, s.getDeviceClass().intValue(), hasBonding(s.getDeviceAddress()));
 
-        DBusSigHandler<Adapter.RemoteNameUpdated> remoteNameUpdated = new DBusSigHandler<Adapter.RemoteNameUpdated>() {
-            public void handle(Adapter.RemoteNameUpdated s) {
-                listener.deviceDiscovered(s.getDeviceAddress(), s.getDeviceName(), -1, false);
-            }
-        };
+        DBusSigHandler<RemoteNameUpdated> remoteNameUpdated = s -> listener.deviceDiscovered(s.getDeviceAddress(), s.getDeviceName(), -1, false);
 
-        DBusSigHandler<Adapter.RemoteClassUpdated> remoteClassUpdated = new DBusSigHandler<Adapter.RemoteClassUpdated>() {
-            public void handle(Adapter.RemoteClassUpdated s) {
-                listener.deviceDiscovered(s.getDeviceAddress(), null, s.getDeviceClass().intValue(), hasBonding(s.getDeviceAddress()));
-            }
-        };
+        DBusSigHandler<RemoteClassUpdated> remoteClassUpdated = s -> listener.deviceDiscovered(s.getDeviceAddress(), null, s.getDeviceClass().intValue(), hasBonding(s.getDeviceAddress()));
 
         try {
-            dbusConn.addSigHandler(Adapter.DiscoveryCompleted.class, discoveryCompleted);
-            dbusConn.addSigHandler(Adapter.DiscoveryStarted.class, discoveryStarted);
-            dbusConn.addSigHandler(Adapter.RemoteDeviceFound.class, remoteDeviceFound);
-            dbusConn.addSigHandler(Adapter.RemoteNameUpdated.class, remoteNameUpdated);
-            dbusConn.addSigHandler(Adapter.RemoteClassUpdated.class, remoteClassUpdated);
+            dbusConn.addSigHandler(DiscoveryCompleted.class, discoveryCompleted);
+            dbusConn.addSigHandler(DiscoveryStarted.class, discoveryStarted);
+            dbusConn.addSigHandler(RemoteDeviceFound.class, remoteDeviceFound);
+            dbusConn.addSigHandler(RemoteNameUpdated.class, remoteNameUpdated);
+            dbusConn.addSigHandler(RemoteClassUpdated.class, remoteClassUpdated);
 
             // Inquiries are throttled if they are called too quickly in succession.
             // e.g. JSR-82 TCK
@@ -427,11 +425,11 @@ public class BlueZAPIV3 implements BlueZAPI {
             }
 
         } finally {
-            quietRemoveSigHandler(Adapter.RemoteClassUpdated.class, remoteClassUpdated);
-            quietRemoveSigHandler(Adapter.RemoteNameUpdated.class, remoteNameUpdated);
-            quietRemoveSigHandler(Adapter.RemoteDeviceFound.class, remoteDeviceFound);
-            quietRemoveSigHandler(Adapter.DiscoveryStarted.class, discoveryStarted);
-            quietRemoveSigHandler(Adapter.DiscoveryCompleted.class, discoveryCompleted);
+            quietRemoveSigHandler(RemoteClassUpdated.class, remoteClassUpdated);
+            quietRemoveSigHandler(RemoteNameUpdated.class, remoteNameUpdated);
+            quietRemoveSigHandler(RemoteDeviceFound.class, remoteDeviceFound);
+            quietRemoveSigHandler(DiscoveryStarted.class, discoveryStarted);
+            quietRemoveSigHandler(DiscoveryCompleted.class, discoveryCompleted);
         }
     }
 
@@ -449,39 +447,35 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#getRemoteDeviceFriendlyName(java.lang.String)
      */
-    public String getRemoteDeviceFriendlyName(final String deviceAddress) throws DBusException, IOException {
-        final Object discoveryCompletedEvent = new Object();
-        final Vector<String> namesFound = new Vector<String>();
+    public String getRemoteDeviceFriendlyName(String deviceAddress) throws DBusException, IOException {
+        Object discoveryCompletedEvent = new Object();
+        Vector<String> namesFound = new Vector<>();
 
-        DBusSigHandler<Adapter.DiscoveryCompleted> discoveryCompleted = new DBusSigHandler<Adapter.DiscoveryCompleted>() {
-            public void handle(Adapter.DiscoveryCompleted s) {
-                DebugLog.debug("discoveryCompleted.handle()");
-                synchronized (discoveryCompletedEvent) {
-                    discoveryCompletedEvent.notifyAll();
-                }
+        DBusSigHandler<DiscoveryCompleted> discoveryCompleted = s -> {
+            DebugLog.debug("discoveryCompleted.handle()");
+            synchronized (discoveryCompletedEvent) {
+                discoveryCompletedEvent.notifyAll();
             }
         };
 
-        DBusSigHandler<Adapter.RemoteNameUpdated> remoteNameUpdated = new DBusSigHandler<Adapter.RemoteNameUpdated>() {
-            public void handle(Adapter.RemoteNameUpdated s) {
-                if (deviceAddress.equals(s.getDeviceAddress())) {
-                    if (s.getDeviceName() != null) {
-                        namesFound.add(s.getDeviceName());
-                        synchronized (discoveryCompletedEvent) {
-                            discoveryCompletedEvent.notifyAll();
-                        }
-                    } else {
-                        DebugLog.debug("device name is null");
+        DBusSigHandler<RemoteNameUpdated> remoteNameUpdated = s -> {
+            if (deviceAddress.equals(s.getDeviceAddress())) {
+                if (s.getDeviceName() != null) {
+                    namesFound.add(s.getDeviceName());
+                    synchronized (discoveryCompletedEvent) {
+                        discoveryCompletedEvent.notifyAll();
                     }
                 } else {
-                    DebugLog.debug("ignore device name " + s.getDeviceAddress() + " " + s.getDeviceName());
+                    DebugLog.debug("device name is null");
                 }
+            } else {
+                DebugLog.debug("ignore device name " + s.getDeviceAddress() + " " + s.getDeviceName());
             }
         };
 
         try {
-            dbusConn.addSigHandler(Adapter.DiscoveryCompleted.class, discoveryCompleted);
-            dbusConn.addSigHandler(Adapter.RemoteNameUpdated.class, remoteNameUpdated);
+            dbusConn.addSigHandler(DiscoveryCompleted.class, discoveryCompleted);
+            dbusConn.addSigHandler(RemoteNameUpdated.class, remoteNameUpdated);
 
             synchronized (discoveryCompletedEvent) {
                 adapter.DiscoverDevices();
@@ -489,7 +483,7 @@ public class BlueZAPIV3 implements BlueZAPI {
                 try {
                     discoveryCompletedEvent.wait();
                     DebugLog.debug(namesFound.size() + " device name(s) found");
-                    if (namesFound.size() == 0) {
+                    if (namesFound.isEmpty()) {
                         throw new IOException("Can't retrive device name");
                     }
                     // return the last name found
@@ -499,8 +493,8 @@ public class BlueZAPIV3 implements BlueZAPI {
                 }
             }
         } finally {
-            quietRemoveSigHandler(Adapter.RemoteNameUpdated.class, remoteNameUpdated);
-            quietRemoveSigHandler(Adapter.DiscoveryCompleted.class, discoveryCompleted);
+            quietRemoveSigHandler(RemoteNameUpdated.class, remoteNameUpdated);
+            quietRemoveSigHandler(DiscoveryCompleted.class, discoveryCompleted);
         }
     }
 
@@ -513,17 +507,17 @@ public class BlueZAPIV3 implements BlueZAPI {
         if (!preKnown) {
             return null;
         }
-        List<String> addresses = new Vector<String>();
+        List<String> addresses = new Vector<>();
         String[] bonded = adapter.ListBondings();
         if (bonded != null) {
-            for (int i = 0; i < bonded.length; i++) {
-                addresses.add(bonded[i]);
+            for (String aBonded : bonded) {
+                addresses.add(aBonded);
             }
         }
         String[] trusted = adapter.ListTrusts();
         if (trusted != null) {
-            for (int i = 0; i < trusted.length; i++) {
-                addresses.add(trusted[i]);
+            for (String aTrusted : trusted) {
+                addresses.add(aTrusted);
             }
         }
         return addresses;
@@ -544,7 +538,7 @@ public class BlueZAPIV3 implements BlueZAPI {
      * @see org.bluez.BlueZAPI#isRemoteDeviceTrusted(java.lang.String)
      */
     public Boolean isRemoteDeviceTrusted(String deviceAddress) throws DBusException {
-        return Boolean.valueOf(adapter.HasBonding(deviceAddress));
+        return adapter.HasBonding(deviceAddress);
     }
 
     /*
@@ -562,7 +556,7 @@ public class BlueZAPIV3 implements BlueZAPI {
      * @see org.bluez.BlueZAPI#authenticateRemoteDevice(java.lang.String,
      * java.lang.String)
      */
-    public boolean authenticateRemoteDevice(final String deviceAddress, final String passkey) throws DBusException {
+    public boolean authenticateRemoteDevice(String deviceAddress, String passkey) throws DBusException {
         if (passkey == null) {
             authenticateRemoteDevice(deviceAddress);
             return true;
@@ -570,7 +564,7 @@ public class BlueZAPIV3 implements BlueZAPI {
 
             PasskeyAgent passkeyAgent = new PasskeyAgent() {
 
-                public String Request(String path, String address) throws Rejected, Canceled {
+                public String Request(String path, String address) throws Error.Rejected, Error.Canceled {
                     if (deviceAddress.equals(address)) {
                         DebugLog.debug("PasskeyAgent.Request");
                         return passkey;
@@ -609,7 +603,7 @@ public class BlueZAPIV3 implements BlueZAPI {
             dbusConn.exportObject(passkeyAgentPath, passkeyAgent);
 
             // see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=501222
-            final boolean useDefaultPasskeyAgentBug = BlueCoveImpl.getConfigProperty("bluecove.bluez.registerDefaultPasskeyAgent", false);
+            boolean useDefaultPasskeyAgentBug = BlueCoveImpl.getConfigProperty("bluecove.bluez.registerDefaultPasskeyAgent", false);
             try {
                 if (useDefaultPasskeyAgentBug) {
                     security.RegisterDefaultPasskeyAgent(passkeyAgentPath);
@@ -652,15 +646,15 @@ public class BlueZAPIV3 implements BlueZAPI {
         UInt32[] serviceHandles;
         try {
             serviceHandles = adapter.GetRemoteServiceHandles(deviceAddress, match);
-        } catch (DBus.Error.NoReply e) {
+        } catch (NoReply e) {
             return null;
         }
         if (serviceHandles == null) {
             throw new DBusException("Recived no records");
         }
-        Map<Integer, String> xmlRecords = new HashMap<Integer, String>();
-        for (int i = 0; i < serviceHandles.length; ++i) {
-            xmlRecords.put(serviceHandles[i].intValue(), adapter.GetRemoteServiceRecordAsXML(deviceAddress, serviceHandles[i]));
+        Map<Integer, String> xmlRecords = new HashMap<>();
+        for (UInt32 serviceHandle : serviceHandles) {
+            xmlRecords.put(serviceHandle.intValue(), adapter.GetRemoteServiceRecordAsXML(deviceAddress, serviceHandle));
         }
         return xmlRecords;
     }

@@ -29,8 +29,8 @@ public class Color
 
 		// Start conversion
 		int i = Integer.valueOf( v.toUpperCase(), 16 );
-		int r = ( i >> 16 ) & 0xFF;
-		int g = ( i >> 8 ) & 0xFF;
+		int r = i >> 16 & 0xFF;
+		int g = i >> 8 & 0xFF;
 		int b = i & 0xFF;
 
 		System.out.println( r + ", " + g + ", " + b );

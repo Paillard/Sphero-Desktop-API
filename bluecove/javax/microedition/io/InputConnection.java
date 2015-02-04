@@ -39,7 +39,7 @@ public interface InputConnection extends Connection {
 	 * 
 	 * @exception IOException If an I/O error occur
 	 */
-	public InputStream openInputStream() throws IOException;
+    InputStream openInputStream() throws IOException;
 
 	/**
 	 * Open and return a data input stream for a connection.
@@ -48,5 +48,5 @@ public interface InputConnection extends Connection {
 	 * 
 	 * @exception IOException If an I/O error occur
 	 */
-	public DataInputStream openDataInputStream() throws IOException;
+    DataInputStream openDataInputStream() throws IOException;
 }

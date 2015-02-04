@@ -27,6 +27,7 @@
 package javax.bluetooth;
 
 import java.io.IOException;
+import java.lang.IllegalArgumentException;
 
 /**
  * This {@code BluetoothConnectionException} is thrown when a Bluetooth 
@@ -47,7 +48,7 @@ public class BluetoothConnectionException extends IOException {
 	 * <p>
 	 * The value for {@code UNKNOWN_PSM} is 0x0001 (1).
 	 */
-	public final static int UNKNOWN_PSM = 0x0001;
+    public static final int UNKNOWN_PSM = 0x0001;
 	
 	/**
 	 * Indicates the connection failed because the security settings on 
@@ -56,14 +57,14 @@ public class BluetoothConnectionException extends IOException {
 	 * <p>
 	 * The value for {@code SECURITY_BLOCK} is 0x0002 (2).
 	 */
-	public final static int SECURITY_BLOCK = 0x002;
+    public static final int SECURITY_BLOCK = 0x002;
 	/**
 	 * Indicates the connection failed due to a lack of resources either 
 	 * on the local device or on the remote device.
 	 * <p>
 	 * The value for {@code NO_RESOURCES} is 0x0003 (3).
 	 */
-	public final static int NO_RESOURCES = 0x0003;
+    public static final int NO_RESOURCES = 0x0003;
 	
 	/**
 	 * Indicates the connection to the server failed due to unknown 
@@ -71,14 +72,14 @@ public class BluetoothConnectionException extends IOException {
 	 * <p>
 	 * The value for {@code FAILED_NOINFO} is 0x0004 (4).
 	 */
-	public final static int FAILED_NOINFO = 0x0004;
+    public static final int FAILED_NOINFO = 0x0004;
 
 	/**
 	 * Indicates the connection to the server failed due to a timeout.
 	 * <p>
 	 * The value for {@code TIMEOUT} is 0x0005 (5).
 	 */
-	public final static int TIMEOUT = 0x0005;
+    public static final int TIMEOUT = 0x0005;
 	
 	/**
 	 * Indicates the connection failed because the configuration 
@@ -87,7 +88,7 @@ public class BluetoothConnectionException extends IOException {
 	 * <p>
 	 * The value for {@code UNACCEPTABLE_PARAMS} is 0x0006 (6).
 	 */
-	public final static int UNACCEPTABLE_PARAMS = 0x0006;
+    public static final int UNACCEPTABLE_PARAMS = 0x0006;
 	
 	
 	private	int	errorCode;
@@ -98,15 +99,14 @@ public class BluetoothConnectionException extends IOException {
 	 * 
 	 * @param error indicates the exception condition; must be one 
 	 * 				of the constants described in this class
-	 * @throws java.lang.IllegalArgumentException  if the input value 
+	 * @throws IllegalArgumentException  if the input value
 	 * 					is not one of the constants in this class
 	 */
 	public BluetoothConnectionException(int error) {
-		super();
-		if(error < 1 || error > 6) {
-			throw new java.lang.IllegalArgumentException();
+        if(error < 1 || error > 6) {
+			throw new IllegalArgumentException();
 		}
-		errorCode = error;			
+        errorCode = error;
 	}
 	
 	/**
@@ -116,15 +116,15 @@ public class BluetoothConnectionException extends IOException {
 	 * @param error indicates the exception condition; must be one of 
 	 * 				the constants described in this class
 	 * @param msg a description of the exception; may by {@code null}
-	 * @throws java.lang.IllegalArgumentException  if the input value 
+	 * @throws IllegalArgumentException  if the input value
 	 * 					is not one of the constants in this class
 	 */
 	public BluetoothConnectionException(int error, String msg){
 		super(msg);
 		if (error < 1 || error > 6) {
-			throw new java.lang.IllegalArgumentException();
+			throw new IllegalArgumentException();
 		}
-		errorCode = error;
+        errorCode = error;
 	}
 	/**
 	 * Gets the status set in the constructor that will indicate the 

@@ -32,5 +32,5 @@ interface RetrieveDevicesCallback {
 	/**
 	 * Convenience method called from native code
 	 */
-	public void deviceFoundCallback(long deviceAddr, int deviceClass, String deviceName, boolean paired);
+    void deviceFoundCallback(long deviceAddr, int deviceClass, String deviceName, boolean paired);
 }

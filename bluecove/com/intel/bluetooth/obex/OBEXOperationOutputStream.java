@@ -36,16 +36,16 @@ class OBEXOperationOutputStream extends OutputStream {
 
 	private Object lock = new Object();
 
-	private boolean isClosed = false;
+	private boolean isClosed;
 
 	OBEXOperationOutputStream(int mtu, OBEXOperationDelivery op) {
-		this.operation = op;
-		buffer = new byte[mtu - OBEXOperationCodes.OBEX_MTU_HEADER_RESERVE];
-		bufferLength = 0;
+        this.operation = op;
+        buffer = new byte[mtu - OBEXOperationCodes.OBEX_MTU_HEADER_RESERVE];
+        bufferLength = 0;
 	}
 
 	public void write(int i) throws IOException {
-		write(new byte[] { (byte) i }, 0, 1);
+        write(new byte[] { (byte) i }, 0, 1);
 	}
 
 	public void write(byte b[], int off, int len) throws IOException {
@@ -54,7 +54,7 @@ class OBEXOperationOutputStream extends OutputStream {
 		}
 		if (b == null) {
 			throw new NullPointerException();
-		} else if ((off < 0) || (len < 0) || ((off + len) > b.length)) {
+		} else if (off < 0 || len < 0 || off + len > b.length) {
 			throw new IndexOutOfBoundsException();
 		} else if (len == 0) {
 			return;
@@ -63,16 +63,16 @@ class OBEXOperationOutputStream extends OutputStream {
 		synchronized (lock) {
 			int written = 0;
 			while (written < len) {
-				int available = (buffer.length - bufferLength);
-				if ((len - written) < available) {
+				int available = buffer.length - bufferLength;
+				if (len - written < available) {
 					available = len - written;
 				}
 				System.arraycopy(b, off + written, buffer, bufferLength, available);
-				bufferLength += available;
+                bufferLength += available;
 				written += available;
 				if (bufferLength == buffer.length) {
-					this.operation.deliverPacket(false, buffer);
-					bufferLength = 0;
+                    this.operation.deliverPacket(false, buffer);
+                    bufferLength = 0;
 				}
 			}
 		}
@@ -80,7 +80,7 @@ class OBEXOperationOutputStream extends OutputStream {
 
 	public void flush() throws IOException {
 		if (bufferLength > 0) {
-			deliverBuffer(false);
+            deliverBuffer(false);
 		}
 	}
 
@@ -88,23 +88,23 @@ class OBEXOperationOutputStream extends OutputStream {
 		synchronized (lock) {
 			byte[] b = new byte[bufferLength];
 			System.arraycopy(buffer, 0, b, 0, bufferLength);
-			this.operation.deliverPacket(finalPacket, b);
-			bufferLength = 0;
+            this.operation.deliverPacket(finalPacket, b);
+            bufferLength = 0;
 		}
 	}
 
 	void abort() {
 		synchronized (lock) {
-			isClosed = true;
+            isClosed = true;
 		}
 	}
 
 	public void close() throws IOException {
 		if (!isClosed) {
 			synchronized (lock) {
-				isClosed = true;
+                isClosed = true;
 				if (!operation.isClosed()) {
-					deliverBuffer(true);
+                    deliverBuffer(true);
 				}
 			}
 		}

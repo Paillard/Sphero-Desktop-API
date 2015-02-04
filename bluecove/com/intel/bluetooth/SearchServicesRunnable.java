@@ -42,7 +42,7 @@ interface SearchServicesRunnable {
 	 * Common synchronous method called by SearchServicesThread. Should throw
 	 * BluetoothStateException only if it can't start Search
 	 */
-	public int runSearchServices(SearchServicesThread sst, int[] attrSet, UUID[] uuidSet, RemoteDevice device,
-			DiscoveryListener listener) throws BluetoothStateException;
+    int runSearchServices(SearchServicesThread sst, int[] attrSet, UUID[] uuidSet, RemoteDevice device,
+                          DiscoveryListener listener) throws BluetoothStateException;
 
 }

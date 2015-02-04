@@ -37,7 +37,7 @@ class BluetoothRFCommClientConnection extends BluetoothRFCommConnection {
 		super(bluetoothStack, bluetoothStack.connectionRfOpenClientConnection(params));
 		boolean initOK = false;
 		try {
-			this.securityOpt = bluetoothStack.rfGetSecurityOpt(this.handle, Utils.securityOpt(params.authenticate,
+            this.securityOpt = bluetoothStack.rfGetSecurityOpt(this.handle, Utils.securityOpt(params.authenticate,
 					params.encrypt));
 			RemoteDeviceHelper.connected(this);
 			initOK = true;
@@ -54,6 +54,6 @@ class BluetoothRFCommClientConnection extends BluetoothRFCommConnection {
 
 	void closeConnectionHandle(long handle) throws IOException {
 		RemoteDeviceHelper.disconnected(this);
-		bluetoothStack.connectionRfCloseClientConnection(handle);
+        bluetoothStack.connectionRfCloseClientConnection(handle);
 	}
 }

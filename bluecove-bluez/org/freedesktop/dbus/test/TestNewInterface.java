@@ -10,8 +10,9 @@
 */
 package org.freedesktop.dbus.test;
 
-import org.freedesktop.dbus.DBusInterface;
+import org.freedesktop.DBus;
 import org.freedesktop.DBus.Description;
+import org.freedesktop.dbus.DBusInterface;
 
 /**
  * A sample remote interface which exports one method.
@@ -22,5 +23,5 @@ public interface TestNewInterface extends DBusInterface
     * A simple method with no parameters which returns a String
     */
    @Description("Simple test method")
-   public String getName();
+   String getName();
 }

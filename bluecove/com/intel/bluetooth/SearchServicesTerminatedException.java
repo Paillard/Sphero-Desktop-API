@@ -34,8 +34,7 @@ class SearchServicesTerminatedException extends SearchServicesException {
 	private static final long serialVersionUID = 1L;
 
 	public SearchServicesTerminatedException() {
-		super();
-	}
+    }
 
 	public SearchServicesTerminatedException(String s) {
 		super(s);

@@ -12,8 +12,7 @@ public class InvalidRobotAddressException extends Exception
 
 	public InvalidRobotAddressException()
 	{
-		super();
-	}
+    }
 
 	public InvalidRobotAddressException( String s )
 	{

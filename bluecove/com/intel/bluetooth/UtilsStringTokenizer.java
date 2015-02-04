@@ -53,25 +53,25 @@ class UtilsStringTokenizer {
 	public UtilsStringTokenizer(String str, String delimiter) {
 		this.str = str;
 		this.delimiter = delimiter;
-		this.currentPosition = 0;
-		nextPosition();
+        this.currentPosition = 0;
+        nextPosition();
 	}
 
 	/**
 	 * @return True, if there is a token left
 	 */
 	public boolean hasMoreTokens() {
-		return (newPosition != -1) && (currentPosition < newPosition);
+		return newPosition != -1 && currentPosition < newPosition;
 	}
 
 	private void nextPosition() {
-		this.newPosition = this.str.indexOf(this.delimiter, this.currentPosition);
+        this.newPosition = this.str.indexOf(this.delimiter, this.currentPosition);
 		if (this.newPosition == -1) {
-			this.newPosition = this.str.length();
+            this.newPosition = this.str.length();
 		} else if (this.newPosition == this.currentPosition) {
 			// Zero len token
-			this.currentPosition += 1;
-			nextPosition();
+            this.currentPosition += 1;
+            nextPosition();
 		}
 	}
 
@@ -88,8 +88,8 @@ class UtilsStringTokenizer {
 
 		String next = this.str.substring(this.currentPosition, this.newPosition);
 
-		this.currentPosition = this.newPosition + 1;
-		nextPosition();
+        this.currentPosition = this.newPosition + 1;
+        nextPosition();
 		return next;
 	}
 }

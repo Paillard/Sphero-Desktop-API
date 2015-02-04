@@ -83,7 +83,7 @@ public class RemoteDevice {
 			throw new IllegalArgumentException("Malformed address: " + address + "; can't be negative");
 		}
 		DebugLog.debug("new RemoteDevice", address);
-		this.addressStr = RemoteDeviceHelper.formatBluetoothAddress(address);
+        this.addressStr = RemoteDeviceHelper.formatBluetoothAddress(address);
 		try {
 			if (this.addressStr.equals(LocalDevice.getLocalDevice().getBluetoothAddress())) {
 				throw new IllegalArgumentException("can't use the LocalDevice address.");
@@ -91,7 +91,7 @@ public class RemoteDevice {
 		} catch (BluetoothStateException e) {
 			throw (RuntimeException) UtilsJavaSE.initCause(new RuntimeException("Can't initialize bluetooth support"), e);
 		}
-		this.addressLong = RemoteDeviceHelper.getAddress(address);
+        this.addressLong = RemoteDeviceHelper.getAddress(address);
 	}
 
 	/**
@@ -278,7 +278,7 @@ public class RemoteDevice {
 	 * @exception IOException
 	 *                if <code>conn</code> is closed
 	 */
-	public boolean authorize(javax.microedition.io.Connection conn) throws IOException {
+	public boolean authorize(Connection conn) throws IOException {
 		return RemoteDeviceHelper.implAuthorize(this, conn);
 	}
 
@@ -365,7 +365,7 @@ public class RemoteDevice {
 	 *                for a client connection, since the notifier is not a
 	 *                connection to this <code>RemoteDevice</code>
 	 */
-	public boolean encrypt(javax.microedition.io.Connection conn, boolean on) throws IOException {
+	public boolean encrypt(Connection conn, boolean on) throws IOException {
 		return RemoteDeviceHelper.implEncrypt(this, conn, on);
 	}
 
@@ -418,7 +418,7 @@ public class RemoteDevice {
 	 * @exception IOException
 	 *                if <code>conn</code> is closed
 	 */
-	public boolean isAuthorized(javax.microedition.io.Connection conn) throws IOException {
+	public boolean isAuthorized(Connection conn) throws IOException {
 		return RemoteDeviceHelper.implIsAuthorized(this, conn);
 	}
 

@@ -1,6 +1,7 @@
 package se.nicklasgavelin.sphero.macro.command;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand;
+import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 import se.nicklasgavelin.util.Value;
 
@@ -28,7 +29,7 @@ public class RotationRate extends MacroCommand
 	public RotationRate( float rate )
 	{
 		super( MACRO_COMMAND.MAC_ROTATION_RATE );
-		this.mRate = rate;
+        this.mRate = rate;
 	}
 
 	/**
@@ -48,7 +49,7 @@ public class RotationRate extends MacroCommand
 	 */
 	public void setRotationRate( float rate )
 	{
-		this.mRate = Value.clamp( rate, MIN_RATE, MAX_RATE );
+        this.mRate = Value.clamp( rate, MIN_RATE, MAX_RATE);
 	}
 
 	@Override
@@ -57,9 +58,9 @@ public class RotationRate extends MacroCommand
 		// byte[] data = new byte[ getLength() ];
 		// data[0] = getCommandID();
 		// data[1] = ( byte ) ( int ) (this.mRate * 255.0D);
-		ByteArrayBuffer bab = new ByteArrayBuffer( getLength() );
-		bab.append( getCommandID() );
-		bab.append( (int) ( this.mRate * 255.0D ) );
+		ByteArrayBuffer bab = new ByteArrayBuffer(getLength() );
+		bab.append(getCommandID() );
+		bab.append( (int) (this.mRate * 255.0D ) );
 
 		return bab.toByteArray();
 	}

@@ -14,18 +14,20 @@ import java.util.Random;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.freedesktop.DBus.Peer;
+import org.freedesktop.DBus;
 import org.freedesktop.DBus.Introspectable;
+import org.freedesktop.DBus.Peer;
 import org.freedesktop.dbus.DBusConnection;
 import org.freedesktop.dbus.DBusSigHandler;
 import org.freedesktop.dbus.UInt32;
+import org.freedesktop.dbus.test.Profiler.ProfileSignal;
 
-class ProfileHandler implements DBusSigHandler<Profiler.ProfileSignal>
+class ProfileHandler implements DBusSigHandler<ProfileSignal>
 {
-   public int c = 0;
-   public void handle(Profiler.ProfileSignal s)
+   public int c;
+   public void handle(ProfileSignal s)
    {
-      if (0 == (c++%profile.SIGNAL_INNER)) System.out.print("-");
+      if (0 == c++%profile.SIGNAL_INNER) System.out.print("-");
    }
 }
 
@@ -60,27 +62,27 @@ public class profile
    {
       private long last;
       private int[] deltas;
-      private int current = 0;
+      private int current;
       public Log(int size)
       {
-         deltas = new int[size];
+          deltas = new int[size];
       }
       public void start()
       {
-         last = System.currentTimeMillis();
+          last = System.currentTimeMillis();
       }
       public void stop()
       {
-         deltas[current] = (int) (System.currentTimeMillis()-last);
-         current++;
+          deltas[current] = (int) (System.currentTimeMillis()- last);
+          current++;
       }
       public double mean()
       {
          if (0 == current) return 0;
          long sum = 0;
          for (int i = 0; i < current; i++)
-            sum+=deltas[i];
-         return sum /= current;            
+            sum+= deltas[i];
+         return sum /= current;
       }
       public long min()
       {
@@ -102,7 +104,7 @@ public class profile
          double sum = 0;
          for (int i=0; i < current; i++)
             sum += (deltas[i]-mean)*(deltas[i]-mean);
-         return Math.sqrt(sum / (current-1));
+         return Math.sqrt(sum / (current -1));
       }
    }
    public static void main(String[] args)
@@ -116,7 +118,7 @@ public class profile
          DBusConnection conn = DBusConnection.getConnection(DBusConnection.SESSION);
          conn.requestBusName("org.freedesktop.DBus.java.profiler");
          if ("pings".equals(args[0])) {
-            int count = PING_INNER*PING_OUTER;
+            int count = PING_INNER * PING_OUTER;
             System.out.print("Sending "+count+" pings...");
             Peer p = conn.getRemoteObject("org.freedesktop.DBus.java.profiler", "/Profiler", Peer.class);
             Log l = new Log(count);
@@ -135,8 +137,8 @@ public class profile
             System.out.println("deviation: "+l.stddev());
             System.out.println("Total time: "+t+"ms");
          } else if ("strings".equals(args[0])) {
-            int count = STRING_ARRAY_INNER*STRING_ARRAY_OUTER;
-            System.out.print("Sending array of "+STRING_ARRAY_LENGTH+" strings "+count+" times.");
+            int count = STRING_ARRAY_INNER * STRING_ARRAY_OUTER;
+            System.out.print("Sending array of "+ STRING_ARRAY_LENGTH +" strings "+count+" times.");
             ProfilerInstance pi = new ProfilerInstance();
             conn.exportObject("/Profiler", pi);
             Profiler p = conn.getRemoteObject("org.freedesktop.DBus.java.profiler", "/Profiler", Profiler.class);
@@ -159,8 +161,8 @@ public class profile
             System.out.println("deviation: "+l.stddev());
             System.out.println("Total time: "+t+"ms");
          } else if ("arrays".equals(args[0])) {
-            int count = ARRAY_INNER*ARRAY_OUTER;
-            System.out.print("Sending array of "+ARRAY_LENGTH+" ints "+count+" times.");
+            int count = ARRAY_INNER * ARRAY_OUTER;
+            System.out.print("Sending array of "+ ARRAY_LENGTH +" ints "+count+" times.");
             ProfilerInstance pi = new ProfilerInstance();
             conn.exportObject("/Profiler", pi);
             Profiler p = conn.getRemoteObject("org.freedesktop.DBus.java.profiler", "/Profiler", Profiler.class);
@@ -183,13 +185,13 @@ public class profile
             System.out.println("deviation: "+l.stddev());
             System.out.println("Total time: "+t+"ms");
          } else if ("maps".equals(args[0])) {
-            int count = MAP_INNER*MAP_OUTER;
-            System.out.print("Sending map of "+MAP_LENGTH+" string=>strings "+count+" times.");
+            int count = MAP_INNER * MAP_OUTER;
+            System.out.print("Sending map of "+ MAP_LENGTH +" string=>strings "+count+" times.");
             ProfilerInstance pi = new ProfilerInstance();
             conn.exportObject("/Profiler", pi);
             Profiler p = conn.getRemoteObject("org.freedesktop.DBus.java.profiler", "/Profiler", Profiler.class);
-            HashMap<String,String> m = new HashMap<String,String>();
-            for (int i = 0; i < MAP_LENGTH; i++) 
+            HashMap<String,String> m = new HashMap<>();
+            for (int i = 0; i < MAP_LENGTH; i++)
                m.put(""+i, "hello");
             Log l = new Log(count);
             long t = System.currentTimeMillis();
@@ -207,13 +209,13 @@ public class profile
             System.out.println("deviation: "+l.stddev());
             System.out.println("Total time: "+t+"ms");
          } else if ("lists".equals(args[0])) {
-            int count = LIST_OUTER*LIST_INNER;
-            System.out.print("Sending list of "+LIST_LENGTH+" strings "+count+" times.");
+            int count = LIST_OUTER * LIST_INNER;
+            System.out.print("Sending list of "+ LIST_LENGTH +" strings "+count+" times.");
             ProfilerInstance pi = new ProfilerInstance();
             conn.exportObject("/Profiler", pi);
             Profiler p = conn.getRemoteObject("org.freedesktop.DBus.java.profiler", "/Profiler", Profiler.class);
-            Vector<String> v = new Vector<String>();
-            for (int i = 0; i < LIST_LENGTH; i++) 
+            Vector<String> v = new Vector<>();
+            for (int i = 0; i < LIST_LENGTH; i++)
                v.add("hello "+i);
             Log l = new Log(count);
             long t = System.currentTimeMillis();
@@ -231,7 +233,7 @@ public class profile
             System.out.println("deviation: "+l.stddev());
             System.out.println("Total time: "+t+"ms");
          } else if ("structs".equals(args[0])) {
-            int count = STRUCT_OUTER*STRUCT_INNER;
+            int count = STRUCT_OUTER * STRUCT_INNER;
             System.out.print("Sending a struct "+count+" times.");
             ProfilerInstance pi = new ProfilerInstance();
             conn.exportObject("/Profiler", pi);
@@ -253,7 +255,7 @@ public class profile
             System.out.println("deviation: "+l.stddev());
             System.out.println("Total time: "+t+"ms");
          } else if ("introspect".equals(args[0])) {
-            int count = INTROSPECTION_OUTER*INTROSPECTION_INNER;
+            int count = INTROSPECTION_OUTER * INTROSPECTION_INNER;
             System.out.print("Recieving introspection data "+count+" times.");
             ProfilerInstance pi = new ProfilerInstance();
             conn.exportObject("/Profiler", pi);
@@ -276,12 +278,12 @@ public class profile
             System.out.println("Total time: "+t+"ms");
             System.out.println("Introspect data: "+s);
          } else if ("bytes".equals(args[0])) {
-            System.out.print("Sending "+BYTES+" bytes");
+            System.out.print("Sending "+ BYTES +" bytes");
             ProfilerInstance pi = new ProfilerInstance();
             conn.exportObject("/Profiler", pi);
             Profiler p = conn.getRemoteObject("org.freedesktop.DBus.java.profiler", "/Profiler", Profiler.class);
             byte[] bs = new byte[BYTES];
-            for (int i = 0; i < BYTES; i++) 
+            for (int i = 0; i < BYTES; i++)
                bs[i] = (byte) i;            
             long t = System.currentTimeMillis();
             p.bytes(bs);
@@ -300,7 +302,7 @@ public class profile
                count++;
             } while(count < 10000);
             long end = System.currentTimeMillis();
-            System.out.println("No payload: "+((count*1000)/(end-start))+" RT/second");
+            System.out.println("No payload: "+ count*1000 / (end-start) +" RT/second");
             start = System.currentTimeMillis();
             count = 0;
             do {
@@ -309,7 +311,7 @@ public class profile
             } while(count < 10000);
 				peer.Ping();
             end = System.currentTimeMillis();
-            System.out.println("No payload, One way: "+((count*1000)/(end-start))+" /second");
+            System.out.println("No payload, One way: "+ count*1000 / (end-start) +" /second");
             int len = 256;
             while (len <= 32768) {
                byte[] bs = new byte[len];
@@ -322,8 +324,8 @@ public class profile
                end = System.currentTimeMillis();
                long ms = end-start;
                double cps = (count*1000)/ms;
-               double rate = (len*cps)/(1024.0*1024.0);
-               System.out.println(len+" byte array) "+(count*len)+" bytes in "+ms+"ms (in "+count+" calls / "+(int)cps+" CPS): "+rate+"MB/s");
+               double rate = len*cps /(1024.0*1024.0);
+               System.out.println(len+" byte array) "+ count*len +" bytes in "+ms+"ms (in "+count+" calls / "+(int)cps+" CPS): "+rate+"MB/s");
                len <<= 1;
             }
             len = 256;
@@ -339,17 +341,17 @@ public class profile
                } while(count < 1000);
                long ms = end-start;
                double cps = (count*1000)/ms;
-               double rate = (len*cps)/(1024.0*1024.0);
-               System.out.println(len+" string) "+(count*len)+" bytes in "+ms+"ms (in "+count+" calls / "+(int)cps+" CPS): "+rate+"MB/s");
+               double rate = len*cps /(1024.0*1024.0);
+               System.out.println(len+" string) "+ count*len +" bytes in "+ms+"ms (in "+count+" calls / "+(int)cps+" CPS): "+rate+"MB/s");
                len <<= 1;
             }
          } else if ("signals".equals(args[0])) {
-            int count = SIGNAL_OUTER*SIGNAL_INNER;
+            int count = SIGNAL_OUTER * SIGNAL_INNER;
             System.out.print("Sending "+count+" signals");
             ProfileHandler ph = new ProfileHandler();
-            conn.addSigHandler(Profiler.ProfileSignal.class, ph);
+            conn.addSigHandler(ProfileSignal.class, ph);
             Log l = new Log(count);
-            Profiler.ProfileSignal ps = new Profiler.ProfileSignal("/");
+            ProfileSignal ps = new ProfileSignal("/");
             long t = System.currentTimeMillis();
             for (int i = 0; i < SIGNAL_OUTER; i++) {
                for (int j = 0; j < SIGNAL_INNER; j++) {
@@ -365,7 +367,7 @@ public class profile
             System.out.println("deviation: "+l.stddev());
             System.out.println("Total time: "+t+"ms");
             while (ph.c < count) try { Thread.sleep(100); }
-            catch (InterruptedException Ie) {};
+            catch (InterruptedException Ie) {}
          } else {
             conn.disconnect();
             System.out.println("Invalid profile ``"+args[0]+"''.");

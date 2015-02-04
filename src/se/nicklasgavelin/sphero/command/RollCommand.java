@@ -1,5 +1,6 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
 import se.nicklasgavelin.util.Value;
 
 /**
@@ -23,7 +24,7 @@ public class RollCommand extends CommandMessage
 	{
 		super( COMMAND_MESSAGE_TYPE.ROLL );
 
-		this.heading = ( (int) heading % 360 );
+		this.heading = (int) heading % 360;
 		this.velocity = (float) Value.clamp( velocity, 0.0D, 1.0D );
 		this.stop = stop;
 	}
@@ -63,10 +64,10 @@ public class RollCommand extends CommandMessage
 	{
 		byte[] data = new byte[ 4 ];
 
-		data[0] = (byte) (int) ( this.velocity * 255.0D );
+		data[0] = (byte) (int) (this.velocity * 255.0D );
 		data[1] = (byte) ( (int) this.heading >> 8 );
 		data[2] = (byte) (int) this.heading;
-		data[3] = (byte) ( this.stop ? 0 : 1 );
+		data[3] = (byte) (this.stop ? 0 : 1 );
 
 		return data;
 	}

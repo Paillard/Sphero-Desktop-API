@@ -32,17 +32,17 @@ public class TestSerializable<A> implements DBusSerializable
    {
       this.a = a;
       this.b = b;
-      this.c = new Vector<Integer>(c);
+      this.c = new Vector<>(c);
    }
    public Object[] serialize() throws DBusException
    {
-      return new Object[] { a, b, c };
+      return new Object[] {a, b, c};
    }
    public int getInt() { return a; }
    public String getString() { return b; }
    public Vector<Integer> getVector() { return c; }
    public String toString()
    {
-      return "TestSerializable{"+a+","+b+","+c+"}";
+      return "TestSerializable{"+ a +","+ b +","+ c +"}";
    }
 }

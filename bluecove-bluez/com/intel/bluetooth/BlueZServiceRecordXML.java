@@ -52,9 +52,9 @@ import org.xml.sax.SAXException;
  */
 class BlueZServiceRecordXML {
 
-    private static final Map<String, Integer> integerXMLtypes = new HashMap<String, Integer>();
+    private static final Map<String, Integer> integerXMLtypes = new HashMap<>();
 
-    private static final Map<Integer, String> allXMLtypes = new HashMap<Integer, String>();
+    private static final Map<Integer, String> allXMLtypes = new HashMap<>();
     
     static {
         integerXMLtypes.put("uint8", DataElement.U_INT_1);
@@ -65,7 +65,7 @@ class BlueZServiceRecordXML {
         integerXMLtypes.put("int16", DataElement.INT_2);
         integerXMLtypes.put("int32", DataElement.INT_4);
         integerXMLtypes.put("int64", DataElement.INT_8);
-        
+
         allXMLtypes.put(DataElement.U_INT_1, "uint8");
         allXMLtypes.put(DataElement.U_INT_2, "uint16");
         allXMLtypes.put(DataElement.U_INT_4, "uint32");
@@ -96,7 +96,7 @@ class BlueZServiceRecordXML {
     private static void appendUUID(StringBuffer buf, UUID uuid) {
         String str = uuid.toString().toUpperCase();
         int shortIdx = str.indexOf(BluetoothConsts.SHORT_UUID_BASE);
-        if ((shortIdx != -1) && (shortIdx + BluetoothConsts.SHORT_UUID_BASE.length() == str.length())) {
+        if (shortIdx != -1 && shortIdx + BluetoothConsts.SHORT_UUID_BASE.length() == str.length()) {
             // This is short 16-bit or 32-bit UUID
             buf.append("0x").append(str.substring(0, shortIdx));
         } else {
@@ -134,15 +134,15 @@ class BlueZServiceRecordXML {
             break;
         case DataElement.UUID:
             buf.append(" value=\"");
-            appendUUID(buf, ((UUID) d.getValue()));
+            appendUUID(buf, (UUID) d.getValue());
             buf.append("\">");
             break;
         case DataElement.U_INT_8:
             byte[] b8 = (byte[]) d.getValue();
             buf.append(" value=\"0x");
-            for (int i = 0; i < b8.length; i++) {
-                buf.append(Integer.toHexString(b8[i] >> 4 & 0xf));
-                buf.append(Integer.toHexString(b8[i] & 0xf));
+            for (byte aB8 : b8) {
+                buf.append(Integer.toHexString(aB8 >> 4 & 0xf));
+                buf.append(Integer.toHexString(aB8 & 0xf));
             }
             buf.append("\">");
             break;
@@ -159,8 +159,8 @@ class BlueZServiceRecordXML {
         case DataElement.DATALT:
         case DataElement.DATSEQ:
             buf.append(">\n");
-            for (Enumeration en = (Enumeration) (d.getValue()); en.hasMoreElements();) {
-                appendDataElement(buf, (DataElement)en.nextElement());
+            for (Enumeration en = (Enumeration) d.getValue(); en.hasMoreElements();) {
+                appendDataElement(buf, (DataElement) en.nextElement());
             }
             break;
         case DataElement.NULL:
@@ -177,9 +177,9 @@ class BlueZServiceRecordXML {
         b.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
         b.append("<record>\n");
         int[] ids = serviceRecord.getAttributeIDs();
-        Vector<Integer> sorted = new Vector<Integer>();
-        for (int i = 0; i < ids.length; i++) {
-            sorted.addElement(new Integer(ids[i]));
+        Vector<Integer> sorted = new Vector<>();
+        for (int id1 : ids) {
+            sorted.addElement(id1);
         }
         Collections.sort(sorted);
         for(Integer id : sorted) {
@@ -200,7 +200,7 @@ class BlueZServiceRecordXML {
                 throw new IOException("SDP xml record expected, got " + root.getTagName());
             }
 
-            Map<Integer, DataElement> elements = new HashMap<Integer, DataElement>();
+            Map<Integer, DataElement> elements = new HashMap<>();
 
             NodeList nodes = root.getElementsByTagName("attribute");
             for (int i = 0; i < nodes.getLength(); i++) {
@@ -208,7 +208,7 @@ class BlueZServiceRecordXML {
                 Node idNode = node.getAttributes().getNamedItem("id");
                 int id = parsInt(idNode.getNodeValue());
                 NodeList children = node.getChildNodes();
-                for (int j = 0; (children != null) && (j < children.getLength()); j++) {
+                for (int j = 0; children != null && j < children.getLength(); j++) {
                     Node child = children.item(j);
                     if (child.getNodeType() == Node.ELEMENT_NODE) {
                         elements.put(id, parsDataElement(child));
@@ -217,28 +217,26 @@ class BlueZServiceRecordXML {
                 }
             }
             return elements;
-        } catch (ParserConfigurationException e) {
-            throw (IOException) UtilsJavaSE.initCause(new IOException(e.getMessage()), e);
-        } catch (SAXException e) {
+        } catch (ParserConfigurationException | SAXException e) {
             throw (IOException) UtilsJavaSE.initCause(new IOException(e.getMessage()), e);
         }
     }
 
     private static int parsInt(String value) {
         if (value.startsWith("0x")) {
-            return Integer.valueOf(value.substring(2), 16).intValue();
+            return Integer.valueOf(value.substring(2), 16);
         } else {
-            return Integer.valueOf(value).intValue();
+            return Integer.valueOf(value);
         }
     }
 
     private static long parsLong(String value) {
         if (value.startsWith("0x")) {
-            return Long.valueOf(value.substring(2), 16).longValue();
+            return Long.valueOf(value.substring(2), 16);
         } else if (value.startsWith("-0x")) {
-            return - Long.valueOf(value.substring(3), 16).longValue();
+            return -Long.valueOf(value.substring(3), 16);
         } else {
-            return Long.valueOf(value).longValue();
+            return Long.valueOf(value);
         }
     }
 
@@ -269,7 +267,7 @@ class BlueZServiceRecordXML {
         if (value.length() == 32) {
             return new UUID(value.replace("-", ""), false);
         } else if (value.startsWith("0x")) {
-            return new UUID(Long.valueOf(value.substring(2), 16).longValue());
+            return new UUID(Long.valueOf(value.substring(2), 16));
         } else {
             String value2 = value.replace("-", "");
             if (value2.length() == 32) {
@@ -290,7 +288,7 @@ class BlueZServiceRecordXML {
         }
         byte[] result = new byte[length];
         for (int i = 0; i < length; i++) {
-            result[(length - 1) - i] = (byte)(Integer.parseInt(value.substring(i * 2, i * 2 + 2), 16) & 0xFF);
+            result[length - 1 - i] = (byte)(Integer.parseInt(value.substring(i * 2, i * 2 + 2), 16) & 0xFF);
         }
         return result;
     }
@@ -326,7 +324,7 @@ class BlueZServiceRecordXML {
                 return valueNode.getNodeValue();
             }
             if ("hex".equals(encodingNode.getNodeValue())) {
-                StringBuffer b = new StringBuffer();
+                StringBuilder b = new StringBuilder();
                 String value = valueNode.getNodeValue();
                 for (int i = 0; i < value.length() / 2; i++) {
                     b.append((char) Integer.parseInt(value.substring(i * 2, i * 2 + 2), 16));
@@ -346,7 +344,7 @@ class BlueZServiceRecordXML {
         } else if ("sequence".equals(name)) {
             DataElement seq = new DataElement(DataElement.DATSEQ);
             NodeList children = node.getChildNodes();
-            for (int j = 0; (children != null) && (j < children.getLength()); j++) {
+            for (int j = 0; children != null && j < children.getLength(); j++) {
                 Node child = children.item(j);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
                     seq.addElement(parsDataElement(child));
@@ -356,7 +354,7 @@ class BlueZServiceRecordXML {
         } else if ("alternate".equals(name)) {
             DataElement seq = new DataElement(DataElement.DATALT);
             NodeList children = node.getChildNodes();
-            for (int j = 0; (children != null) && (j < children.getLength()); j++) {
+            for (int j = 0; children != null && j < children.getLength(); j++) {
                 Node child = children.item(j);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
                     seq.addElement(parsDataElement(child));
@@ -378,7 +376,7 @@ class BlueZServiceRecordXML {
         } else if ("int128".equals(name)) {
             return new DataElement(DataElement.INT_16, getByteArrayValue(node, 16));
         } else if ("uint128".equals(name)) {
-            return new DataElement(DataElement.U_INT_16, getByteArrayValue(node, 16));   
+            return new DataElement(DataElement.U_INT_16, getByteArrayValue(node, 16));
         } else {
             throw new IOException("Unrecognized DataElement " + name);
         }

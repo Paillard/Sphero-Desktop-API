@@ -1,5 +1,7 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
+
 /**
  * Set data streaming to received data from the Sphero device.
  * For masks perform bitwise or to get multiple sensor values.
@@ -90,7 +92,7 @@ public class SetDataStreamingCommand extends CommandMessage
 	 */
 	public void addMask( int mask )
 	{
-		this.mSensorMask |= mask;
+        this.mSensorMask |= mask;
 	}
 
 	/**
@@ -108,15 +110,15 @@ public class SetDataStreamingCommand extends CommandMessage
 	{
 		byte[] data = new byte[ 9 ];
 
-		data[0] = (byte) ( this.mDivisor >> 8 );
+		data[0] = (byte) (this.mDivisor >> 8 );
 		data[1] = (byte) this.mDivisor;
 
-		data[2] = (byte) ( this.mPacketFrames >> 8 );
+		data[2] = (byte) (this.mPacketFrames >> 8 );
 		data[3] = (byte) this.mPacketFrames;
 
-		data[4] = (byte) ( this.mSensorMask >> 24 );
-		data[5] = (byte) ( this.mSensorMask >> 16 );
-		data[6] = (byte) ( this.mSensorMask >> 8 );
+		data[4] = (byte) (this.mSensorMask >> 24 );
+		data[5] = (byte) (this.mSensorMask >> 16 );
+		data[6] = (byte) (this.mSensorMask >> 8 );
 		data[7] = (byte) this.mSensorMask;
 
 		data[8] = (byte) this.mPacketCount;
@@ -215,8 +217,8 @@ public class SetDataStreamingCommand extends CommandMessage
 			 */
 			public static final class ALL
 			{
-				public static final int FILTERED = ( X.FILTERED | Y.FILTERED | Z.FILTERED ),
-						RAW = ( X.RAW | Y.RAW | Z.RAW );
+				public static final int FILTERED = X.FILTERED | Y.FILTERED | Z.FILTERED,
+						RAW = X.RAW | Y.RAW | Z.RAW;
 			}
 
 			/**

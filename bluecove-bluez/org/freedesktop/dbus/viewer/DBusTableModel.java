@@ -28,9 +28,9 @@ class DBusTableModel extends AbstractTableModel
 	
 	private static final String PATH = "path";
 
-	final String[] columns = { NAME, PATH, USER, OWNER, INTROSPECTABLE };
+	final String[] columns = {NAME, PATH, USER, OWNER, INTROSPECTABLE};
 
-	private List<DBusEntry> entries = new ArrayList<DBusEntry>();
+	private List<DBusEntry> entries = new ArrayList<>();
 
 	/** {@inheritDoc} */
 	public int getRowCount()
@@ -43,7 +43,7 @@ class DBusTableModel extends AbstractTableModel
 	 */
 	public void add(DBusEntry entry)
 	{
-		entries.add(entry);
+        entries.add(entry);
 	}
 
 	/** {@inheritDoc} */
@@ -77,22 +77,16 @@ class DBusTableModel extends AbstractTableModel
 		{
 			return String.class;
 		}
-		if (columnName.equals(PATH))
-		{
-			return String.class;
-		}
-		else if (columnName.equals(USER))
-		{
-			return Object.class;
-		}
-		else if (columnName.equals(OWNER))
-		{
-			return String.class;
-		}
-		else if (columnName.equals(INTROSPECTABLE))
-		{
-			return Boolean.class;
-		}
+        switch (columnName) {
+            case PATH:
+                return String.class;
+            case USER:
+                return Object.class;
+            case OWNER:
+                return String.class;
+            case INTROSPECTABLE:
+                return Boolean.class;
+        }
 		return super.getColumnClass(columnIndex);
 	}
 
@@ -105,22 +99,16 @@ class DBusTableModel extends AbstractTableModel
 		{
 			return entry.getName();
 		}
-		if (columnName.equals(PATH))
-		{
-			return entry.getPath();
-		}
-		else if (columnName.equals(USER))
-		{
-			return entry.getUser();
-		}
-		else if (columnName.equals(OWNER))
-		{
-			return entry.getOwner();
-		}
-		else if (columnName.equals(INTROSPECTABLE))
-		{
-			return entry.getIntrospectable() != null;
-		}
+        switch (columnName) {
+            case PATH:
+                return entry.getPath();
+            case USER:
+                return entry.getUser();
+            case OWNER:
+                return entry.getOwner();
+            case INTROSPECTABLE:
+                return entry.getIntrospectable() != null;
+        }
 		return null;
 	}
 

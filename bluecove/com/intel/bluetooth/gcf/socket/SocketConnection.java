@@ -39,7 +39,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 	}
 
 	public SocketConnection(String host, int port) throws IOException {
-		this.socket = new Socket(host, port);
+        this.socket = new Socket(host, port);
 	}
 
 	public SocketConnection(Socket socket) {
@@ -84,28 +84,28 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 			throw new IOException();
 		}
 		switch (option) {
-		case DELAY:
+		case SocketConnection.DELAY:
 			if (socket.getTcpNoDelay()) {
 				return 1;
 			} else {
 				return 0;
 			}
-		case LINGER:
+		case SocketConnection.LINGER:
 			int value = socket.getSoLinger();
 			if (value == -1) {
 				return 0;
 			} else {
 				return value;
 			}
-		case KEEPALIVE:
+		case SocketConnection.KEEPALIVE:
 			if (socket.getKeepAlive()) {
 				return 1;
 			} else {
 				return 0;
 			}
-		case RCVBUF:
+		case SocketConnection.RCVBUF:
 			return socket.getReceiveBufferSize();
-		case SNDBUF:
+		case SocketConnection.SNDBUF:
 			return socket.getSendBufferSize();
 		default:
 			throw new IllegalArgumentException();
@@ -118,41 +118,41 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 			throw new IOException();
 		}
 		switch (option) {
-		case DELAY:
+		case SocketConnection.DELAY:
 			int delay;
 			if (value == 0) {
 				delay = 0;
 			} else {
 				delay = 1;
 			}
-			socket.setTcpNoDelay(delay == 0 ? false : true);
+            socket.setTcpNoDelay(delay == 0 ? false : true);
 			break;
-		case LINGER:
+		case SocketConnection.LINGER:
 			if (value < 0) {
 				throw new IllegalArgumentException();
 			}
-			socket.setSoLinger(value == 0 ? false : true, value);
+            socket.setSoLinger(value == 0 ? false : true, value);
 			break;
-		case KEEPALIVE:
+		case SocketConnection.KEEPALIVE:
 			int keepalive;
 			if (value == 0) {
 				keepalive = 0;
 			} else {
 				keepalive = 1;
 			}
-			socket.setKeepAlive(keepalive == 0 ? false : true);
+            socket.setKeepAlive(keepalive == 0 ? false : true);
 			break;
-		case RCVBUF:
+		case SocketConnection.RCVBUF:
 			if (value <= 0) {
 				throw new IllegalArgumentException();
 			}
-			socket.setReceiveBufferSize(value);
+            socket.setReceiveBufferSize(value);
 			break;
-		case SNDBUF:
+		case SocketConnection.SNDBUF:
 			if (value <= 0) {
 				throw new IllegalArgumentException();
 			}
-			socket.setSendBufferSize(value);
+            socket.setSendBufferSize(value);
 			break;
 		default:
 			throw new IllegalArgumentException();
@@ -162,7 +162,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 	public void close() throws IOException {
 		// TODO fix differences between Java ME and Java SE
 
-		socket.close();
+        socket.close();
 	}
 
 	public InputStream openInputStream() throws IOException {

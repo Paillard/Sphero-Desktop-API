@@ -33,7 +33,7 @@ public interface ContentConnection extends StreamConnection {
 	 * 
 	 * @return the content type of the resource that the URL references, or null if not known.
 	 */
-	public String getType();
+    String getType();
 
 	/**
 	 * Returns a string describing the encoding of the content which the resource connected to is providing. 
@@ -41,7 +41,7 @@ public interface ContentConnection extends StreamConnection {
 	 * 
 	 * @return the content encoding of the resource that the URL references, or null if not known.
 	 */
-	public String getEncoding();
+    String getEncoding();
 
 	/**
 	 * Returns the length of the content which is being provided. 
@@ -49,6 +49,6 @@ public interface ContentConnection extends StreamConnection {
 	 * 
 	 * @return the content length of the resource that this connection's URL references, or -1 if the content length is not known.
 	 */
-	public long getLength();
+    long getLength();
 
 }

@@ -90,33 +90,33 @@ public abstract class MicroeditionConnector {
 
 	static {
 		// cliParams ::== master | encrypt | authenticate
-		cliParams.put(AUTHENTICATE, AUTHENTICATE);
-		cliParams.put(ENCRYPT, ENCRYPT);
-		cliParams.put(MASTER, MASTER);
+        cliParams.put(AUTHENTICATE, AUTHENTICATE);
+        cliParams.put(ENCRYPT, ENCRYPT);
+        cliParams.put(MASTER, MASTER);
 
 		// srvParams ::== name | master | encrypt | authorize | authenticate
-		copyAll(srvParams, cliParams);
-		srvParams.put(AUTHORIZE, AUTHORIZE);
-		srvParams.put(NAME, NAME);
+        copyAll(srvParams, cliParams);
+        srvParams.put(AUTHORIZE, AUTHORIZE);
+        srvParams.put(NAME, NAME);
 
-		copyAll(cliParamsL2CAP, cliParams);
+        copyAll(cliParamsL2CAP, cliParams);
 
-		cliParamsL2CAP.put(RECEIVE_MTU, RECEIVE_MTU);
-		cliParamsL2CAP.put(TRANSMIT_MTU, TRANSMIT_MTU);
+        cliParamsL2CAP.put(RECEIVE_MTU, RECEIVE_MTU);
+        cliParamsL2CAP.put(TRANSMIT_MTU, TRANSMIT_MTU);
 
-		copyAll(srvParamsL2CAP, cliParamsL2CAP);
-		srvParamsL2CAP.put(AUTHORIZE, AUTHORIZE);
-		srvParamsL2CAP.put(NAME, NAME);
-		srvParamsL2CAP.put(EXT_BLUECOVE_L2CAP_PSM, EXT_BLUECOVE_L2CAP_PSM);
+        copyAll(srvParamsL2CAP, cliParamsL2CAP);
+        srvParamsL2CAP.put(AUTHORIZE, AUTHORIZE);
+        srvParamsL2CAP.put(NAME, NAME);
+        srvParamsL2CAP.put(EXT_BLUECOVE_L2CAP_PSM, EXT_BLUECOVE_L2CAP_PSM);
 
 		// "socket://" host ":" port
 		// no validation for socket, since this is internal connector
 
-		suportScheme.put(BluetoothConsts.PROTOCOL_SCHEME_RFCOMM, Boolean.TRUE);
-		suportScheme.put(BluetoothConsts.PROTOCOL_SCHEME_BT_OBEX, Boolean.TRUE);
-		suportScheme.put(BluetoothConsts.PROTOCOL_SCHEME_TCP_OBEX, Boolean.TRUE);
-		suportScheme.put(BluetoothConsts.PROTOCOL_SCHEME_L2CAP, Boolean.TRUE);
-		suportScheme.put("socket", Boolean.TRUE);
+        suportScheme.put(BluetoothConsts.PROTOCOL_SCHEME_RFCOMM, Boolean.TRUE);
+        suportScheme.put(BluetoothConsts.PROTOCOL_SCHEME_BT_OBEX, Boolean.TRUE);
+        suportScheme.put(BluetoothConsts.PROTOCOL_SCHEME_TCP_OBEX, Boolean.TRUE);
+        suportScheme.put(BluetoothConsts.PROTOCOL_SCHEME_L2CAP, Boolean.TRUE);
+        suportScheme.put("socket", Boolean.TRUE);
 	}
 
 	private MicroeditionConnector() {
@@ -178,8 +178,8 @@ public abstract class MicroeditionConnector {
 		if (!suportScheme.containsKey(scheme)) {
 			throw new ConnectionNotFoundException(scheme);
 		}
-		boolean schemeBluetooth = (scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_RFCOMM))
-				|| (scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_BT_OBEX) || (scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_L2CAP)));
+		boolean schemeBluetooth = scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_RFCOMM)
+				|| scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_BT_OBEX) || scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_L2CAP);
 		boolean isL2CAP = scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_L2CAP);
 		boolean isTCPOBEX = scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_TCP_OBEX);
 
@@ -200,7 +200,7 @@ public abstract class MicroeditionConnector {
 			Hashtable params;
 			if (isTCPOBEX) {
 				params = new Hashtable();
-				isServer = (host.length() == 0);
+				isServer = host.isEmpty();
 			} else if (isL2CAP) {
 				if (isServer) {
 					params = srvParamsL2CAP;
@@ -231,7 +231,7 @@ public abstract class MicroeditionConnector {
 					String validName = validParamName(params, param);
 					if (validName != null) {
 						String hasValue = (String) values.get(validName);
-						if ((hasValue != null) && (!hasValue.equals(value))) {
+						if (hasValue != null && !hasValue.equals(value)) {
 							throw new IllegalArgumentException("duplicate param [" + param + "] value [" + value + "]");
 						}
 						values.put(validName, value);
@@ -244,13 +244,13 @@ public abstract class MicroeditionConnector {
 			}
 		} else if (isTCPOBEX) {
 			host = name.substring(scheme.length() + 3);
-			isServer = (host.length() == 0);
+			isServer = host.isEmpty();
 		} else {
 			throw new IllegalArgumentException(name.substring(scheme.length() + 3));
 		}
 
 		if (isTCPOBEX) {
-			if ((portORuuid == null) || (portORuuid.length() == 0)) {
+			if (portORuuid == null || portORuuid.isEmpty()) {
 				portORuuid = String.valueOf(BluetoothConsts.TCP_OBEX_DEFAULT_PORT);
 			}
 			// else {
@@ -285,14 +285,14 @@ public abstract class MicroeditionConnector {
 			if (values.get(NAME) == null) {
 				values.put(NAME, "BlueCove");
 			} else if (schemeBluetooth) {
-				validateBluetoothServiceName((String) values.get(NAME));
+                validateBluetoothServiceName((String) values.get(NAME));
 			}
 			if (schemeBluetooth) {
 				notifierParams = new BluetoothConnectionNotifierParams(new UUID(portORuuid, false), paramBoolean(
-						values, AUTHENTICATE), paramBoolean(values, ENCRYPT), paramBoolean(values, AUTHORIZE),
+                        values, AUTHENTICATE), paramBoolean(values, ENCRYPT), paramBoolean(values, AUTHORIZE),
 						(String) values.get(NAME), paramBoolean(values, MASTER));
 				notifierParams.timeouts = timeouts;
-				if (notifierParams.encrypt && (!notifierParams.authenticate)) {
+				if (notifierParams.encrypt && !notifierParams.authenticate) {
 					if (values.get(AUTHENTICATE) == null) {
 						notifierParams.authenticate = true;
 					} else {
@@ -300,7 +300,7 @@ public abstract class MicroeditionConnector {
 								"encryption requires authentication");
 					}
 				}
-				if (notifierParams.authorize && (!notifierParams.authenticate)) {
+				if (notifierParams.authorize && !notifierParams.authenticate) {
 					if (values.get(AUTHENTICATE) == null) {
 						notifierParams.authenticate = true;
 					} else {
@@ -315,7 +315,7 @@ public abstract class MicroeditionConnector {
 							throw new IllegalArgumentException(EXT_BLUECOVE_L2CAP_PSM + " extension not supported on this stack");
 						}
 						int psm = Integer.parseInt(bluecove_ext_psm, 16);
-						validateL2CAPPSM(psm, bluecove_ext_psm);
+                        validateL2CAPPSM(psm, bluecove_ext_psm);
 						notifierParams.bluecove_ext_psm = psm;
 					}
 				}
@@ -334,29 +334,29 @@ public abstract class MicroeditionConnector {
 			if (schemeBluetooth) {
 				if (!isAndroid) {
 					if (isL2CAP) {
-						validateL2CAPPSM(channel, portORuuid);
+                        validateL2CAPPSM(channel, portORuuid);
 					} else {
-						if ((channel < BluetoothConsts.RFCOMM_CHANNEL_MIN)
-								|| (channel > BluetoothConsts.RFCOMM_CHANNEL_MAX)) {
+						if (channel < BluetoothConsts.RFCOMM_CHANNEL_MIN
+								|| channel > BluetoothConsts.RFCOMM_CHANNEL_MAX) {
 							throw new IllegalArgumentException("RFCOMM channel " + portORuuid);
 						}
 					}
 					
 					connectionParams = new BluetoothConnectionParams(RemoteDeviceHelper.getAddress(host), channel,
-							paramBoolean(values, AUTHENTICATE), paramBoolean(values, ENCRYPT));
+                            paramBoolean(values, AUTHENTICATE), paramBoolean(values, ENCRYPT));
 				} else {
 					try {
 						// using reflection not to add a dependency on android module
-						connectionParams = (BluetoothConnectionParams) Class.forName("com.intel.bluetooth.AndroidBluetoothConnectionParams").getConstructor(new Class[]{long.class, boolean.class, boolean.class}).newInstance(new Object[]{Long.valueOf(RemoteDeviceHelper.getAddress(host)),
-									Boolean.valueOf(paramBoolean(values, AUTHENTICATE)), Boolean.valueOf(paramBoolean(values, ENCRYPT))});
-						connectionParams.getClass().getMethod("setServiceUUID", new Class[] {String.class}).invoke(connectionParams, new Object[] {portORuuid});
+						connectionParams = (BluetoothConnectionParams) Class.forName("com.intel.bluetooth.AndroidBluetoothConnectionParams").getConstructor(new Class[]{long.class, boolean.class, boolean.class}).newInstance(RemoteDeviceHelper.getAddress(host),
+                                paramBoolean(values, AUTHENTICATE), paramBoolean(values, ENCRYPT));
+						connectionParams.getClass().getMethod("setServiceUUID", new Class[] {String.class}).invoke(connectionParams, portORuuid);
 					} catch (Exception ex) {
 						throw new BluetoothConnectionException(BluetoothConnectionException.FAILED_NOINFO, ex.toString());
 					}
 				}
 				
 				connectionParams.timeouts = timeouts;
-				if (connectionParams.encrypt && (!connectionParams.authenticate)) {
+				if (connectionParams.encrypt && !connectionParams.authenticate) {
 					if (values.get(AUTHENTICATE) == null) {
 						connectionParams.authenticate = true;
 					} else {
@@ -384,65 +384,66 @@ public abstract class MicroeditionConnector {
 		/*
 		 * create connection
 		 */
-		if (scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_RFCOMM)) {
-			if (isServer) {
-				return new BluetoothRFCommConnectionNotifier(bluetoothStack, notifierParams);
-			} else {
-				return new BluetoothRFCommClientConnection(bluetoothStack, connectionParams);
-			}
-		} else if (scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_BT_OBEX)) {
-			if (isServer) {
-				notifierParams.obex = true;
-				return new OBEXSessionNotifierImpl(
-						new BluetoothRFCommConnectionNotifier(bluetoothStack, notifierParams), obexConnectionParams);
-			} else {
-				return new OBEXClientSessionImpl(new BluetoothRFCommClientConnection(bluetoothStack, connectionParams),
-						obexConnectionParams);
-			}
-		} else if (scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_L2CAP)) {
-			if (isServer) {
-				return new BluetoothL2CAPConnectionNotifier(bluetoothStack, notifierParams, paramL2CAPMTU(values,
-						RECEIVE_MTU), paramL2CAPMTU(values, TRANSMIT_MTU));
-			} else {
-				return new BluetoothL2CAPClientConnection(bluetoothStack, connectionParams, paramL2CAPMTU(values,
-						RECEIVE_MTU), paramL2CAPMTU(values, TRANSMIT_MTU));
-			}
-		} else if (scheme.equals(BluetoothConsts.PROTOCOL_SCHEME_TCP_OBEX)) {
-			if (isServer) {
-				try {
-					channel = Integer.parseInt(portORuuid);
-				} catch (NumberFormatException e) {
-					throw new IllegalArgumentException("port " + portORuuid);
-				}
-				return new OBEXSessionNotifierImpl(new ServerSocketConnection(channel), obexConnectionParams);
-			} else {
-				return new OBEXClientSessionImpl(new SocketConnection(host, channel), obexConnectionParams);
-			}
-		} else if (scheme.equals("socket")) {
-			if (isServer) {
-				try {
-					channel = Integer.parseInt(portORuuid);
-				} catch (NumberFormatException e) {
-					throw new IllegalArgumentException("port " + portORuuid);
-				}
-				return new ServerSocketConnection(channel);
-			} else {
-				return new SocketConnection(host, channel);
-			}
-		} else {
-			throw new ConnectionNotFoundException("scheme [" + scheme + "]");
-		}
+        switch (scheme) {
+            case BluetoothConsts.PROTOCOL_SCHEME_RFCOMM:
+                if (isServer) {
+                    return new BluetoothRFCommConnectionNotifier(bluetoothStack, notifierParams);
+                } else {
+                    return new BluetoothRFCommClientConnection(bluetoothStack, connectionParams);
+                }
+            case BluetoothConsts.PROTOCOL_SCHEME_BT_OBEX:
+                if (isServer) {
+                    notifierParams.obex = true;
+                    return new OBEXSessionNotifierImpl(
+                            new BluetoothRFCommConnectionNotifier(bluetoothStack, notifierParams), obexConnectionParams);
+                } else {
+                    return new OBEXClientSessionImpl(new BluetoothRFCommClientConnection(bluetoothStack, connectionParams),
+                            obexConnectionParams);
+                }
+            case BluetoothConsts.PROTOCOL_SCHEME_L2CAP:
+                if (isServer) {
+                    return new BluetoothL2CAPConnectionNotifier(bluetoothStack, notifierParams, paramL2CAPMTU(values,
+                            RECEIVE_MTU), paramL2CAPMTU(values, TRANSMIT_MTU));
+                } else {
+                    return new BluetoothL2CAPClientConnection(bluetoothStack, connectionParams, paramL2CAPMTU(values,
+                            RECEIVE_MTU), paramL2CAPMTU(values, TRANSMIT_MTU));
+                }
+            case BluetoothConsts.PROTOCOL_SCHEME_TCP_OBEX:
+                if (isServer) {
+                    try {
+                        channel = Integer.parseInt(portORuuid);
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("port " + portORuuid);
+                    }
+                    return new OBEXSessionNotifierImpl(new ServerSocketConnection(channel), obexConnectionParams);
+                } else {
+                    return new OBEXClientSessionImpl(new SocketConnection(host, channel), obexConnectionParams);
+                }
+            case "socket":
+                if (isServer) {
+                    try {
+                        channel = Integer.parseInt(portORuuid);
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("port " + portORuuid);
+                    }
+                    return new ServerSocketConnection(channel);
+                } else {
+                    return new SocketConnection(host, channel);
+                }
+            default:
+                throw new ConnectionNotFoundException("scheme [" + scheme + "]");
+        }
 	}
 
 	private static void validateL2CAPPSM(int channel, String channelAsString) throws IllegalArgumentException {
 		// Valid PSM range: 0x0001-0x0019 (0x1001-0xFFFF dynamically
 		// assigned, 0x0019-0x0100 reserved for future use).
-		if ((channel < BluetoothConsts.L2CAP_PSM_MIN) || (channel > BluetoothConsts.L2CAP_PSM_MAX)) {
+		if (channel < BluetoothConsts.L2CAP_PSM_MIN || channel > BluetoothConsts.L2CAP_PSM_MAX) {
 			// PSM 1 discovery, 3 RFCOMM
 			throw new IllegalArgumentException("PCM " + channelAsString);
 		}
-		if ((channel < BluetoothConsts.L2CAP_PSM_MIN_JSR_82)
-				&& (!BlueCoveImpl.getConfigProperty(BlueCoveConfigProperties.PROPERTY_JSR_82_PSM_MINIMUM_OFF, false))) {
+		if (channel < BluetoothConsts.L2CAP_PSM_MIN_JSR_82
+				&& !BlueCoveImpl.getConfigProperty(BlueCoveConfigProperties.PROPERTY_JSR_82_PSM_MINIMUM_OFF, false)) {
 			throw new IllegalArgumentException("PCM " + channelAsString + ", PCM values restricted by JSR-82 to minimum "
 					+ BluetoothConsts.L2CAP_PSM_MIN_JSR_82 + ", see BlueCoveConfigProperties.PROPERTY_JSR_82_PSM_MINIMUM_OFF");
 		}
@@ -453,23 +454,23 @@ public abstract class MicroeditionConnector {
 		}
 		// The least significant byte must be odd
 		byte lsByte = (byte) (0xFF & channel);
-		if ((lsByte % 2) == 0) {
+		if (lsByte % 2 == 0) {
 			throw new IllegalArgumentException("PSM value " + channelAsString + " least significant byte must be odd");
 		}
 		byte msByte = (byte) ((0xFF00 & channel) >> 8);
-		if ((msByte % 2) == 1) {
+		if (msByte % 2 == 1) {
 			throw new IllegalArgumentException("PSM value " + channelAsString + " most significant byte must be even");
 		}
 	}
 
 	private static void validateBluetoothServiceName(String serviceName) {
-		if (serviceName.length() == 0) {
+		if (serviceName.isEmpty()) {
 			throw new IllegalArgumentException("zero length service name");
 		}
-		final String allowNameCharactes = " -_";
+		String allowNameCharactes = " -_";
 		for (int i = 0; i < serviceName.length(); i++) {
 			char c = serviceName.charAt(i);
-			if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')
+			if (c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c >= '0' && c <= '9'
 					|| allowNameCharactes.indexOf(c) != -1) {
 				continue;
 			}
@@ -505,7 +506,7 @@ public abstract class MicroeditionConnector {
 			if (mtu >= L2CAPConnection.MINIMUM_MTU) {
 				return mtu;
 			}
-			if ((mtu > 0) && (mtu < L2CAPConnection.MINIMUM_MTU) && (name.equals(TRANSMIT_MTU))) {
+			if (mtu > 0 && mtu < L2CAPConnection.MINIMUM_MTU && name.equals(TRANSMIT_MTU)) {
 				return L2CAPConnection.MINIMUM_MTU;
 			}
 		} catch (NumberFormatException e) {
@@ -562,7 +563,7 @@ public abstract class MicroeditionConnector {
 	 * access to the requested stream is not permitted.
 	 */
 	public static InputStream openInputStream(String name) throws IOException {
-		InputConnection con = ((InputConnection) openImpl(name, READ, false, false));
+		InputConnection con = (InputConnection) openImpl(name, READ, false, false);
 		try {
 			return con.openInputStream();
 		} finally {
@@ -577,7 +578,7 @@ public abstract class MicroeditionConnector {
 	 * access to the requested stream is not permitted.
 	 */
 	public static OutputStream openOutputStream(String name) throws IOException {
-		OutputConnection con = ((OutputConnection) openImpl(name, WRITE, false, false));
+		OutputConnection con = (OutputConnection) openImpl(name, WRITE, false, false);
 		try {
 			return con.openOutputStream();
 		} finally {

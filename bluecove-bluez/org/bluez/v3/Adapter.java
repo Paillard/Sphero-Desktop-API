@@ -35,6 +35,24 @@ package org.bluez.v3;
 import java.util.Map;
 
 import org.bluez.Error;
+import org.bluez.Error.AlreadyExists;
+import org.bluez.Error.AuthenticationCanceled;
+import org.bluez.Error.AuthenticationFailed;
+import org.bluez.Error.AuthenticationRejected;
+import org.bluez.Error.AuthenticationTimeout;
+import org.bluez.Error.ConnectionAttemptFailed;
+import org.bluez.Error.DoesNotExist;
+import org.bluez.Error.Failed;
+import org.bluez.Error.InProgress;
+import org.bluez.Error.InvalidArguments;
+import org.bluez.Error.NoSuchAdapter;
+import org.bluez.Error.NotAuthorized;
+import org.bluez.Error.NotAvailable;
+import org.bluez.Error.NotConnected;
+import org.bluez.Error.NotInProgress;
+import org.bluez.Error.NotReady;
+import org.bluez.Error.RequestDeferred;
+import org.bluez.Error.UnsupportedMajorClass;
 import org.freedesktop.dbus.DBusInterfaceName;
 import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.UInt32;
@@ -65,12 +83,12 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * @since BlueZ 3.10
      */
-    Map GetInfo() throws Error.NotReady;
+    Map GetInfo() throws NotReady;
 
     /**
      * Returns the device address for a given path. Example: "00:11:22:33:44:55"
      */
-    String GetAddress() throws Error.NotReady;
+    String GetAddress() throws NotReady;
 
     /**
      * Returns the version of the Bluetooth chip. This version is compiled from the LMP
@@ -90,9 +108,9 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * 
      * @return Example: "HCI 19.2"
-     * @throws Error.Failed
+     * @throws Failed
      */
-    String GetRevision() throws Error.Failed;
+    String GetRevision() throws Failed;
 
     /**
      * Returns the manufacturer of the Bluetooth chip. If the company id is not know the
@@ -101,7 +119,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * Example: "Cambridge Silicon Radio"
      */
-    String GetManufacturer() throws Error.Failed;
+    String GetManufacturer() throws Failed;
 
     /**
      * Returns the company name from the OUI database of the Bluetooth device address.
@@ -113,7 +131,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * Example: "Apple Computer"
      */
-    String GetCompany() throws Error.Failed;
+    String GetCompany() throws Failed;
 
     /**
      * Returns a list of available modes the adapter can be switched into.
@@ -137,7 +155,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * @param mode
      */
-    void SetMode(String mode) throws Error.Failed, Error.NoSuchAdapter;
+    void SetMode(String mode) throws Failed, NoSuchAdapter;
 
     /**
      * Returns the discoverable timeout in seconds. A value of zero means that the timeout
@@ -155,7 +173,7 @@ public interface Adapter extends org.bluez.Adapter {
      * SetMode method must be used.
      * 
      */
-    void SetDiscoverableTimeout(UInt32 timeout) throws Error.NotReady, Error.InvalidArguments;
+    void SetDiscoverableTimeout(UInt32 timeout) throws NotReady, InvalidArguments;
 
     /**
      * Returns true if the local adapter is connectable and false if it is switched off.
@@ -178,7 +196,7 @@ public interface Adapter extends org.bluez.Adapter {
      * @param address
      * @return
      */
-    boolean IsConnected(String address) throws Error.InvalidArguments;
+    boolean IsConnected(String address) throws InvalidArguments;
 
     /**
      * Returns a list with addresses of currently connected remote devices.
@@ -189,7 +207,7 @@ public interface Adapter extends org.bluez.Adapter {
      * Returns the current major class value for this system. Currently, only "computer"
      * is supported. For the other values, unsupported major class error is returned.
      */
-    String GetMajorClass() throws Error.InvalidArguments, Error.UnsupportedMajorClass;
+    String GetMajorClass() throws InvalidArguments, UnsupportedMajorClass;
 
     /**
      * Returns a list of available minor classes for the currently used major class. At
@@ -198,7 +216,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * If the major class is not "computer" an error should be returned.
      */
-    String[] ListAvailableMinorClasses() throws Error.InvalidArguments, Error.UnsupportedMajorClass;
+    String[] ListAvailableMinorClasses() throws InvalidArguments, UnsupportedMajorClass;
 
     /**
      * Returns the current minor class value for this system where the default major class
@@ -211,14 +229,14 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * The default value is "uncategorized".
      */
-    String GetMinorClass() throws Error.InvalidArguments, Error.UnsupportedMajorClass;
+    String GetMinorClass() throws InvalidArguments, UnsupportedMajorClass;
 
     /**
      * Sets the local minor class and on success it sends a MinorClassChanged signal.
      * 
      * If the major class is not "computer" an error should be returned.
      */
-    void SetMinorClass(String minor) throws Error.NotReady, Error.InvalidArguments, Error.NoSuchAdapter, Error.Failed, Error.UnsupportedMajorClass;
+    void SetMinorClass(String minor) throws NotReady, InvalidArguments, NoSuchAdapter, Failed, UnsupportedMajorClass;
 
     /**
      * Returns the current set of service classes.
@@ -229,12 +247,12 @@ public interface Adapter extends org.bluez.Adapter {
      * Valid values: "positioning", "networking", "rendering", "capturing",
      * "object transfer", "audio", "telephony", "information"
      */
-    String[] GetServiceClasses() throws Error.NotReady, Error.NoSuchAdapter, Error.Failed;
+    String[] GetServiceClasses() throws NotReady, NoSuchAdapter, Failed;
 
     /**
      * Returns the local adapter name (friendly name) in UTF-8.
      */
-    String GetName() throws Error.NotReady, Error.Failed;
+    String GetName() throws NotReady, Failed;
 
     /**
      * Sets the local adapter name. If EIR is supported by the local hardware this
@@ -242,7 +260,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * Questions: What to do (in case of EIR) if one low-level API call fails.
      */
-    void SetName(String name) throws Error.InvalidArguments, Error.Failed;
+    void SetName(String name) throws InvalidArguments, Failed;
 
     /**
      * Returns the properties for a remote device.
@@ -261,7 +279,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * Example: "Bluetooth 2.0 + EDR"
      */
-    String GetRemoteVersion(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String GetRemoteVersion(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Get the revision of the Bluetooth chip. This is a vendor specific value and in most
@@ -270,14 +288,14 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * Example: "HCI 19.2"
      */
-    String GetRemoteRevision(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String GetRemoteRevision(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Get the manufacturer of the chip for a remote device.
      * 
      * Example: "Nokia Mobile Phones"
      */
-    String GetRemoteManufacturer(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String GetRemoteManufacturer(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Get the company name from the OUI database of the Bluetooth device address. This
@@ -286,40 +304,40 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * Example: "Microsoft Corporation"
      */
-    String GetRemoteCompany(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String GetRemoteCompany(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Get the major device class of the specified device.
      * 
      * Example: "computer"
      */
-    String GetRemoteMajorClass(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String GetRemoteMajorClass(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Get the minor device class of the specified device.
      * 
      * Example: "laptop"
      */
-    String GetRemoteMinorClass(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String GetRemoteMinorClass(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Get the service classes of the specified device.
      * 
      * Example: ["networking", "object transfer"]
      */
-    String[] GetRemoteServiceClasses(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String[] GetRemoteServiceClasses(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Get the remote major, minor, and service classes encoded as 32 bit integer.
      */
-    UInt32 GetRemoteClass(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    UInt32 GetRemoteClass(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Get the remote features encoded as bit mask.
      * 
      * @since BlueZ 3.8
      */
-    byte[] GetRemoteFeatures(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    byte[] GetRemoteFeatures(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Get the remote device's name. This request returns always a cached name. The
@@ -338,7 +356,7 @@ public interface Adapter extends org.bluez.Adapter {
      * throws Error.InvalidArguments Error.NotAvailable Error.NotReady
      * Error.RequestDeferred
      */
-    String GetRemoteName(String address) throws Error.InvalidArguments, Error.NotAvailable, Error.NotReady, Error.RequestDeferred;
+    String GetRemoteName(String address) throws InvalidArguments, NotAvailable, NotReady, RequestDeferred;
 
     /**
      * Returns alias name for remote device. If this is an empty String value, the UI
@@ -346,7 +364,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * An alias should supersede the remote name.
      */
-    String GetRemoteAlias(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String GetRemoteAlias(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Sets alias name for remote device. If alias name is empty, then no alias is set.
@@ -354,7 +372,7 @@ public interface Adapter extends org.bluez.Adapter {
      * On success the SetRemoteAlias method will produce a RemoteAliasChanged signal which
      * applications can use to update their current display of the remote device name.
      */
-    void SetRemoteAlias(String address, String alias) throws Error.Failed, Error.InvalidArguments;
+    void SetRemoteAlias(String address, String alias) throws Failed, InvalidArguments;
 
     /**
      * Resets alias name for remote device. If there is no alias set for the device this
@@ -363,21 +381,21 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * On success the ClearRemoteAlias method will produce a RemoteAliasCleared signal.
      */
-    void ClearRemoteAlias(String address) throws Error.Failed, Error.InvalidArguments;
+    void ClearRemoteAlias(String address) throws Failed, InvalidArguments;
 
     /**
      * Returns the date and time when the adapter has been seen by a discover procedure.
      * 
      * Example: "2006-02-08 12:00:00 GMT"
      */
-    String LastSeen(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String LastSeen(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * Returns the date and time of the last time when the adapter has been connected.
      * 
      * Example: "2006-02-08 12:00:00 GMT"
      */
-    String LastUsed(String address) throws Error.InvalidArguments, Error.NotAvailable;
+    String LastUsed(String address) throws InvalidArguments, NotAvailable;
 
     /**
      * This method disconnects a specific remote device by terminating the low-level ACL
@@ -387,8 +405,8 @@ public interface Adapter extends org.bluez.Adapter {
      * will only happen 2 seconds later. This enables upper-level applications to
      * terminate their connections gracefully before the ACL connection is terminated.
      */
-    void DisconnectRemoteDevice(String address) throws Error.NotReady, Error.Failed, Error.NoSuchAdapter, Error.InvalidArguments, Error.NotConnected,
-            Error.InProgress;
+    void DisconnectRemoteDevice(String address) throws NotReady, Failed, NoSuchAdapter, InvalidArguments, NotConnected,
+            InProgress;
 
     /**
      * This method creates a bonding with a remote device.
@@ -405,8 +423,8 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * In case of success it will send a BondingCreated signal.
      */
-    void CreateBonding(String address) throws Error.NotReady, Error.Failed, Error.InvalidArguments, Error.AlreadyExists, Error.InProgress, Error.NoSuchAdapter,
-            Error.ConnectionAttemptFailed, Error.AuthenticationFailed, Error.AuthenticationTimeout, Error.AuthenticationRejected, Error.AuthenticationCanceled;
+    void CreateBonding(String address) throws NotReady, Failed, InvalidArguments, AlreadyExists, InProgress, NoSuchAdapter,
+            ConnectionAttemptFailed, AuthenticationFailed, AuthenticationTimeout, AuthenticationRejected, AuthenticationCanceled;
 
     /**
      * This method will cancel the CreateBonding process.
@@ -414,7 +432,7 @@ public interface Adapter extends org.bluez.Adapter {
      * The CreateBonding method will return AuthenticationCanceled to signal that an
      * attempt to create a bonding has been canceled.
      */
-    void CancelBondingProcess(String address) throws Error.NotReady, Error.Failed, Error.InvalidArguments, Error.NotInProgress, Error.NotAuthorized;
+    void CancelBondingProcess(String address) throws NotReady, Failed, InvalidArguments, NotInProgress, NotAuthorized;
 
     /**
      * This method removes the bonding with a remote device.
@@ -427,12 +445,12 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * After deleting the link key this method will send a BondingRemoved signal.
      */
-    void RemoveBonding(String address) throws Error.NotReady, Error.Failed, Error.InvalidArguments, Error.NoSuchAdapter, Error.DoesNotExist;
+    void RemoveBonding(String address) throws NotReady, Failed, InvalidArguments, NoSuchAdapter, DoesNotExist;
 
     /**
      * Returns true if the remote device is bonded and false if no link key is available.
      */
-    boolean HasBonding(String address) throws Error.InvalidArguments;
+    boolean HasBonding(String address) throws InvalidArguments;
 
     /**
      * List device addresses of currently bonded adapter.
@@ -445,7 +463,7 @@ public interface Adapter extends org.bluez.Adapter {
      * @param address
      * @return unit8
      */
-    byte GetPinCodeLength(String address) throws Error.InvalidArguments, Error.DoesNotExist;
+    byte GetPinCodeLength(String address) throws InvalidArguments, DoesNotExist;
 
     /**
      * Returns the currently used encryption key size.
@@ -455,7 +473,7 @@ public interface Adapter extends org.bluez.Adapter {
      * @param address
      * @return unit8
      */
-    byte GetEncryptionKeySize(String address) throws Error.InvalidArguments, Error.Failed;
+    byte GetEncryptionKeySize(String address) throws InvalidArguments, Failed;
 
     /**
      * Marks the remote device as trusted. Authorization request will automatically
@@ -464,7 +482,7 @@ public interface Adapter extends org.bluez.Adapter {
      * @param address
      * @since BlueZ 3.10
      */
-    void SetTrusted(String address) throws Error.InvalidArguments, Error.AlreadyExists;
+    void SetTrusted(String address) throws InvalidArguments, AlreadyExists;
 
     /**
      * Returns true if the user is trusted or false otherwise. The address parameter must
@@ -474,13 +492,13 @@ public interface Adapter extends org.bluez.Adapter {
      * @return
      * @since BlueZ 3.10
      */
-    boolean IsTrusted(String address) throws Error.InvalidArguments;
+    boolean IsTrusted(String address) throws InvalidArguments;
 
     /**
      * Marks the remote device as not trusted.
      * @since BlueZ 3.10
      */
-    void RemoveTrust(String address) throws Error.InvalidArguments, Error.DoesNotExist;
+    void RemoveTrust(String address) throws InvalidArguments, DoesNotExist;
 
     /**
      * Returns a list of remote devices that are trusted.
@@ -497,7 +515,7 @@ public interface Adapter extends org.bluez.Adapter {
      * RemoteDeviceFound and also RemoteNameUpdated signals. If the procedure has been
      * finished an DiscoveryCompleted signal will be sent.
      */
-    void DiscoverDevices() throws Error.NotReady, Error.Failed, Error.InProgress, Error.NoSuchAdapter;
+    void DiscoverDevices() throws NotReady, Failed, InProgress, NoSuchAdapter;
 
     /**
      * This method starts the device discovery procedure. This includes an inquiry and an
@@ -510,25 +528,25 @@ public interface Adapter extends org.bluez.Adapter {
      * names and sends RemoteNameUpdated in this case it will only happen if GetRemoteName
      * has been called and no previously stored name is available.
      */
-    void DiscoverDevicesWithoutNameResolving() throws Error.NotReady, Error.Failed, Error.InProgress, Error.NoSuchAdapter;
+    void DiscoverDevicesWithoutNameResolving() throws NotReady, Failed, InProgress, NoSuchAdapter;
 
     /**
      * This method will cancel any previous DiscoverDevices or
      * DiscoverDevicesWithoutNameResolving actions.
      */
-    void CancelDiscovery() throws Error.NotReady, Error.Failed, Error.NotAuthorized, Error.NoSuchAdapter;
+    void CancelDiscovery() throws NotReady, Failed, NotAuthorized, NoSuchAdapter;
 
     /**
      * This method starts a periodic discovery.
      */
-    void StartPeriodicDiscovery() throws Error.NotReady, Error.Failed, Error.InProgress, Error.NoSuchAdapter;
+    void StartPeriodicDiscovery() throws NotReady, Failed, InProgress, NoSuchAdapter;
 
     /**
      * This method stops a periodic discovery. If the adapter is not in the periodic
      * inquiry mode an error(not authorized) is returned. Everyone can request exit from
      * this mode, it is not restricted to start requestor.
      */
-    void StopPeriodicDiscovery() throws Error.NotReady, Error.Failed, Error.NotAuthorized, Error.NoSuchAdapter;
+    void StopPeriodicDiscovery() throws NotReady, Failed, NotAuthorized, NoSuchAdapter;
 
     /**
      * Returns true if the periodic inquiry is active and false if it is switched off.
@@ -541,28 +559,28 @@ public interface Adapter extends org.bluez.Adapter {
      * @param resolve_names
      * @since BlueZ 3.8
      */
-    void SetPeriodicDiscoveryNameResolving(boolean resolve_names) throws Error.InvalidArguments;
+    void SetPeriodicDiscoveryNameResolving(boolean resolve_names) throws InvalidArguments;
 
     /**
      * Check if automatic remote name resolving is enabled or not for periodic discovery.
      * @since BlueZ 3.8
      */
-    boolean GetPeriodicDiscoveryNameResolving() throws Error.InvalidArguments;
+    boolean GetPeriodicDiscoveryNameResolving() throws InvalidArguments;
 
     /**
      * 
      This method will request the SDP database of a remote device and retrieve the
      * service record handles. To request service browse send an empty match String.
      */
-    public UInt32[] GetRemoteServiceHandles(String address, String match) throws Error.InvalidArguments, Error.InProgress, Error.ConnectionAttemptFailed,
-            Error.Failed;
+    UInt32[] GetRemoteServiceHandles(String address, String match) throws InvalidArguments, InProgress, ConnectionAttemptFailed,
+            Failed;
 
     /**
      * This method will request the SDP database of a remote device for a service record
      * and return the binary stream of it.
      * 
      */
-    public byte[] GetRemoteServiceRecord(String address, UInt32 handle) throws Error.InvalidArguments, Error.InProgress, Error.Failed;
+    byte[] GetRemoteServiceRecord(String address, UInt32 handle) throws InvalidArguments, InProgress, Failed;
 
     /**
      * This method will request the SDP database of a remote device for a service record
@@ -570,7 +588,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * @since BlueZ 3.8
      */
-    public String GetRemoteServiceRecordAsXML(String address, UInt32 handle) throws Error.InvalidArguments, Error.InProgress, Error.Failed;
+    String GetRemoteServiceRecordAsXML(String address, UInt32 handle) throws InvalidArguments, InProgress, Failed;
 
     /**
      * This method will request the SDP database of a remote device for all supported
@@ -579,7 +597,7 @@ public interface Adapter extends org.bluez.Adapter {
      * @param address
      * @return
      */
-    String[] GetRemoteServiceIdentifiers(String address) throws Error.InProgress, Error.Failed;
+    String[] GetRemoteServiceIdentifiers(String address) throws InProgress, Failed;
 
     /**
      * This method will finish all SDP transaction for that given address. In general this
@@ -618,7 +636,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * This signal can also be triggered by low-level HCI commands.
      */
-    public class ModeChanged extends DBusSignal {
+    class ModeChanged extends DBusSignal {
 
         private final String mode;
 
@@ -637,7 +655,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * @since BlueZ 3.8
      */
-    public class DiscoverableTimeoutChanged extends DBusSignal {
+    class DiscoverableTimeoutChanged extends DBusSignal {
 
         private final UInt32 timeout;
 
@@ -655,7 +673,7 @@ public interface Adapter extends org.bluez.Adapter {
      * After changing the minor class with SetMinorClass this signal will provide the new
      * class value.
      */
-    public class MinorClassChanged extends DBusSignal {
+    class MinorClassChanged extends DBusSignal {
 
         private final String minorClass;
 
@@ -675,7 +693,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * This signal can also be triggered by low-level HCI commands.
      */
-    public class NameChanged extends DBusSignal {
+    class NameChanged extends DBusSignal {
 
         private final String name;
 
@@ -692,7 +710,7 @@ public interface Adapter extends org.bluez.Adapter {
     /**
      * This signal indicates that a device discovery procedure has been started.
      */
-    public class DiscoveryStarted extends DBusSignal {
+    class DiscoveryStarted extends DBusSignal {
         public DiscoveryStarted(String path) throws DBusException {
             super(path);
         }
@@ -701,7 +719,7 @@ public interface Adapter extends org.bluez.Adapter {
     /**
      * This signal indicates that a device discovery procedure has been completed.
      */
-    public class DiscoveryCompleted extends DBusSignal {
+    class DiscoveryCompleted extends DBusSignal {
         public DiscoveryCompleted(String path) throws DBusException {
             super(path);
         }
@@ -710,7 +728,7 @@ public interface Adapter extends org.bluez.Adapter {
     /**
      * This signal indicates that a periodic discovery procedure has been started.
      */
-    public class PeriodicDiscoveryStarted extends DBusSignal {
+    class PeriodicDiscoveryStarted extends DBusSignal {
         public PeriodicDiscoveryStarted(String path) throws DBusException {
             super(path);
         }
@@ -719,7 +737,7 @@ public interface Adapter extends org.bluez.Adapter {
     /**
      * This signal indicates that a periodic discovery procedure has been completed.
      */
-    public class PeriodicDiscoveryStopped extends DBusSignal {
+    class PeriodicDiscoveryStopped extends DBusSignal {
         public PeriodicDiscoveryStopped(String path) throws DBusException {
             super(path);
         }
@@ -729,7 +747,7 @@ public interface Adapter extends org.bluez.Adapter {
      * This signal will be send every time an inquiry result has been found by the service
      * daemon. In general they only appear during a device discovery.
      */
-    public class RemoteDeviceFound extends DBusSignal {
+    class RemoteDeviceFound extends DBusSignal {
 
         private final String address;
 
@@ -770,7 +788,7 @@ public interface Adapter extends org.bluez.Adapter {
      * This signal will be send when an inquiry session for a periodic discovery finishes
      * and previously found devices are no longer in range or visible.
      */
-    public class RemoteDeviceDisappeared extends DBusSignal {
+    class RemoteDeviceDisappeared extends DBusSignal {
 
         private final String address;
 
@@ -792,7 +810,7 @@ public interface Adapter extends org.bluez.Adapter {
      * This happens for example after a remote connection attempt. This signal will not be
      * send if the class of device hasn't changed compared to cached one.
      */
-    public class RemoteClassUpdated extends DBusSignal {
+    class RemoteClassUpdated extends DBusSignal {
 
         private final String address;
 
@@ -823,7 +841,7 @@ public interface Adapter extends org.bluez.Adapter {
      * This signal will be send every time the service daemon detect a new name for a
      * remote device.
      */
-    public class RemoteNameUpdated extends DBusSignal {
+    class RemoteNameUpdated extends DBusSignal {
 
         private final String address;
 
@@ -856,7 +874,7 @@ public interface Adapter extends org.bluez.Adapter {
      * identifier and it does not contain repeated entries.
      * 
      */
-    public class RemoteIdentifiersUpdated extends DBusSignal {
+    class RemoteIdentifiersUpdated extends DBusSignal {
 
         private final String address;
 
@@ -885,7 +903,7 @@ public interface Adapter extends org.bluez.Adapter {
      * This signal will be sent every time the service daemon tries to resolve a remote
      * and this fails.
      */
-    public class RemoteNameFailed extends DBusSignal {
+    class RemoteNameFailed extends DBusSignal {
 
         private final String address;
 
@@ -908,7 +926,7 @@ public interface Adapter extends org.bluez.Adapter {
      * 
      * @since BlueZ 3.10
      */
-    public class RemoteNameRequested extends DBusSignal {
+    class RemoteNameRequested extends DBusSignal {
 
         private final String address;
 
@@ -929,7 +947,7 @@ public interface Adapter extends org.bluez.Adapter {
      * After changing an alias with SetRemoteAlias this signal will indicate the new
      * alias.
      */
-    public class RemoteAliasChanged extends DBusSignal {
+    class RemoteAliasChanged extends DBusSignal {
 
         private final String address;
 
@@ -958,7 +976,7 @@ public interface Adapter extends org.bluez.Adapter {
      * After removing an alias with ClearRemoteAlias this signal will indicate that the
      * alias is no longer valid.
      */
-    public class RemoteAliasCleared extends DBusSignal {
+    class RemoteAliasCleared extends DBusSignal {
 
         private final String address;
 
@@ -979,7 +997,7 @@ public interface Adapter extends org.bluez.Adapter {
      * This signal will be send if a low level connection between two devices has been
      * created.
      */
-    public class RemoteDeviceConnected extends DBusSignal {
+    class RemoteDeviceConnected extends DBusSignal {
 
         private final String address;
 
@@ -997,7 +1015,7 @@ public interface Adapter extends org.bluez.Adapter {
      * This signal will be sent when a low level disconnection to a remote device has been
      * requested. The actual disconnection will happen 2 seconds later.
      */
-    public class RemoteDeviceDisconnectRequested extends DBusSignal {
+    class RemoteDeviceDisconnectRequested extends DBusSignal {
 
         private final String address;
 
@@ -1015,7 +1033,7 @@ public interface Adapter extends org.bluez.Adapter {
      * This signal will be send if a low level connection between two devices has been
      * terminated.
      */
-    public class RemoteDeviceDisconnected extends DBusSignal {
+    class RemoteDeviceDisconnected extends DBusSignal {
 
         private final String address;
 
@@ -1032,7 +1050,7 @@ public interface Adapter extends org.bluez.Adapter {
     /**
      * Signals that a successful bonding has been created.
      */
-    public class BondingCreated extends DBusSignal {
+    class BondingCreated extends DBusSignal {
 
         private final String address;
 
@@ -1049,7 +1067,7 @@ public interface Adapter extends org.bluez.Adapter {
     /**
      * Signals that a bonding was removed.
      */
-    public class BondingRemoved extends DBusSignal {
+    class BondingRemoved extends DBusSignal {
 
         private final String address;
 
@@ -1066,7 +1084,7 @@ public interface Adapter extends org.bluez.Adapter {
     /**
      * Sent when SetTrusted() is called.
      */
-    public class TrustAdded extends DBusSignal {
+    class TrustAdded extends DBusSignal {
 
         private final String address;
 
@@ -1083,7 +1101,7 @@ public interface Adapter extends org.bluez.Adapter {
     /**
      * Sent when RemoveTrust() is called.
      */
-    public class TrustRemoved extends DBusSignal {
+    class TrustRemoved extends DBusSignal {
 
         private final String address;
 

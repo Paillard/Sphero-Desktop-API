@@ -25,30 +25,22 @@
  */
 package com.intel.bluetooth;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-
-import javax.bluetooth.BluetoothStateException;
-import javax.bluetooth.DataElement;
-import javax.bluetooth.DeviceClass;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.DiscoveryListener;
-import javax.bluetooth.RemoteDevice;
-import javax.bluetooth.ServiceRecord;
-import javax.bluetooth.ServiceRegistrationException;
-import javax.bluetooth.UUID;
-
+import com.intel.bluetooth.BluetoothConsts.DeviceClassConsts;
+import cx.ath.matthew.unix.UnixSocket;
 import org.bluez.BlueZAPI;
+import org.bluez.BlueZAPI.DeviceInquiryListener;
 import org.bluez.BlueZAPIFactory;
 import org.freedesktop.dbus.DBusConnection;
 import org.freedesktop.dbus.Path;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
+
+import javax.bluetooth.*;
+import javax.bluetooth.UUID;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * A Java/DBUS implementation. Property "bluecove.deviceID" or "bluecove.deviceAddress"
@@ -75,18 +67,18 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
     // implementation for this bluez d-bus implementation.
     public static final String NATIVE_BLUECOVE_LIB_BLUEZ = "bluecovez";
 
-    private final static String BLUEZ_DEVICEID_PREFIX = "hci";
+    private static final String BLUEZ_DEVICEID_PREFIX = "hci";
 
-    private final static int LISTEN_BACKLOG_RFCOMM = 4;
+    private static final int LISTEN_BACKLOG_RFCOMM = 4;
 
-    private final static int LISTEN_BACKLOG_L2CAP = 4;
+    private static final int LISTEN_BACKLOG_L2CAP = 4;
 
     private final int l2cap_receiveMTU_max = 65535;
 
-    private final static Vector<String> devicesUsed = new Vector<String>();
+    private static final Vector<String> devicesUsed = new Vector<>();
 
     // Our reusable DBUS connection.
-    private DBusConnection dbusConn = null;
+    private DBusConnection dbusConn;
 
     private String deviceID;
 
@@ -103,7 +95,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
 
     private DiscoveryListener discoveryListener;
 
-    private boolean deviceInquiryCanceled = false;
+    private boolean deviceInquiryCanceled;
 
     private class DiscoveryData {
 
@@ -143,14 +135,14 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
      * 
      * @see com.intel.bluetooth.BluetoothStack#requireNativeLibraries()
      */
-    public LibraryInformation[] requireNativeLibraries() {
+    public BluetoothStack.LibraryInformation[] requireNativeLibraries() {
         try {
-            LibraryInformation unixSocketLib = new LibraryInformation("unix-java", false);
-            unixSocketLib.stackClass = cx.ath.matthew.unix.UnixSocket.class;
-            return new LibraryInformation[] { new LibraryInformation(NATIVE_BLUECOVE_LIB_BLUEZ), unixSocketLib };
+            BluetoothStack.LibraryInformation unixSocketLib = new BluetoothStack.LibraryInformation("unix-java", false);
+            unixSocketLib.stackClass = UnixSocket.class;
+            return new BluetoothStack.LibraryInformation[] { new BluetoothStack.LibraryInformation(NATIVE_BLUECOVE_LIB_BLUEZ), unixSocketLib };
         } catch (NoClassDefFoundError e) {
             // dubs may use different UnixSocket implementation
-            return new LibraryInformation[] { new LibraryInformation(NATIVE_BLUECOVE_LIB_BLUEZ) };
+            return new BluetoothStack.LibraryInformation[] { new BluetoothStack.LibraryInformation(NATIVE_BLUECOVE_LIB_BLUEZ) };
         }
     }
 
@@ -178,20 +170,20 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
      *         BlueZ.
      */
     private String toHexString(long l) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         String lo = Integer.toHexString((int) l);
         if (l > 0xffffffffl) {
             String hi = Integer.toHexString((int) (l >> 32));
             buf.append(hi);
         }
         buf.append(lo);
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         int prependZeros = 12 - buf.length();
         for (int i = 0; i < prependZeros; ++i) {
             result.append("0");
         }
-        result.append(buf.toString());
-        StringBuffer hex = new StringBuffer();
+        result.append(buf);
+        StringBuilder hex = new StringBuilder();
         for (int i = 0; i < 12; i += 2) {
             hex.append(result.substring(i, i + 2));
             if (i < 10) {
@@ -261,13 +253,13 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
             if (devicesUsed.contains(deviceID)) {
                 throw new BluetoothStateException("LocalDevice " + deviceID + " alredy in use");
             }
-            propertiesMap = new TreeMap<String, String>();
+            propertiesMap = new TreeMap<>();
             propertiesMap.put(BluetoothConsts.PROPERTY_BLUETOOTH_CONNECTED_DEVICES_MAX, "7");
             propertiesMap.put(BluetoothConsts.PROPERTY_BLUETOOTH_SD_TRANS_MAX, "7");
             propertiesMap.put(BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_DEVICE_ID, deviceID);
 
-            final String TRUE = "true";
-            final String FALSE = "false";
+            String TRUE = "true";
+            String FALSE = "false";
             propertiesMap.put(BluetoothConsts.PROPERTY_BLUETOOTH_CONNECTED_INQUIRY_SCAN, TRUE);
             propertiesMap.put(BluetoothConsts.PROPERTY_BLUETOOTH_CONNECTED_PAGE_SCAN, TRUE);
             propertiesMap.put(BluetoothConsts.PROPERTY_BLUETOOTH_CONNECTED_INQUIRY, TRUE);
@@ -318,7 +310,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
      * @see com.intel.bluetooth.BluetoothStack#getFeatureSet()
      */
     public int getFeatureSet() {
-        return FEATURE_SERVICE_ATTRIBUTES | FEATURE_L2CAP | FEATURE_ASSIGN_SERVER_PSM;
+        return BluetoothStack.FEATURE_SERVICE_ATTRIBUTES | BluetoothStack.FEATURE_L2CAP | BluetoothStack.FEATURE_ASSIGN_SERVER_PSM;
     }
 
     // --- LocalDevice
@@ -331,7 +323,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         try {
             int record = blueZ.getAdapterDeviceClass();
             if (DiscoveryAgent.LIAC == getLocalDeviceDiscoverable()) {
-                record |= BluetoothConsts.DeviceClassConsts.LIMITED_DISCOVERY_SERVICE;
+                record |= DeviceClassConsts.LIMITED_DISCOVERY_SERVICE;
             }
             return new DeviceClass(record);
         } catch (DBusExecutionException e) {
@@ -355,7 +347,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
 
     public String getLocalDeviceProperty(String property) {
         if (BlueCoveLocalDeviceProperties.LOCAL_DEVICE_DEVICES_LIST.equals(property)) {
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             for (String adapterId : blueZ.listAdapters()) {
                 if (b.length() > 0) {
                     b.append(',');
@@ -391,9 +383,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         }
         try {
             return blueZ.setAdapterDiscoverable(mode);
-        } catch (DBusException e) {
-            throw (BluetoothStateException) UtilsJavaSE.initCause(new BluetoothStateException(e.getMessage()), e);
-        } catch (DBusExecutionException e) {
+        } catch (DBusException | DBusExecutionException e) {
             throw (BluetoothStateException) UtilsJavaSE.initCause(new BluetoothStateException(e.getMessage()), e);
         }
     }
@@ -451,16 +441,16 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         return DeviceInquiryThread.startInquiry(this, this, accessCode, listener);
     }
 
-    public int runDeviceInquiry(final DeviceInquiryThread startedNotify, int accessCode, DiscoveryListener listener) throws BluetoothStateException {
+    public int runDeviceInquiry(DeviceInquiryThread startedNotify, int accessCode, DiscoveryListener listener) throws BluetoothStateException {
         DebugLog.debug("runDeviceInquiry()");
         try {
 
             // Different signal handlers get different device attributes
             // so we cache the data until device discovery is finished
             // and then create the RemoteDevice objects.
-            final Map<Long, DiscoveryData> address2DiscoveryData = new HashMap<Long, DiscoveryData>();
+            Map<Long, BluetoothStackBlueZDBus.DiscoveryData> address2DiscoveryData = new HashMap<>();
 
-            BlueZAPI.DeviceInquiryListener bluezDiscoveryListener = new BlueZAPI.DeviceInquiryListener() {
+            DeviceInquiryListener bluezDiscoveryListener = new DeviceInquiryListener() {
 
                 public void deviceInquiryStarted() {
                     startedNotify.deviceInquiryStartedCallback();
@@ -469,9 +459,9 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
 
                 public void deviceDiscovered(String deviceAddr, String deviceName, int deviceClass, boolean paired) {
                     long longAddress = convertBTAddress(deviceAddr);
-                    DiscoveryData discoveryData = address2DiscoveryData.get(longAddress);
+                    BluetoothStackBlueZDBus.DiscoveryData discoveryData = address2DiscoveryData.get(longAddress);
                     if (discoveryData == null) {
-                        discoveryData = new DiscoveryData();
+                        discoveryData = new BluetoothStackBlueZDBus.DiscoveryData();
                         address2DiscoveryData.put(longAddress, discoveryData);
                     }
                     if (deviceName != null) {
@@ -495,7 +485,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
             }
 
             for (Long address : address2DiscoveryData.keySet()) {
-                DiscoveryData discoveryData = address2DiscoveryData.get(address);
+                BluetoothStackBlueZDBus.DiscoveryData discoveryData = address2DiscoveryData.get(address);
                 if (discoveryData.name == null) {
                     try {
                         discoveryData.name = blueZ.getRemoteDeviceFriendlyName(toHexString(address));
@@ -506,7 +496,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
                         discoveryData.name = "";
                     }
                 }
-                RemoteDevice remoteDevice = RemoteDeviceHelper.createRemoteDevice(BluetoothStackBlueZDBus.this, address, discoveryData.name,
+                RemoteDevice remoteDevice = RemoteDeviceHelper.createRemoteDevice(this, address, discoveryData.name,
                         discoveryData.paired);
                 listener.deviceDiscovered(remoteDevice, new DeviceClass(discoveryData.deviceClass));
                 if (deviceInquiryCanceled) {
@@ -546,7 +536,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
     /**
      * Contact the remote device
      */
-    public String getRemoteDeviceFriendlyName(final long deviceAddress) throws IOException {
+    public String getRemoteDeviceFriendlyName(long deviceAddress) throws IOException {
         // return adapter.GetRemoteName(toHexString(anAddress));
         // For JSR-82 GetRemoteName can't be since it use cash.
 
@@ -555,22 +545,17 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         }
         try {
             return blueZ.getRemoteDeviceFriendlyName(toHexString(deviceAddress));
-        } catch (DBusExecutionException e) {
-            throw (BluetoothStateException) UtilsJavaSE.initCause(new BluetoothStateException(e.getMessage()), e);
-        } catch (DBusException e) {
+        } catch (DBusExecutionException | DBusException e) {
             throw (BluetoothStateException) UtilsJavaSE.initCause(new BluetoothStateException(e.getMessage()), e);
         }
     }
 
     public RemoteDevice[] retrieveDevices(int option) {
-        List<String> preKnownDevices = blueZ.retrieveDevices((DiscoveryAgent.PREKNOWN == option));
+        List<String> preKnownDevices = blueZ.retrieveDevices(DiscoveryAgent.PREKNOWN == option);
         if (preKnownDevices == null) {
             return null;
         }
-        final Vector<RemoteDevice> devices = new Vector<RemoteDevice>();
-        for (String addres : preKnownDevices) {
-            devices.add(RemoteDeviceHelper.createRemoteDevice(this, convertBTAddress(addres), null, true));
-        }
+        Vector<RemoteDevice> devices = preKnownDevices.stream().map(addres -> RemoteDeviceHelper.createRemoteDevice(this, convertBTAddress(addres), null, true)).collect(Collectors.toCollection(() -> new Vector<>()));
         return RemoteDeviceHelper.remoteDeviceListToArray(devices);
     }
 
@@ -588,7 +573,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
 
     public Boolean isRemoteDeviceAuthenticated(long address) {
         try {
-            return Boolean.valueOf(blueZ.isRemoteDeviceConnected(toHexString(address)) && blueZ.isRemoteDeviceTrusted(toHexString(address)));
+            return blueZ.isRemoteDeviceConnected(toHexString(address)) && blueZ.isRemoteDeviceTrusted(toHexString(address));
         } catch (DBusExecutionException e) {
             DebugLog.error("isRemoteDeviceAuthenticated", e);
             return Boolean.FALSE;
@@ -629,9 +614,9 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         if (xmlRecords == null) {
             return DiscoveryListener.SERVICE_SEARCH_DEVICE_NOT_REACHABLE;
         }
-        nextRecord: for (Map.Entry<Integer, String> record : xmlRecords.entrySet()) {
+        nextRecord: for (Entry<Integer, String> record : xmlRecords.entrySet()) {
             DebugLog.debug("pars service record", record.getValue());
-            ServiceRecordImpl sr = new ServiceRecordImpl(this, remoteDevice, record.getKey().intValue());
+            ServiceRecordImpl sr = new ServiceRecordImpl(this, remoteDevice, record.getKey());
             Map<Integer, DataElement> elements;
             try {
                 elements = BlueZServiceRecordXML.parsXMLRecord(record.getValue());
@@ -639,11 +624,11 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
                 DebugLog.error("Error parsing service record", e);
                 continue nextRecord;
             }
-            for (Map.Entry<Integer, DataElement> element : elements.entrySet()) {
-                sr.populateAttributeValue(element.getKey().intValue(), element.getValue());
+            for (Entry<Integer, DataElement> element : elements.entrySet()) {
+                sr.populateAttributeValue(element.getKey(), element.getValue());
             }
-            for (int u = 0; u < uuidSet.length; u++) {
-                if (!((sr.hasServiceClassUUID(uuidSet[u])) || (sr.hasProtocolClassUUID(uuidSet[u])))) {
+            for (UUID anUuidSet : uuidSet) {
+                if (!(sr.hasServiceClassUUID(anUuidSet) || sr.hasProtocolClassUUID(anUuidSet))) {
                     DebugLog.debug("ignoring service", sr);
                     continue nextRecord;
                 }
@@ -663,14 +648,14 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         int respCode = getRemoteServices(sst, uuidSet, device);
         DebugLog.debug("SearchServices finished", sst.getTransID());
         Vector<ServiceRecord> records = sst.getServicesRecords();
-        if (records.size() != 0) {
+        if (!records.isEmpty()) {
             ServiceRecord[] servRecordArray = (ServiceRecord[]) Utils.vector2toArray(records, new ServiceRecord[records.size()]);
             listener.servicesDiscovered(sst.getTransID(), servRecordArray);
         }
-        if ((respCode != DiscoveryListener.SERVICE_SEARCH_ERROR) && (sst.isTerminated())) {
+        if (respCode != DiscoveryListener.SERVICE_SEARCH_ERROR && sst.isTerminated()) {
             return DiscoveryListener.SERVICE_SEARCH_TERMINATED;
         } else if (respCode == DiscoveryListener.SERVICE_SEARCH_COMPLETED) {
-            if (records.size() != 0) {
+            if (!records.isEmpty()) {
                 return DiscoveryListener.SERVICE_SEARCH_COMPLETED;
             } else {
                 return DiscoveryListener.SERVICE_SEARCH_NO_RECORDS;
@@ -683,11 +668,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
     public boolean cancelServiceSearch(int transID) {
         DebugLog.debug("cancelServiceSearch()");
         SearchServicesThread sst = SearchServicesThread.getServiceSearchThread(transID);
-        if (sst != null) {
-            return sst.setTerminated();
-        } else {
-            return false;
-        }
+        return sst != null && sst.setTerminated();
     }
 
     public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int[] attrIDs) throws IOException {

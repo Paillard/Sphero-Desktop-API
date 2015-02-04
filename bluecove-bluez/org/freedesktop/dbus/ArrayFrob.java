@@ -10,48 +10,45 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext._;
+import cx.ath.matthew.debug.Debug;
 
 import java.lang.reflect.Array;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
-import cx.ath.matthew.debug.Debug;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 class ArrayFrob
 {
-   static Hashtable<Class<? extends Object>, Class<? extends Object>> primitiveToWrapper = new Hashtable<Class<? extends Object>, Class<? extends Object>>();
-   static Hashtable<Class<? extends Object>, Class<? extends Object>> wrapperToPrimitive = new Hashtable<Class<? extends Object>, Class<? extends Object>>();
+   static Map<Class<?>, Class<?>> primitiveToWrapper = new HashMap<>();
+   static Map<Class<?>, Class<?>> wrapperToPrimitive = new HashMap<>();
    static {
-      primitiveToWrapper.put( Boolean.TYPE, Boolean.class );
-      primitiveToWrapper.put( Byte.TYPE, Byte.class );
-      primitiveToWrapper.put( Short.TYPE, Short.class );
-      primitiveToWrapper.put( Character.TYPE, Character.class );
-      primitiveToWrapper.put( Integer.TYPE, Integer.class );
-      primitiveToWrapper.put( Long.TYPE, Long.class );
-      primitiveToWrapper.put( Float.TYPE, Float.class );
-      primitiveToWrapper.put( Double.TYPE, Double.class );
-      wrapperToPrimitive.put( Boolean.class, Boolean.TYPE );
-      wrapperToPrimitive.put( Byte.class, Byte.TYPE );
-      wrapperToPrimitive.put( Short.class, Short.TYPE );
-      wrapperToPrimitive.put( Character.class, Character.TYPE );
-      wrapperToPrimitive.put( Integer.class, Integer.TYPE );
-      wrapperToPrimitive.put( Long.class, Long.TYPE );
-      wrapperToPrimitive.put( Float.class, Float.TYPE );
-      wrapperToPrimitive.put( Double.class, Double.TYPE );
+       primitiveToWrapper.put(Boolean.TYPE, Boolean.class);
+       primitiveToWrapper.put(Byte.TYPE, Byte.class);
+       primitiveToWrapper.put(Short.TYPE, Short.class);
+       primitiveToWrapper.put(Character.TYPE, Character.class);
+       primitiveToWrapper.put(Integer.TYPE, Integer.class);
+       primitiveToWrapper.put(Long.TYPE, Long.class);
+       primitiveToWrapper.put(Float.TYPE, Float.class);
+       primitiveToWrapper.put(Double.TYPE, Double.class);
+       wrapperToPrimitive.put(Boolean.class, Boolean.TYPE);
+       wrapperToPrimitive.put(Byte.class, Byte.TYPE);
+       wrapperToPrimitive.put(Short.class, Short.TYPE);
+       wrapperToPrimitive.put(Character.class, Character.TYPE);
+       wrapperToPrimitive.put(Integer.class, Integer.TYPE);
+       wrapperToPrimitive.put(Long.class, Long.TYPE);
+       wrapperToPrimitive.put(Float.class, Float.TYPE);
+       wrapperToPrimitive.put(Double.class, Double.TYPE);
 
    }
    @SuppressWarnings("unchecked")
    public static <T> T[] wrap(Object o) throws IllegalArgumentException
    {
-         Class<? extends Object> ac = o.getClass();
-         if (!ac.isArray()) throw new IllegalArgumentException(_("Not an array"));
-         Class<? extends Object> cc = ac.getComponentType();
-         Class<? extends Object> ncc = primitiveToWrapper.get(cc);
-         if (null == ncc) throw new IllegalArgumentException(_("Not a primitive type"));
+         Class<?> ac = o.getClass();
+         if (!ac.isArray()) throw new IllegalArgumentException(getResource("Not an array"));
+         Class<?> cc = ac.getComponentType();
+         Class<?> ncc = primitiveToWrapper.get(cc);
+         if (null == ncc) throw new IllegalArgumentException(getResource("Not a primitive type"));
          T[] ns = (T[]) Array.newInstance(ncc, Array.getLength(o));
          for (int i = 0; i < ns.length; i++)
             ns[i] = (T) Array.get(o, i);
@@ -62,8 +59,8 @@ class ArrayFrob
    {
       Class<? extends T[]> ac = (Class<? extends T[]>) ns.getClass();
       Class<T> cc = (Class<T>) ac.getComponentType();
-      Class<? extends Object> ncc = wrapperToPrimitive.get(cc);
-      if (null == ncc) throw new IllegalArgumentException(_("Not a wrapper type"));
+      Class<?> ncc = wrapperToPrimitive.get(cc);
+      if (null == ncc) throw new IllegalArgumentException(getResource("Not a wrapper type"));
       Object o = Array.newInstance(ncc, ns.length);
       for (int i = 0; i < ns.length; i++)
          Array.set(o, i, ns[i]);
@@ -77,8 +74,8 @@ class ArrayFrob
    public static <T> List<T> listify(Object o) throws IllegalArgumentException
    {
       if (o instanceof Object[]) return listify((T[]) o);
-      if (!o.getClass().isArray()) throw new IllegalArgumentException(_("Not an array"));
-      List<T> l = new ArrayList<T>(Array.getLength(o));
+      if (!o.getClass().isArray()) throw new IllegalArgumentException(getResource("Not an array"));
+      List<T> l = new ArrayList<>(Array.getLength(o));
       for (int i = 0; i < Array.getLength(o); i++)
          l.add((T)Array.get(o, i));
       return l;
@@ -96,7 +93,7 @@ class ArrayFrob
       return o;
    }
    @SuppressWarnings("unchecked")
-   public static Object convert(Object o, Class<? extends Object> c) throws IllegalArgumentException
+   public static Object convert(Object o, Class<?> c) throws IllegalArgumentException
    {
       /* Possible Conversions:
        *
@@ -161,7 +158,7 @@ class ArrayFrob
          throw new IllegalArgumentException(e);
       }
 
-      throw new IllegalArgumentException(MessageFormat.format(_("Not An Expected Convertion type from {0} to {1}"), new Object[] { o.getClass(), c}));
+      throw new IllegalArgumentException(MessageFormat.format(getResource("Not An Expected Convertion type from {0} to {1}"), new Object[] { o.getClass(), c}));
    }
    public static Object[] type(Object[] old, Class<Object> c)
    {

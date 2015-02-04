@@ -23,6 +23,8 @@
  */
 package com.intel.bluetooth;
 
+import com.intel.bluetooth.BluetoothConsts.DeviceClassConsts;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,8 +37,6 @@ import javax.bluetooth.LocalDevice;
 import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
-
-import com.intel.bluetooth.BluetoothConsts.DeviceClassConsts;
 
 class ServiceRecordImpl implements ServiceRecord {
 
@@ -62,20 +62,20 @@ class ServiceRecordImpl implements ServiceRecord {
 
 		this.handle = handle;
 
-		this.deviceServiceClassesRegistered = 0;
+        this.deviceServiceClassesRegistered = 0;
 
-		this.attributes = new Hashtable();
+        this.attributes = new Hashtable();
 	}
 
 	byte[] toByteArray() throws IOException {
 	    DataElement rootSeq = new DataElement(DataElement.DATSEQ);
-		final boolean sort = true;
+		boolean sort = true;
 		if (sort) {
 			int[] sortIDs = new int[attributes.size()];
 			int k = 0;
 			for (Enumeration e = attributes.keys(); e.hasMoreElements();) {
 				Integer key = (Integer) e.nextElement();
-				sortIDs[k] = key.intValue();
+				sortIDs[k] = key;
 				k++;
 			}
 			// DebugLog.debug("b4 sort", sortIDs);
@@ -90,11 +90,10 @@ class ServiceRecordImpl implements ServiceRecord {
 				}
 			}
 			// DebugLog.debug("sorted", sortIDs);
-			for (int i = 0; i < sortIDs.length; i++) {
-			    int attrID  = sortIDs[i];
-			    rootSeq.addElement(new DataElement(DataElement.U_INT_2, attrID));
-			    rootSeq.addElement(getAttributeValue(attrID));
-			}
+            for (int attrID : sortIDs) {
+                rootSeq.addElement(new DataElement(DataElement.U_INT_2, attrID));
+                rootSeq.addElement(getAttributeValue(attrID));
+            }
 		} else {
 			for (Enumeration e = attributes.keys(); e.hasMoreElements();) {
 				Integer key = (Integer) e.nextElement();
@@ -109,7 +108,7 @@ class ServiceRecordImpl implements ServiceRecord {
 	}
 
 	void loadByteArray(byte data[]) throws IOException {
-		DataElement element = (new SDPInputStream(new ByteArrayInputStream(data))).readElement();
+		DataElement element = new SDPInputStream(new ByteArrayInputStream(data)).readElement();
 		if (element.getDataType() != DataElement.DATSEQ) {
 			throw new IOException("DATSEQ expected instead of " + element.getDataType());
 		}
@@ -120,7 +119,7 @@ class ServiceRecordImpl implements ServiceRecord {
 				throw new IOException("U_INT_2 expected instead of " + id.getDataType());
 			}
 			DataElement value = (DataElement) en.nextElement();
-			this.populateAttributeValue((int) id.getLong(), value);
+            this.populateAttributeValue((int) id.getLong(), value);
 		}
 	}
 
@@ -169,7 +168,7 @@ class ServiceRecordImpl implements ServiceRecord {
 		int i = 0;
 
 		for (Enumeration e = attributes.keys(); e.hasMoreElements();) {
-			attrIDs[i++] = ((Integer) e.nextElement()).intValue();
+			attrIDs[i++] = (Integer) e.nextElement();
 		}
 
 		return attrIDs;
@@ -229,11 +228,11 @@ class ServiceRecordImpl implements ServiceRecord {
 		 * check attrIDs are in range
 		 */
 
-		for (int i = 0; i < attrIDs.length; i++) {
-			if (attrIDs[i] < 0x0000 || attrIDs[i] > 0xffff) {
-				throw new IllegalArgumentException();
-			}
-		}
+        for (int attrID : attrIDs) {
+            if (attrID < 0x0000 || attrID > 0xffff) {
+                throw new IllegalArgumentException();
+            }
+        }
 
 		/*
 		 * copy and sort attrIDs (required by MS Bluetooth and for check for
@@ -297,7 +296,7 @@ class ServiceRecordImpl implements ServiceRecord {
 		int commChannel = -1;
 
 		DataElement protocolDescriptor = getAttributeValue(BluetoothConsts.ProtocolDescriptorList);
-		if ((protocolDescriptor == null) || (protocolDescriptor.getDataType() != DataElement.DATSEQ)) {
+		if (protocolDescriptor == null || protocolDescriptor.getDataType() != DataElement.DATSEQ) {
 			return null;
 		}
 
@@ -327,7 +326,7 @@ class ServiceRecordImpl implements ServiceRecord {
 						isOBEX = true;
 						isRFCOMM = false;
 						isL2CAP = false;
-					} else if (elementSeqEnum.hasMoreElements() && (BluetoothConsts.RFCOMM_PROTOCOL_UUID.equals(uuid))) {
+					} else if (elementSeqEnum.hasMoreElements() && BluetoothConsts.RFCOMM_PROTOCOL_UUID.equals(uuid)) {
 
 						DataElement protocolPSMElement = (DataElement) elementSeqEnum.nextElement();
 
@@ -340,15 +339,15 @@ class ServiceRecordImpl implements ServiceRecord {
 						case DataElement.INT_4:
 						case DataElement.INT_8:
 							long val = protocolPSMElement.getLong();
-							if ((val >= BluetoothConsts.RFCOMM_CHANNEL_MIN)
-									&& (val <= BluetoothConsts.RFCOMM_CHANNEL_MAX)) {
+							if (val >= BluetoothConsts.RFCOMM_CHANNEL_MIN
+									&& val <= BluetoothConsts.RFCOMM_CHANNEL_MAX) {
 								commChannel = (int) val;
 								isRFCOMM = true;
 								isL2CAP = false;
 							}
 							break;
 						}
-					} else if (elementSeqEnum.hasMoreElements() && (BluetoothConsts.L2CAP_PROTOCOL_UUID.equals(uuid))) {
+					} else if (elementSeqEnum.hasMoreElements() && BluetoothConsts.L2CAP_PROTOCOL_UUID.equals(uuid)) {
 						DataElement protocolPSMElement = (DataElement) elementSeqEnum.nextElement();
 						switch (protocolPSMElement.getDataType()) {
 						case DataElement.U_INT_1:
@@ -359,7 +358,7 @@ class ServiceRecordImpl implements ServiceRecord {
 						case DataElement.INT_4:
 						case DataElement.INT_8:
 							long pcm = protocolPSMElement.getLong();
-							if ((pcm >= BluetoothConsts.L2CAP_PSM_MIN) && (pcm <= BluetoothConsts.L2CAP_PSM_MAX)) {
+							if (pcm >= BluetoothConsts.L2CAP_PSM_MIN && pcm <= BluetoothConsts.L2CAP_PSM_MAX) {
 								commChannel = (int) pcm;
 								isL2CAP = true;
 							}
@@ -377,7 +376,7 @@ class ServiceRecordImpl implements ServiceRecord {
 		/*
 		 * build URL
 		 */
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (isOBEX) {
 			buf.append(BluetoothConsts.PROTOCOL_SCHEME_BT_OBEX);
 		} else if (isRFCOMM) {
@@ -420,13 +419,13 @@ class ServiceRecordImpl implements ServiceRecord {
 		}
 
 		switch (requiredSecurity) {
-		case NOAUTHENTICATE_NOENCRYPT:
+		case ServiceRecord.NOAUTHENTICATE_NOENCRYPT:
 			buf.append(";authenticate=false;encrypt=false");
 			break;
-		case AUTHENTICATE_NOENCRYPT:
+		case ServiceRecord.AUTHENTICATE_NOENCRYPT:
 			buf.append(";authenticate=true;encrypt=false");
 			break;
-		case AUTHENTICATE_ENCRYPT:
+		case ServiceRecord.AUTHENTICATE_ENCRYPT:
 			buf.append(";authenticate=true;encrypt=true");
 			break;
 		default:
@@ -447,7 +446,7 @@ class ServiceRecordImpl implements ServiceRecord {
 		int channel = -1;
 
 		DataElement protocolDescriptor = getAttributeValue(BluetoothConsts.ProtocolDescriptorList);
-		if ((protocolDescriptor == null) || (protocolDescriptor.getDataType() != DataElement.DATSEQ)) {
+		if (protocolDescriptor == null || protocolDescriptor.getDataType() != DataElement.DATSEQ) {
 			return -1;
 		}
 
@@ -469,7 +468,7 @@ class ServiceRecordImpl implements ServiceRecord {
 						continue;
 					}
 					Object uuid = protocolElement.getValue();
-					if (elementSeqEnum.hasMoreElements() && (protocolUUID.equals(uuid))) {
+					if (elementSeqEnum.hasMoreElements() && protocolUUID.equals(uuid)) {
 
 						DataElement protocolPSMElement = (DataElement) elementSeqEnum.nextElement();
 
@@ -551,7 +550,7 @@ class ServiceRecordImpl implements ServiceRecord {
 			throw new NotSupportedRuntimeException(bluetoothStack.getStackID());
 		}
 
-		this.deviceServiceClasses = classes;
+        this.deviceServiceClasses = classes;
 	}
 
 	/*
@@ -604,11 +603,11 @@ class ServiceRecordImpl implements ServiceRecord {
 		 * remove, add or modify attribute
 		 */
 
-		attributeUpdated = true;
+        attributeUpdated = true;
 		if (attrValue == null) {
-			return (attributes.remove(new Integer(attrID)) != null);
+			return attributes.remove(new Integer(attrID)) != null;
 		} else {
-			attributes.put(new Integer(attrID), attrValue);
+            attributes.put(attrID, attrValue);
 			return true;
 		}
 	}
@@ -621,21 +620,21 @@ class ServiceRecordImpl implements ServiceRecord {
 			throw new IllegalArgumentException();
 		}
 		if (attrValue == null) {
-			attributes.remove(new Integer(attrID));
+            attributes.remove(new Integer(attrID));
 		} else {
-			attributes.put(new Integer(attrID), attrValue);
+            attributes.put(attrID, attrValue);
 		}
 	}
 
 	public String toString() {
 
-		StringBuffer buf = new StringBuffer("{\n");
+		StringBuilder buf = new StringBuilder("{\n");
 
 		for (Enumeration e = attributes.keys(); e.hasMoreElements();) {
 			Integer i = (Integer) e.nextElement();
 
 			buf.append("0x");
-			buf.append(Integer.toHexString(i.intValue()));
+			buf.append(Integer.toHexString(i));
 			buf.append(":\n\t");
 
 			DataElement d = (DataElement) attributes.get(i);
@@ -668,14 +667,14 @@ class ServiceRecordImpl implements ServiceRecord {
 	 */
 	boolean hasServiceClassUUID(UUID uuid) {
 		DataElement attrDataElement = getAttributeValue(BluetoothConsts.ServiceClassIDList);
-		if ((attrDataElement == null) || (attrDataElement.getDataType() != DataElement.DATSEQ)
+		if (attrDataElement == null || attrDataElement.getDataType() != DataElement.DATSEQ
 				|| attrDataElement.getSize() == 0) {
 			// DebugLog.debug("Bogus ServiceClassIDList");
 			return false;
 		}
 
 		Object value = attrDataElement.getValue();
-		if ((value == null) || (!(value instanceof Enumeration))) {
+		if (value == null || !(value instanceof Enumeration)) {
 			DebugLog.debug("Bogus Value in DATSEQ");
 			if (value != null) {
 				DebugLog.error("DATSEQ class " + value.getClass().getName());
@@ -689,7 +688,7 @@ class ServiceRecordImpl implements ServiceRecord {
 				continue;
 			}
 			DataElement dataElement = (DataElement) element;
-			if ((dataElement.getDataType() == DataElement.UUID) && (uuid.equals(dataElement.getValue()))) {
+			if (dataElement.getDataType() == DataElement.UUID && uuid.equals(dataElement.getValue())) {
 				return true;
 			}
 		}
@@ -699,7 +698,7 @@ class ServiceRecordImpl implements ServiceRecord {
 
 	boolean hasProtocolClassUUID(UUID uuid) {
 		DataElement protocolDescriptor = getAttributeValue(BluetoothConsts.ProtocolDescriptorList);
-		if ((protocolDescriptor == null) || (protocolDescriptor.getDataType() != DataElement.DATSEQ)) {
+		if (protocolDescriptor == null || protocolDescriptor.getDataType() != DataElement.DATSEQ) {
 			// DebugLog.debug("Bogus ProtocolDescriptorList");
 			return false;
 		}
@@ -767,7 +766,7 @@ class ServiceRecordImpl implements ServiceRecord {
 	 */
 	void populateRFCOMMAttributes(long handle, int channel, UUID uuid, String name, boolean obex) {
 
-		this.populateAttributeValue(BluetoothConsts.ServiceRecordHandle, new DataElement(DataElement.U_INT_4, handle));
+        this.populateAttributeValue(BluetoothConsts.ServiceRecordHandle, new DataElement(DataElement.U_INT_4, handle));
 
 		/*
 		 * service class ID list
@@ -779,7 +778,7 @@ class ServiceRecordImpl implements ServiceRecord {
 			serviceClassIDList.addElement(new DataElement(DataElement.UUID, BluetoothConsts.SERIAL_PORT_UUID));
 		}
 
-		this.populateAttributeValue(BluetoothConsts.ServiceClassIDList, serviceClassIDList);
+        this.populateAttributeValue(BluetoothConsts.ServiceClassIDList, serviceClassIDList);
 
 		/*
 		 * protocol descriptor list
@@ -802,17 +801,17 @@ class ServiceRecordImpl implements ServiceRecord {
 			protocolDescriptorList.addElement(OBEXDescriptor);
 		}
 
-		this.populateAttributeValue(BluetoothConsts.ProtocolDescriptorList, protocolDescriptorList);
+        this.populateAttributeValue(BluetoothConsts.ProtocolDescriptorList, protocolDescriptorList);
 
 		if (name != null) {
-			this.populateAttributeValue(BluetoothConsts.AttributeIDServiceName, new DataElement(DataElement.STRING,
+            this.populateAttributeValue(BluetoothConsts.AttributeIDServiceName, new DataElement(DataElement.STRING,
 					name));
 		}
 	}
 
 	void populateL2CAPAttributes(int handle, int channel, UUID uuid, String name) {
 
-		this.populateAttributeValue(BluetoothConsts.ServiceRecordHandle, new DataElement(DataElement.U_INT_4, handle));
+        this.populateAttributeValue(BluetoothConsts.ServiceRecordHandle, new DataElement(DataElement.U_INT_4, handle));
 
 		/*
 		 * service class ID list
@@ -821,7 +820,7 @@ class ServiceRecordImpl implements ServiceRecord {
 		DataElement serviceClassIDList = new DataElement(DataElement.DATSEQ);
 		serviceClassIDList.addElement(new DataElement(DataElement.UUID, uuid));
 
-		this.populateAttributeValue(BluetoothConsts.ServiceClassIDList, serviceClassIDList);
+        this.populateAttributeValue(BluetoothConsts.ServiceClassIDList, serviceClassIDList);
 
 		/*
 		 * protocol descriptor list
@@ -833,10 +832,10 @@ class ServiceRecordImpl implements ServiceRecord {
 		L2CAPDescriptor.addElement(new DataElement(DataElement.U_INT_2, channel));
 		protocolDescriptorList.addElement(L2CAPDescriptor);
 
-		this.populateAttributeValue(BluetoothConsts.ProtocolDescriptorList, protocolDescriptorList);
+        this.populateAttributeValue(BluetoothConsts.ProtocolDescriptorList, protocolDescriptorList);
 
 		if (name != null) {
-			this.populateAttributeValue(BluetoothConsts.AttributeIDServiceName, new DataElement(DataElement.STRING,
+            this.populateAttributeValue(BluetoothConsts.AttributeIDServiceName, new DataElement(DataElement.STRING,
 					name));
 		}
 	}

@@ -36,8 +36,8 @@ class SDPInputStream extends InputStream {
 	private int pos;
 
 	public SDPInputStream(InputStream in) {
-		this.source = in;
-		pos = 0;
+        this.source = in;
+        pos = 0;
 	}
 
 	public int read() throws IOException {
@@ -49,7 +49,7 @@ class SDPInputStream extends InputStream {
 		for (int i = 0; i < size; i++) {
 			result = result << 8 | read();
 		}
-		pos += size;
+        pos += size;
 		return result;
 	}
 
@@ -62,12 +62,12 @@ class SDPInputStream extends InputStream {
         return result;
     }
 	
-	private String hexString(byte[] b) throws IOException {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < b.length; i++) {
-			buf.append(Integer.toHexString(b[i] >> 4 & 0xf));
-			buf.append(Integer.toHexString(b[i] & 0xf));
-		}
+	private String hexString(byte[] b) {
+		StringBuilder buf = new StringBuilder();
+        for (byte aB : b) {
+            buf.append(Integer.toHexString(aB >> 4 & 0xf));
+            buf.append(Integer.toHexString(aB & 0xf));
+        }
 		return buf.toString();
 	}
 
@@ -76,7 +76,7 @@ class SDPInputStream extends InputStream {
 		for (int i = 0; i < size; i++) {
 			result[i] = (byte) read();
 		}
-		pos += size;
+        pos += size;
 		return result;
 	}
 
@@ -85,7 +85,7 @@ class SDPInputStream extends InputStream {
 		int type = header >> 3 & 0x1f;
 		int sizeDescriptor = header & 0x07;
 
-		pos++;
+        pos++;
 
 		switch (type) {
 		case 0: // NULL
@@ -121,26 +121,24 @@ class SDPInputStream extends InputStream {
 				throw new IOException();
 			}
 		case 3: // UUID
-		{
-			UUID uuid = null;
+            UUID uuid = null;
 
-			switch (sizeDescriptor) {
-			case 1:
-				uuid = new UUID(readLong(2));
-				break;
-			case 2:
-				uuid = new UUID(readLong(4));
-				break;
-			case 4:
-				uuid = new UUID(hexString(readBytes(16)), false);
-				break;
-			default:
-				throw new IOException();
-			}
+            switch (sizeDescriptor) {
+            case 1:
+                uuid = new UUID(readLong(2));
+                break;
+            case 2:
+                uuid = new UUID(readLong(4));
+                break;
+            case 4:
+                uuid = new UUID(hexString(readBytes(16)), false);
+                break;
+            default:
+                throw new IOException();
+            }
 
-			return new DataElement(DataElement.UUID, uuid);
-		}
-		case 4: // STRING
+            return new DataElement(DataElement.UUID, uuid);
+            case 4: // STRING
 		{
 			int length = -1;
 
@@ -224,26 +222,24 @@ class SDPInputStream extends InputStream {
 			return element;
 		}
 		case 8: // URL
-		{
-			int length;
+            int length;
 
-			switch (sizeDescriptor) {
-			case 5:
-				length = readInteger(1);
-				break;
-			case 6:
-				length = readInteger(2);
-				break;
-			case 7:
-				length = readInteger(4);
-				break;
-			default:
-				throw new IOException();
-			}
+            switch (sizeDescriptor) {
+            case 5:
+                length = readInteger(1);
+                break;
+            case 6:
+                length = readInteger(2);
+                break;
+            case 7:
+                length = readInteger(4);
+                break;
+            default:
+                throw new IOException();
+            }
 
-			return new DataElement(DataElement.URL, Utils.newStringASCII(readBytes(length)));
-		}
-		default:
+            return new DataElement(DataElement.URL, Utils.newStringASCII(readBytes(length)));
+            default:
 			throw new IOException("Unknown type " + type);
 		}
 	}

@@ -36,9 +36,9 @@ import javax.bluetooth.UUID;
 
 class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable, SearchServicesRunnable {
 
-	private static BluetoothStackBlueSoleil singleInstance = null;
+	private static BluetoothStackBlueSoleil singleInstance;
 
-	private boolean initialized = false;
+	private boolean initialized;
 
 	private DiscoveryListener currentDeviceDiscoveryListener;
 
@@ -67,8 +67,8 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 	 * 
 	 * @see com.intel.bluetooth.BluetoothStack#requireNativeLibraries()
 	 */
-	public LibraryInformation[] requireNativeLibraries() {
-		return LibraryInformation.library(BlueCoveImpl.NATIVE_LIB_BLUESOLEIL);
+	public BluetoothStack.LibraryInformation[] requireNativeLibraries() {
+		return BluetoothStack.LibraryInformation.library(BlueCoveImpl.NATIVE_LIB_BLUESOLEIL);
 	}
 
 	public native int getLibraryVersion();
@@ -87,8 +87,8 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 			DebugLog.fatal("Can't initialize BlueSoleil");
 			throw new BluetoothStateException("BlueSoleil BluetoothStack not found");
 		}
-		initialized = true;
-		singleInstance = this;
+        initialized = true;
+        singleInstance = this;
 	}
 
 	private native void uninitialize();
@@ -98,15 +98,15 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 			throw new RuntimeException("Destroy invalid instance");
 		}
 		if (initialized) {
-			uninitialize();
-			initialized = false;
+            uninitialize();
+            initialized = false;
 			DebugLog.debug("BlueSoleil destroyed");
 		}
-		singleInstance = null;
+        singleInstance = null;
 	}
 
 	protected void finalize() {
-		destroy();
+        destroy();
 	}
 
 	public native String getLocalDeviceBluetoothAddress();
@@ -251,7 +251,7 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 		if (currentDeviceDiscoveryListener != null) {
 			throw new BluetoothStateException("Another inquiry already running");
 		}
-		currentDeviceDiscoveryListener = listener;
+        currentDeviceDiscoveryListener = listener;
 		return DeviceInquiryThread.startInquiry(this, this, accessCode, listener);
 	}
 
@@ -261,7 +261,7 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 			startedNotify.deviceInquiryStartedCallback();
 			return runDeviceInquiryImpl(startedNotify, accessCode, listener);
 		} finally {
-			currentDeviceDiscoveryListener = null;
+            currentDeviceDiscoveryListener = null;
 		}
 	}
 
@@ -272,7 +272,7 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 			String deviceName, boolean paired) {
 		DebugLog.debug("deviceDiscoveredCallback", deviceName);
 		RemoteDevice remoteDevice = RemoteDeviceHelper.createRemoteDevice(this, deviceAddr, deviceName, paired);
-		if ((currentDeviceDiscoveryListener == null) || (currentDeviceDiscoveryListener != listener)) {
+		if (this.currentDeviceDiscoveryListener == null || this.currentDeviceDiscoveryListener != listener) {
 			return;
 		}
 		listener.deviceDiscovered(remoteDevice, new DeviceClass(deviceClass));
@@ -285,7 +285,7 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 			return false;
 		}
 		// no further deviceDiscovered() events will occur for this inquiry
-		currentDeviceDiscoveryListener = null;
+        currentDeviceDiscoveryListener = null;
 		return cancelInquirympl();
 	}
 
@@ -312,7 +312,7 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 			RemoteDevice device, DiscoveryListener listener) throws BluetoothStateException {
 		startedNotify.searchServicesStartedCallback();
 		UUID uuid = null;
-		if ((uuidSet != null) && (uuidSet.length > 0)) {
+		if (uuidSet != null && uuidSet.length > 0) {
 			uuid = uuidSet[uuidSet.length - 1];
 		}
 		return runSearchServicesImpl(startedNotify, listener, Utils.UUIDToByteArray(uuid), RemoteDeviceHelper
@@ -401,7 +401,7 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 	public native long rfServerAcceptAndOpenRfServerConnection(long handle) throws IOException;
 
 	public void connectionRfCloseServerConnection(long handle) throws IOException {
-		connectionRfCloseClientConnection(handle);
+        connectionRfCloseClientConnection(handle);
 	}
 
 	public native void rfServerClose(long handle, ServiceRecordImpl serviceRecord) throws IOException;

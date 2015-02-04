@@ -23,10 +23,10 @@ public class AbortMacroResponse extends ResponseMessage
 	 * 
 	 * @param rh The response header containing the response data
 	 */
-	public AbortMacroResponse( ResponseHeader rh )// byte[] data )
+	public AbortMacroResponse( ResponseMessage.ResponseHeader rh )// byte[] data )
 	{
 		super( rh );
-		this.macroId = rh.getPacketPayload()[MACRO_ID_INDEX];
+        this.macroId = rh.getPacketPayload()[MACRO_ID_INDEX];
 	}
 
 	/**

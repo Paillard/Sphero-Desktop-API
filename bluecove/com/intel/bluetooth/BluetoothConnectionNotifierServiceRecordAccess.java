@@ -38,12 +38,12 @@ import javax.bluetooth.ServiceRegistrationException;
  */
 public interface BluetoothConnectionNotifierServiceRecordAccess {
 
-	public ServiceRecord getServiceRecord();
+	ServiceRecord getServiceRecord();
 
 	/**
 	 * @param acceptAndOpen
 	 *            wrap validation in ServiceRegistrationException
 	 * @throws ServiceRegistrationException
 	 */
-	public void updateServiceRecord(boolean acceptAndOpen) throws ServiceRegistrationException;
+    void updateServiceRecord(boolean acceptAndOpen) throws ServiceRegistrationException;
 }

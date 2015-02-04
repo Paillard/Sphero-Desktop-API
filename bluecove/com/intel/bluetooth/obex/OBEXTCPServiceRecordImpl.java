@@ -46,19 +46,19 @@ class OBEXTCPServiceRecordImpl implements ServiceRecord {
 
 	OBEXTCPServiceRecordImpl(ServerSocketConnection notifier) {
 		try {
-			port = String.valueOf(notifier.getLocalPort());
-			host = notifier.getLocalAddress();
+            port = String.valueOf(notifier.getLocalPort());
+            host = notifier.getLocalAddress();
 		} catch (IOException e) {
-			host = null;
+            host = null;
 		}
 	}
 
 	OBEXTCPServiceRecordImpl(SocketConnection connection) {
 		try {
-			port = String.valueOf(connection.getPort());
-			host = connection.getAddress();
+            port = String.valueOf(connection.getPort());
+            host = connection.getAddress();
 		} catch (IOException e) {
-			host = null;
+            host = null;
 		}
 	}
 

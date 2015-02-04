@@ -55,11 +55,11 @@ public class ExecInputStream extends FilterInputStream
    public ExecInputStream(InputStream is, Process p) throws IOException
    {
       super(is);
-      proc = p;
-      stdin = p.getOutputStream();
-      stdout = p.getInputStream();
-      copy = new InOutCopier(in, stdin);
-      copy.start();
+       proc = p;
+       stdin = p.getOutputStream();
+       stdout = p.getInputStream();
+       copy = new InOutCopier(in, stdin);
+       copy.start();
    }
    /**
     * Create a new ExecInputStream on the given InputStream
@@ -99,22 +99,22 @@ public class ExecInputStream extends FilterInputStream
    public void close() throws IOException
    {
       try {
-         proc.waitFor();
+          proc.waitFor();
       } catch (InterruptedException Ie)  {}
       //copy.close();
       try {
-         copy.join();
+          copy.join();
       } catch (InterruptedException Ie)  {}
-      stdin.close();
-      in.close();
-      stdout.close();
+       stdin.close();
+       in.close();
+       stdout.close();
    }
    public void flush() throws IOException
    {
-      copy.flush();
+       copy.flush();
    }
    public int	available() throws IOException
-   { return stdout.available(); } 
+   { return stdout.available(); }
    public int	read() throws IOException
    { return stdout.read(); }
    public int	read(byte[] b) throws IOException
@@ -133,7 +133,7 @@ public class ExecInputStream extends FilterInputStream
    public void finalize()
    {
       try {
-         close();
+          close();
       } catch (Exception e) {}
    }
 }

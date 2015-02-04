@@ -34,6 +34,10 @@ package org.bluez.v3;
 
 import java.util.Map;
 
+import org.bluez.Error.AlreadyExists;
+import org.bluez.Error.DoesNotExist;
+import org.bluez.Error.InvalidArguments;
+import org.bluez.Error.NotAvailable;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
 import org.freedesktop.dbus.DBusSignal;
@@ -96,7 +100,7 @@ public interface Service extends DBusInterface {
      * Returns the unique bus name of the service if it has been started. [experimental]
      * @since BlueZ 3.10
      */
-    String GetBusName() throws org.bluez.Error.NotAvailable;
+    String GetBusName() throws NotAvailable;
 
     /**
      * This method tells the system to start the service.
@@ -129,7 +133,7 @@ public interface Service extends DBusInterface {
     /**
      * Marks the user as trusted. [experimental]
      */
-    void SetTrusted(String address) throws org.bluez.Error.InvalidArguments, org.bluez.Error.AlreadyExists;
+    void SetTrusted(String address) throws InvalidArguments, AlreadyExists;
 
     /**
      * Returns true if the user is trusted or false otherwise. The address parameter must
@@ -137,21 +141,21 @@ public interface Service extends DBusInterface {
      * 
      * [experimental]
      */
-    boolean IsTrusted(String address) throws org.bluez.Error.InvalidArguments;
+    boolean IsTrusted(String address) throws InvalidArguments;
 
     /**
      * Marks the user as not trusted.
      * 
      * [experimental]
      */
-    void RemoveTrust(String address) throws org.bluez.Error.InvalidArguments, org.bluez.Error.DoesNotExist;
+    void RemoveTrust(String address) throws InvalidArguments, DoesNotExist;
 
     //===================== Signals =====================
 
     /**
      * The object path of this signal contains which service was started.
      */
-    public class Started extends DBusSignal {
+    class Started extends DBusSignal {
 
         public Started(String path) throws DBusException {
             super(path);
@@ -161,7 +165,7 @@ public interface Service extends DBusInterface {
     /**
      * The object path of this signal contains which service was stopped.
      */
-    public class Stopped extends DBusSignal {
+    class Stopped extends DBusSignal {
 
         public Stopped(String path) throws DBusException {
             super(path);
@@ -173,7 +177,7 @@ public interface Service extends DBusInterface {
      * 
      * @since BlueZ 3.10
      */
-    public class TrustAdded extends DBusSignal {
+    class TrustAdded extends DBusSignal {
 
         private final String address;
 
@@ -192,7 +196,7 @@ public interface Service extends DBusInterface {
      * 
      * @since BlueZ 3.10
      */
-    public class TrustRemoved extends DBusSignal {
+    class TrustRemoved extends DBusSignal {
 
         private final String address;
 

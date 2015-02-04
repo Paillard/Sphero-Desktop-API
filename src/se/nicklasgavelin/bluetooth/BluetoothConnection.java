@@ -58,8 +58,8 @@ public class BluetoothConnection
 	 */
 	public void open() throws IOException
 	{
-		os = con.openDataOutputStream();
-		is = con.openDataInputStream();
+        os = con.openDataOutputStream();
+        is = con.openDataInputStream();
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class BluetoothConnection
 	{
 		try
 		{
-			os.close();
+            os.close();
 		}
 		catch( IOException ioe )
 		{
@@ -77,7 +77,7 @@ public class BluetoothConnection
 
 		try
 		{
-			is.close();
+            is.close();
 		}
 		catch( IOException ioe )
 		{
@@ -85,7 +85,7 @@ public class BluetoothConnection
 
 		try
 		{
-			con.close();
+            con.close();
 		}
 		catch( IOException ioe )
 		{
@@ -137,7 +137,7 @@ public class BluetoothConnection
 	 */
 	public int read( byte[] b ) throws IOException
 	{
-		return is.read( b );
+		return is.read(b);
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class BluetoothConnection
 	 */
 	public void readBytes( byte[] b ) throws IOException
 	{
-		readBytes( b, 0, b.length );
+        readBytes( b, 0, b.length );
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class BluetoothConnection
 	 */
 	public void readBytes( byte[] b, int offset, int length ) throws IOException
 	{
-		is.readFully( b, offset, length );
+        is.readFully(b, offset, length);
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class BluetoothConnection
 	 */
 	public int skipBytes( int bytes ) throws IOException
 	{
-		return is.skipBytes( bytes );
+		return is.skipBytes(bytes);
 	}
 
 	/**
@@ -218,7 +218,7 @@ public class BluetoothConnection
 	 */
 	public void write( int data ) throws IOException
 	{
-		os.write( data );
+        os.write(data);
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class BluetoothConnection
 	 */
 	public void write( byte[] data ) throws IOException
 	{
-		os.write( data );
+        os.write(data);
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class BluetoothConnection
 	 */
 	public void writeBoolean( boolean v ) throws IOException
 	{
-		os.writeBoolean( v );
+        os.writeBoolean(v);
 	}
 
 	/**
@@ -242,7 +242,7 @@ public class BluetoothConnection
 	 */
 	public void writeBytes( String s ) throws IOException
 	{
-		os.write( s.getBytes() );
+        os.write(s.getBytes());
 	}
 
 	/**
@@ -250,7 +250,7 @@ public class BluetoothConnection
 	 */
 	public void writeChar( int v ) throws IOException
 	{
-		os.writeChar( v );
+        os.writeChar(v);
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class BluetoothConnection
 	 */
 	public void writeInt( int v ) throws IOException
 	{
-		os.writeInt( v );
+        os.writeInt(v);
 	}
 
 	/**
@@ -266,7 +266,7 @@ public class BluetoothConnection
 	 */
 	public void writeUTF( String s ) throws IOException
 	{
-		os.writeUTF( s );
+        os.writeUTF(s);
 	}
 
 	/**
@@ -274,6 +274,6 @@ public class BluetoothConnection
 	 */
 	public void flush() throws IOException
 	{
-		os.flush();
+        os.flush();
 	}
 }

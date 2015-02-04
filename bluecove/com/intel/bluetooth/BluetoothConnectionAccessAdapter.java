@@ -69,7 +69,7 @@ public abstract class BluetoothConnectionAccessAdapter implements BluetoothConne
 	 * @see com.intel.bluetooth.BluetoothConnectionAccess#shutdown()
 	 */
 	public void shutdown() throws IOException {
-		getImpl().shutdown();
+        getImpl().shutdown();
 	}
 
 	/*
@@ -78,7 +78,7 @@ public abstract class BluetoothConnectionAccessAdapter implements BluetoothConne
 	 * @see com.intel.bluetooth.BluetoothConnectionAccess#markAuthenticated()
 	 */
 	public void markAuthenticated() {
-		getImpl().markAuthenticated();
+        getImpl().markAuthenticated();
 	}
 
 	/*
@@ -105,7 +105,7 @@ public abstract class BluetoothConnectionAccessAdapter implements BluetoothConne
 	 * @see com.intel.bluetooth.BluetoothConnectionAccess#setRemoteDevice(javax.bluetooth.RemoteDevice)
 	 */
 	public void setRemoteDevice(RemoteDevice remoteDevice) {
-		getImpl().setRemoteDevice(remoteDevice);
+        getImpl().setRemoteDevice(remoteDevice);
 	}
 
 	public BluetoothStack getBluetoothStack() {

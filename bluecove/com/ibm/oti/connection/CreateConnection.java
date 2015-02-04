@@ -36,7 +36,7 @@ public interface CreateConnection extends Connection {
 	 *
 	 * @see javax.microedition.io.Connector
 	 */
-	public void setParameters(String spec, int access, boolean timeout) throws IOException;
+    void setParameters(String spec, int access, boolean timeout) throws IOException;
 
 	/**
 	 * Passes the parameters from the Connector.open() method to this
@@ -60,6 +60,6 @@ public interface CreateConnection extends Connection {
 	 *
 	 * @see javax.microedition.io.Connector
 	 */
-	public Connection setParameters2(String spec, int access, boolean timeout) throws IOException;
+    Connection setParameters2(String spec, int access, boolean timeout) throws IOException;
 
 }

@@ -26,18 +26,18 @@
  */
 package cx.ath.matthew.unix;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import cx.ath.matthew.debug.Debug;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Represents a UnixSocket.
  */
 public class UnixSocket
 {
-   static { System.loadLibrary("unix-java"); }
+   static { System.load(String.format("/home/paill/dev/java/Sphero-Desktop-API/natives/%s", System.mapLibraryName("unix-java"))); }
    private native void native_set_pass_cred(int sock, boolean passcred) throws IOException;
    private native int native_connect(String address, boolean abs) throws IOException;
    private native void native_close(int sock) throws IOException;
@@ -47,13 +47,13 @@ public class UnixSocket
    private native void native_send_creds(int sock, byte data) throws IOException;
    private native byte native_recv_creds(int sock, int[] creds) throws IOException;
 
-   private UnixSocketAddress address = null;
-   private USOutputStream os = null;
-   private USInputStream is = null;
-   private boolean closed = false;
-   private boolean connected = false;
-   private boolean passcred = false;
-   private int sock = 0;
+   private UnixSocketAddress address;
+   private USOutputStream os;
+   private USInputStream is;
+   private boolean closed;
+   private boolean connected;
+   private boolean passcred;
+   private int sock;
    private boolean blocking = true;
    private int uid = -1;
    private int pid = -1;
@@ -62,9 +62,9 @@ public class UnixSocket
    {
       this.sock = sock;
       this.address = address;
-      this.connected = true;
-      this.os = new USOutputStream(sock, this);
-      this.is = new USInputStream(sock, this);
+       this.connected = true;
+       this.os = new USOutputStream(sock, this);
+       this.is = new USInputStream(sock, this);
    }
    /**
     * Create an unconnected socket.
@@ -78,7 +78,7 @@ public class UnixSocket
     */
    public UnixSocket(UnixSocketAddress address) throws IOException
    {
-      connect(address);
+       connect(address);
    }
    /**
     * Create a socket connected to the given address.
@@ -95,13 +95,13 @@ public class UnixSocket
    public void connect(UnixSocketAddress address) throws IOException
    {
       if (connected) close();
-      this.sock = native_connect(address.path, address.abs);
-      this.os = new USOutputStream(this.sock, this);
-      this.is = new USInputStream(this.sock, this);
+       this.sock = native_connect(address.path, address.abs);
+       this.os = new USOutputStream(this.sock, this);
+       this.is = new USInputStream(this.sock, this);
       this.address = address;
-      this.connected = true;
-      this.closed = false;
-      this.is.setBlocking(blocking);
+       this.connected = true;
+       this.closed = false;
+       this.is.setBlocking(blocking);
    }
    /**
     * Connect the socket to this address.
@@ -109,12 +109,12 @@ public class UnixSocket
     */
    public void connect(String address) throws IOException
    {
-      connect(new UnixSocketAddress(address));
+       connect(new UnixSocketAddress(address));
    }
    public void finalize()
    {
-      try { 
-         close();
+      try {
+          close();
       } catch (IOException IOe) {}
    }
    /**
@@ -123,12 +123,12 @@ public class UnixSocket
    public synchronized void close() throws IOException
    {
       if (Debug.debug) Debug.print(Debug.INFO, "Closing socket");
-      native_close(sock);
-      sock = 0;
-      this.closed = true;
-      this.connected = false;
-      os = null;
-      is = null;
+       native_close(sock);
+       sock = 0;
+       this.closed = true;
+       this.connected = false;
+       os = null;
+       is = null;
    }
    /**
     * Returns an InputStream for reading from the socket.
@@ -163,7 +163,7 @@ public class UnixSocket
    public void sendCredentialByte(byte data) throws IOException
    {
       if (!connected) throw new NotConnectedException();
-      native_send_creds(sock, data);
+       native_send_creds(sock, data);
    }
    /**
     * Receive a single byte of data, with credentials.
@@ -176,11 +176,11 @@ public class UnixSocket
    public byte recvCredentialByte() throws IOException
    {
       if (!connected) throw new NotConnectedException();
-      int[] creds = new int[] { -1, -1, -1 };
+      int[] creds = { -1, -1, -1 };
       byte data = native_recv_creds(sock, creds);
-      pid = creds[0];
-      uid = creds[1];
-      gid = creds[2];
+       pid = creds[0];
+       uid = creds[1];
+       gid = creds[2];
       return data;
    }
    /**
@@ -203,7 +203,7 @@ public class UnixSocket
    public int getPeerUID()
    {
       if (-1 == uid)
-         uid = native_getUID(sock);
+          uid = native_getUID(sock);
       return uid;
    }
    /**
@@ -216,7 +216,7 @@ public class UnixSocket
    public int getPeerGID()
    {
       if (-1 == gid)
-         gid = native_getGID(sock);
+          gid = native_getGID(sock);
       return gid;
    }
    /**
@@ -229,7 +229,7 @@ public class UnixSocket
    public int getPeerPID()
    {
       if (-1 == pid)
-         pid = native_getPID(sock);
+          pid = native_getPID(sock);
       return pid;
    }
    /**
@@ -240,8 +240,8 @@ public class UnixSocket
     */
    public void setPassCred(boolean enable) throws IOException
    {
-      native_set_pass_cred(sock, enable);
-      passcred = enable;
+       native_set_pass_cred(sock, enable);
+       passcred = enable;
    }
    /**
     * Get the blocking mode.
@@ -258,7 +258,7 @@ public class UnixSocket
     */
    public void setBlocking(boolean enable)
    {
-      blocking = enable;
+       blocking = enable;
       if (null != is) is.setBlocking(enable);
    }
 
@@ -300,7 +300,7 @@ public class UnixSocket
     */
    public void shutdownInput()
    {
-      is.closed = true;
+       is.closed = true;
    }
    /**
     * Shuts down the output stream.
@@ -308,13 +308,13 @@ public class UnixSocket
     */
    public void shutdownOutput()
    {
-      os.closed = true;
+       os.closed = true;
    }
    /**
     * Set timeout of read requests.
     */
    public void setSoTimeout(int timeout)
    {
-      is.setSoTimeout(timeout);
+       is.setSoTimeout(timeout);
    }
 }

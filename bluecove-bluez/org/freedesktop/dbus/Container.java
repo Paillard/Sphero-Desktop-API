@@ -22,16 +22,16 @@ import java.lang.reflect.Type;
  */
 abstract class Container
 {
-   private static Map<Type,Type[]> typecache = new HashMap<Type,Type[]>();
+   private static Map<Type,Type[]> typecache = new HashMap<>();
    static void putTypeCache(Type k, Type[] v)
    {
-      typecache.put(k, v);
+       typecache.put(k, v);
    }
    static Type[] getTypeCache(Type k)
    {
       return typecache.get(k);
    }
-   private Object[] parameters = null;
+   private Object[] parameters;
    public Container() {}
    private void setup()
    {
@@ -49,8 +49,8 @@ abstract class Container
             args[p.value()] = f.get(this);
          } catch (IllegalAccessException IAe) {}
       }
-         
-      this.parameters = new Object[args.length - diff];
+
+       this.parameters = new Object[args.length - diff];
       System.arraycopy(args, 0, parameters, 0, parameters.length);
    }
    /**
@@ -60,7 +60,7 @@ abstract class Container
    public final Object[] getParameters()
    {
       if (null != parameters) return parameters;
-      setup();
+       setup();
       return parameters;
    }
    /** Returns this struct as a string. */
@@ -68,8 +68,8 @@ abstract class Container
    {
       String s = getClass().getName()+"<";
       if (null == parameters)
-         setup();
-      if (0 == parameters.length) 
+          setup();
+      if (0 == parameters.length)
          return s+">";
       for (Object o: parameters)
          s += o+", ";
@@ -77,11 +77,9 @@ abstract class Container
    }
    public final boolean equals(Object other)
    {
-      if (other instanceof Container)  {
-         Container that = (Container) other;
-         if (this.getClass().equals(that.getClass()))
-            return Arrays.equals(this.getParameters(), that.getParameters());
-         else return false;
+      if (other instanceof Container) {
+          Container that = (Container) other;
+          return this.getClass().equals(that.getClass()) && Arrays.equals(this.getParameters(), that.getParameters());
       }
       else return false;
    }

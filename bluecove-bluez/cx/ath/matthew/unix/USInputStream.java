@@ -34,12 +34,12 @@ public class USInputStream extends InputStream
    public static final int MSG_DONTWAIT = 0x40;
    private native int native_recv(int sock, byte[] b, int off, int len, int flags, int timeout) throws IOException;
    private int sock;
-   boolean closed = false;
+   boolean closed;
    private byte[] onebuf = new byte[1];
    private UnixSocket us;
    private boolean blocking = true;
-   private int flags = 0;
-   private int timeout = 0;
+   private int flags;
+   private int timeout;
    public USInputStream(int sock, UnixSocket us)
    {
       this.sock = sock;
@@ -47,8 +47,8 @@ public class USInputStream extends InputStream
    }
    public void close() throws IOException
    {
-      closed = true;
-      us.close();
+       closed = true;
+       us.close();
    }
    public boolean markSupported() { return false; }
    public int read() throws IOException
@@ -75,7 +75,7 @@ public class USInputStream extends InputStream
    public UnixSocket getSocket() { return us; }
    public void setBlocking(boolean enable)
    {
-      flags = enable ? 0 : MSG_DONTWAIT;
+       flags = enable ? 0 : MSG_DONTWAIT;
    }
    public void setSoTimeout(int timeout)
    {

@@ -1,5 +1,7 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
@@ -44,7 +46,7 @@ public class SetRobotNameCommand extends CommandMessage
 		try
 		{
 			// Try UTF encoding
-			encoded_name = this.name.getBytes( "UTF-8" );
+			encoded_name = this.name.getBytes("UTF-8");
 		}
 		catch( UnsupportedEncodingException e )
 		{
@@ -52,7 +54,7 @@ public class SetRobotNameCommand extends CommandMessage
 		}
 
 		// Copy everything to the data array
-		for( int i = 0; ( i < 48 ) && ( i < encoded_name.length ); i++ )
+		for( int i = 0; i < 48 && i < encoded_name.length; i++ )
 			data[i] = encoded_name[i];
 
 		return data;

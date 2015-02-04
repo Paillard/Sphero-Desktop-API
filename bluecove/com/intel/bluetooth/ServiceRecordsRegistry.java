@@ -54,11 +54,11 @@ public abstract class ServiceRecordsRegistry {
 
 	static synchronized void register(BluetoothConnectionNotifierServiceRecordAccess notifier,
 			ServiceRecordImpl serviceRecord) {
-		serviceRecordsMap.put(serviceRecord, notifier);
+        serviceRecordsMap.put(serviceRecord, notifier);
 	}
 
 	static synchronized void unregister(ServiceRecordImpl serviceRecord) {
-		serviceRecordsMap.remove(serviceRecord);
+        serviceRecordsMap.remove(serviceRecord);
 	}
 
 	static synchronized int getDeviceServiceClasses() {

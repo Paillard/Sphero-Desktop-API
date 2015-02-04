@@ -26,10 +26,10 @@
  */
 package javax.bluetooth;
 
+import com.intel.bluetooth.Utils;
+
 import java.util.Enumeration;
 import java.util.Vector;
-
-import com.intel.bluetooth.Utils;
 
 /**
  * The <code>DataElement</code> class defines the various data types that a
@@ -279,11 +279,11 @@ public class DataElement {
 	public DataElement(int valueType) {
 		switch (valueType) {
 		case NULL:
-			value = null;
+            value = null;
 			break;
 		case DATALT:
 		case DATSEQ:
-			value = new Vector();
+            value = new Vector();
 			break;
 		default:
 			throw new IllegalArgumentException("valueType " + typeToString(valueType)
@@ -304,8 +304,8 @@ public class DataElement {
 	 */
 
 	public DataElement(boolean bool) {
-		value = bool ? Boolean.TRUE : Boolean.FALSE;
-		valueType = BOOL;
+        value = bool ? Boolean.TRUE : Boolean.FALSE;
+        valueType = BOOL;
 	}
 
 	/**
@@ -415,7 +415,7 @@ public class DataElement {
 			throw new IllegalArgumentException("type " + typeToString(valueType) + " can't be represented long");
 		}
 
-		this.value = new Long(value);
+		this.value = value;
 		this.valueType = valueType;
 	}
 
@@ -727,7 +727,7 @@ public class DataElement {
 		case INT_2:
 		case INT_4:
 		case INT_8:
-			return ((Long) value).longValue();
+			return (Long) value;
 		default:
 			throw new ClassCastException("DataType is not INT");
 		}
@@ -748,7 +748,7 @@ public class DataElement {
 
 	public boolean getBoolean() {
 		if (valueType == BOOL) {
-			return ((Boolean) value).booleanValue();
+			return (Boolean) value;
 		} else {
 			throw new ClassCastException("DataType is not BOOL");
 		}
@@ -833,39 +833,39 @@ public class DataElement {
 
 	private static String typeToString(int type) {
 		switch (type) {
-		case DataElement.NULL:
+		case NULL:
 			return "NULL";
-		case DataElement.U_INT_1:
+		case U_INT_1:
 			return "U_INT_1";
-		case DataElement.U_INT_2:
+		case U_INT_2:
 			return "U_INT_2";
-		case DataElement.U_INT_4:
+		case U_INT_4:
 			return "U_INT_4";
-		case DataElement.U_INT_8:
+		case U_INT_8:
             return "U_INT_8";
-		case DataElement.U_INT_16:
+		case U_INT_16:
             return "U_INT_16";
-		case DataElement.INT_1:
+		case INT_1:
 			return "INT_1";
-		case DataElement.INT_2:
+		case INT_2:
 			return "INT_2";
-		case DataElement.INT_4:
+		case INT_4:
 			return "INT_4";
-		case DataElement.INT_8:
+		case INT_8:
 			return "INT_8";
-		case DataElement.INT_16:
+		case INT_16:
 			return "INT_16";
-		case DataElement.URL:
+		case URL:
 			return "URL";
-		case DataElement.STRING:
+		case STRING:
 			return "STRING";
-		case DataElement.UUID:
+		case UUID:
 			return "UUID";
-		case DataElement.DATSEQ:
+		case DATSEQ:
 			return "DATSEQ";
-		case DataElement.BOOL:
+		case BOOL:
 			return "BOOL";
-		case DataElement.DATALT:
+		case DATALT:
 			return "DATALT";
 		default:
 			return "Unknown" + type;
@@ -878,7 +878,8 @@ public class DataElement {
 	 * @deprecated Use ((Object)dataElement).toString() if you want your
 	 *             application to run in MDIP profile
 	 */
-	public String toString() {
+	@Deprecated
+    public String toString() {
 		switch (valueType) {
 		case U_INT_1:
 		case U_INT_2:
@@ -887,29 +888,29 @@ public class DataElement {
 		case INT_2:
 		case INT_4:
 		case INT_8:
-			return typeToString(valueType) + " 0x" + Utils.toHexString(((Long) value).longValue());
+			return typeToString(valueType) + " 0x" + Utils.toHexString((Long) value);
 		case BOOL:
 		case URL:
 		case STRING:
 		case UUID:
-			return typeToString(valueType) + " " + value.toString();
+			return typeToString(valueType) + " " + value;
 		case U_INT_8:
 		case U_INT_16:
 		case INT_16: {
 			byte[] b = (byte[]) value;
 
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(typeToString(valueType)).append(" ");
 
-			for (int i = 0; i < b.length; i++) {
-				buf.append(Integer.toHexString(b[i] >> 4 & 0xf));
-				buf.append(Integer.toHexString(b[i] & 0xf));
-			}
+            for (byte aB : b) {
+                buf.append(Integer.toHexString(aB >> 4 & 0xf));
+                buf.append(Integer.toHexString(aB & 0xf));
+            }
 
 			return buf.toString();
 		}
 		case DATSEQ: {
-			StringBuffer buf = new StringBuffer("DATSEQ {\n");
+			StringBuilder buf = new StringBuilder("DATSEQ {\n");
 
 			for (Enumeration e = ((Vector) value).elements(); e.hasMoreElements();) {
 				buf.append(e.nextElement());
@@ -920,19 +921,18 @@ public class DataElement {
 
 			return buf.toString();
 		}
-		case DATALT: {
-			StringBuffer buf = new StringBuffer("DATALT {\n");
+		case DATALT:
+            StringBuilder buf = new StringBuilder("DATALT {\n");
 
-			for (Enumeration e = ((Vector) value).elements(); e.hasMoreElements();) {
-				buf.append(e.nextElement());
-				buf.append("\n");
-			}
+            for (Enumeration e = ((Vector) value).elements(); e.hasMoreElements();) {
+                buf.append(e.nextElement());
+                buf.append("\n");
+            }
 
-			buf.append("}");
+            buf.append("}");
 
-			return buf.toString();
-		}
-		default:
+            return buf.toString();
+            default:
 			return "Unknown" + valueType;
 		}
 	}

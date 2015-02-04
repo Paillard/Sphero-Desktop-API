@@ -25,10 +25,10 @@ public class MessageWriter
    public MessageWriter(OutputStream out)
    {
 		this.out = out;
-		this.isunix = false;
+       this.isunix = false;
 		try {
 			if (out instanceof USOutputStream)
-				this.isunix = true;
+                this.isunix = true;
 		} catch (Throwable t) {
 		}
 		if (!this.isunix)
@@ -56,13 +56,13 @@ public class MessageWriter
             if (Debug.debug)
                Debug.print(Debug.VERBOSE, "("+buf+"):"+ (null==buf? "": Hexdump.format(buf)));
             if (null == buf) break;
-            out.write(buf);
+             out.write(buf);
          }
-      out.flush();
+       out.flush();
    }
    public void close() throws IOException
    {
       if (Debug.debug) Debug.print(Debug.INFO, "Closing Message Writer");
-      out.close();
+       out.close();
    }
 }

@@ -50,7 +50,7 @@ public class BluetoothService extends Observable implements Runnable
 	private String name;
 	private String description;
 	private String provider;
-	private String serviceConnectionURL = null;
+	private String serviceConnectionURL;
 
 	/**
 	 * Create a Bluetooth service from an available service record, device and
@@ -71,23 +71,23 @@ public class BluetoothService extends Observable implements Runnable
 		DataElement element;
 
 		// Fetch record information
-		element = record.getAttributeValue( ATTR_SERVICENAME );
+		element = record.getAttributeValue(ATTR_SERVICENAME);
 		if( element != null )
-			name = (String) element.getValue();
+            name = (String) element.getValue();
 		else
-			name = UNKNOWN;
+            name = UNKNOWN;
 
-		element = record.getAttributeValue( ATTR_SERVICEDESC );
+		element = record.getAttributeValue(ATTR_SERVICEDESC);
 		if( element != null )
-			description = (String) element.getValue();
+            description = (String) element.getValue();
 		else
-			description = UNKNOWN;
+            description = UNKNOWN;
 
-		element = record.getAttributeValue( ATTR_PROVIDERNAME );
+		element = record.getAttributeValue(ATTR_PROVIDERNAME);
 		if( element != null )
-			provider = (String) element.getValue();
+            provider = (String) element.getValue();
 		else
-			provider = UNKNOWN;
+            provider = UNKNOWN;
 	}
 
 	/**
@@ -101,9 +101,9 @@ public class BluetoothService extends Observable implements Runnable
 	{
 		// this.bt = null;
 		this.serviceConnectionURL = serviceConnectionURL;
-		this.name = UNKNOWN;
-		this.description = UNKNOWN;
-		this.provider = UNKNOWN;
+        this.name = UNKNOWN;
+        this.description = UNKNOWN;
+        this.provider = UNKNOWN;
 	}
 
 	/**
@@ -145,9 +145,9 @@ public class BluetoothService extends Observable implements Runnable
 	public String getConnectionURL()
 	{
 		// Check if we can return something
-		if( this.record != null )
-			return this.record.getConnectionURL( ServiceRecord.AUTHENTICATE_NOENCRYPT, false );
-		else if( this.serviceConnectionURL != null )
+		if(this.record != null )
+			return this.record.getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false);
+		else if(this.serviceConnectionURL != null )
 			return this.serviceConnectionURL;
 
 		return null;
@@ -167,10 +167,10 @@ public class BluetoothService extends Observable implements Runnable
 		StreamConnection con;
 
 		// Check the method of connection
-		if( this.serviceConnectionURL != null )
-			con = (StreamConnection) Connector.open( this.serviceConnectionURL );
+		if(this.serviceConnectionURL != null )
+			con = (StreamConnection) Connector.open(this.serviceConnectionURL);
 		else
-			con = (StreamConnection) Connector.open( record.getConnectionURL( ServiceRecord.AUTHENTICATE_NOENCRYPT, false ) );
+			con = (StreamConnection) Connector.open(record.getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false) );
 
 		// Create our bluetooth connection and return it
 		BluetoothConnection c = new BluetoothConnection( con );

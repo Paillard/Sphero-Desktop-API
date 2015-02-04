@@ -160,14 +160,14 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>COUNT</code> is 0xC0 (192).
 	 */
-	public static final int COUNT = 0xC0;
+    int COUNT = 0xC0;
 
 	/**
 	 * Represents the OBEX Name header. This specifies the name of the object.
 	 * <P>
 	 * The value of <code>NAME</code> is 0x01 (1).
 	 */
-	public static final int NAME = 0x01;
+    int NAME = 0x01;
 
 	/**
 	 * Represents the OBEX Type header. This allows a request to specify the
@@ -175,7 +175,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>TYPE</code> is 0x42 (66).
 	 */
-	public static final int TYPE = 0x42;
+    int TYPE = 0x42;
 
 	/**
 	 * Represents the OBEX Length header. This is the length of the object in
@@ -183,7 +183,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>LENGTH</code> is 0xC3 (195).
 	 */
-	public static final int LENGTH = 0xC3;
+    int LENGTH = 0xC3;
 
 	/**
 	 * Represents the OBEX Time header using the ISO 8601 standards. This is the
@@ -191,7 +191,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>TIME_ISO_8601</code> is 0x44 (68).
 	 */
-	public static final int TIME_ISO_8601 = 0x44;
+    int TIME_ISO_8601 = 0x44;
 
 	/**
 	 * Represents the OBEX Time header using the 4 byte representation. This is
@@ -200,7 +200,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>TIME_4_BYTE</code> is 0xC4 (196).
 	 */
-	public static final int TIME_4_BYTE = 0xC4;
+    int TIME_4_BYTE = 0xC4;
 
 	/**
 	 * Represents the OBEX Description header. This is a text description of the
@@ -208,7 +208,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>DESCRIPTION</code> is 0x05 (5).
 	 */
-	public static final int DESCRIPTION = 0x05;
+    int DESCRIPTION = 0x05;
 
 	/**
 	 * Represents the OBEX Target header. This is the name of the service an
@@ -216,7 +216,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>TARGET</code> is 0x46 (70).
 	 */
-	public static final int TARGET = 0x46;
+    int TARGET = 0x46;
 
 	/**
 	 * Represents the OBEX HTTP header. This allows an HTTP 1.X header to be
@@ -224,7 +224,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>HTTP</code> is 0x47 (71).
 	 */
-	public static final int HTTP = 0x47;
+    int HTTP = 0x47;
 
 	/**
 	 * Represents the OBEX Who header. Identifies the OBEX application to
@@ -232,7 +232,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>WHO</code> is 0x4A (74).
 	 */
-	public static final int WHO = 0x4A;
+    int WHO = 0x4A;
 
 	/**
 	 * Represents the OBEX Object Class header. This header specifies the OBEX
@@ -240,7 +240,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>OBJECT_CLASS</code> is 0x4F (79).
 	 */
-	public static final int OBJECT_CLASS = 0x4F;
+    int OBJECT_CLASS = 0x4F;
 
 	/**
 	 * Represents the OBEX Application Parameter header. This header specifies
@@ -248,7 +248,7 @@ public interface HeaderSet {
 	 * <P>
 	 * The value of <code>APPLICATION_PARAMETER</code> is 0x4C (76).
 	 */
-	public static final int APPLICATION_PARAMETER = 0x4C;
+    int APPLICATION_PARAMETER = 0x4C;
 
 	/**
 	 * Sets the value of the header identifier to the value provided. The type
@@ -269,7 +269,7 @@ public interface HeaderSet {
 	 *                <code>headerValue</code> is not the correct Java type as
 	 *                defined in the description of this interface
 	 */
-	public void setHeader(int headerID, Object headerValue);
+    void setHeader(int headerID, Object headerValue);
 
 	/**
 	 * Retrieves the value of the header identifier provided. The type of the
@@ -290,7 +290,7 @@ public interface HeaderSet {
 	 *                if an error occurred in the transport layer during the
 	 *                operation or if the connection has been closed
 	 */
-	public Object getHeader(int headerID) throws IOException;
+    Object getHeader(int headerID) throws IOException;
 
 	/**
 	 * Retrieves the list of headers that may be retrieved via the
@@ -307,7 +307,7 @@ public interface HeaderSet {
 	 *                if an error occurred in the transport layer during the
 	 *                operation or the connection has been closed
 	 */
-	public int[] getHeaderList() throws IOException;
+    int[] getHeaderList() throws IOException;
 
 	/**
 	 * Sets the authentication challenge header. The <code>realm</code> will
@@ -329,7 +329,7 @@ public interface HeaderSet {
 	 *            successful; if <code>false</code> then read-only access will
 	 *            be granted if successful
 	 */
-	public void createAuthenticationChallenge(String realm, boolean userID, boolean access);
+    void createAuthenticationChallenge(String realm, boolean userID, boolean access);
 
 	/**
 	 * Returns the response code received from the server. Response codes are
@@ -347,5 +347,5 @@ public interface HeaderSet {
 	 *                <code>ClientSession</code> object; if an OBEX server
 	 *                created this object
 	 */
-	public int getResponseCode() throws IOException;
+    int getResponseCode() throws IOException;
 }

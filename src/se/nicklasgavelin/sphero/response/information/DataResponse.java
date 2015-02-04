@@ -6,6 +6,8 @@
 package se.nicklasgavelin.sphero.response.information;
 
 import se.nicklasgavelin.sphero.response.InformationResponseMessage;
+import se.nicklasgavelin.sphero.response.ResponseMessage;
+import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader;
 
 /**
  * @author Nicklas Gavelin, nicklas.gavelin@gmail.com, Luleå University of Technology
@@ -29,7 +31,7 @@ public class DataResponse extends InformationResponseMessage
 	 */
 	public byte[] getSensorData()
 	{
-		return super.getMessageHeader().getPacketPayload();
+		return this.getMessageHeader().getPacketPayload();
 	}
 
 	/**
@@ -39,6 +41,6 @@ public class DataResponse extends InformationResponseMessage
 	 */
 	public int getSensorDataLength()
 	{
-		return super.getPacketPayload().length;
+		return this.getPacketPayload().length;
 	}
 }

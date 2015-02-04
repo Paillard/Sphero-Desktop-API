@@ -10,7 +10,7 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext._;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -55,42 +55,42 @@ public class Transport
          {
             String[] ss = s.split(" ");
             if (Debug.debug) Debug.print(Debug.VERBOSE, "Creating command from: "+Arrays.toString(ss));
-            if (0 == col.compare(ss[0], "OK")) {
-               command = COMMAND_OK;
-               data = ss[1];
-            } else if (0 == col.compare(ss[0], "AUTH")) {
-               command = COMMAND_AUTH;
+            if (0 == SASL.col.compare(ss[0], "OK")) {
+                command = SASL.COMMAND_OK;
+                data = ss[1];
+            } else if (0 == SASL.col.compare(ss[0], "AUTH")) {
+                command = SASL.COMMAND_AUTH;
                if (ss.length > 1) {
-                  if (0 == col.compare(ss[1], "EXTERNAL"))
-                     mechs = AUTH_EXTERNAL;
-                  else if (0 == col.compare(ss[1], "DBUS_COOKIE_SHA1"))
-                     mechs = AUTH_SHA;
-                  else if (0 == col.compare(ss[1], "ANONYMOUS"))
-                     mechs = AUTH_ANON;
+                  if (0 == SASL.col.compare(ss[1], "EXTERNAL"))
+                      mechs = SASL.AUTH_EXTERNAL;
+                  else if (0 == SASL.col.compare(ss[1], "DBUS_COOKIE_SHA1"))
+                      mechs = SASL.AUTH_SHA;
+                  else if (0 == SASL.col.compare(ss[1], "ANONYMOUS"))
+                      mechs = SASL.AUTH_ANON;
                }
                if (ss.length > 2)
-                  data = ss[2];
-            } else if (0 == col.compare(ss[0], "DATA")) {
-               command = COMMAND_DATA;
-               data = ss[1];
-            } else if (0 == col.compare(ss[0], "REJECTED")) {
-               command = COMMAND_REJECTED;
+                   data = ss[2];
+            } else if (0 == SASL.col.compare(ss[0], "DATA")) {
+                command = SASL.COMMAND_DATA;
+                data = ss[1];
+            } else if (0 == SASL.col.compare(ss[0], "REJECTED")) {
+                command = SASL.COMMAND_REJECTED;
                for (int i = 1; i < ss.length; i++)
-                  if (0 == col.compare(ss[i], "EXTERNAL"))
-                     mechs |= AUTH_EXTERNAL;
-                  else if (0 == col.compare(ss[i], "DBUS_COOKIE_SHA1"))
-                     mechs |= AUTH_SHA;
-                  else if (0 == col.compare(ss[i], "ANONYMOUS"))
-                     mechs |= AUTH_ANON;
-            } else if (0 == col.compare(ss[0], "BEGIN")) {
-               command = COMMAND_BEGIN;
-            } else if (0 == col.compare(ss[0], "CANCEL")) {
-               command = COMMAND_CANCEL;
-            } else if (0 == col.compare(ss[0], "ERROR")) {
-               command = COMMAND_ERROR;
-               data = ss[1];
+                  if (0 == SASL.col.compare(ss[i], "EXTERNAL"))
+                      mechs |= SASL.AUTH_EXTERNAL;
+                  else if (0 == SASL.col.compare(ss[i], "DBUS_COOKIE_SHA1"))
+                      mechs |= SASL.AUTH_SHA;
+                  else if (0 == SASL.col.compare(ss[i], "ANONYMOUS"))
+                      mechs |= SASL.AUTH_ANON;
+            } else if (0 == SASL.col.compare(ss[0], "BEGIN")) {
+                command = SASL.COMMAND_BEGIN;
+            } else if (0 == SASL.col.compare(ss[0], "CANCEL")) {
+                command = SASL.COMMAND_CANCEL;
+            } else if (0 == SASL.col.compare(ss[0], "ERROR")) {
+                command = SASL.COMMAND_ERROR;
+                data = ss[1];
             } else {
-               throw new IOException(_("Invalid Command ")+ss[0]);
+               throw new IOException(getResource("Invalid Command ")+ss[0]);
             }
             if (Debug.debug) Debug.print(Debug.VERBOSE, "Created command: "+this);
          }
@@ -98,20 +98,21 @@ public class Transport
          public int getMechs() { return mechs; }
          public String getData() { return data; }
          public String getResponse() { return response; }
-         public void setResponse(String s) { response = s; }
+         public void setResponse(String s) {
+             response = s; }
          public String toString() 
          {
-            return "Command("+command+", "+mechs+", "+data+", "+null+")";
+            return "Command("+ command +", "+ mechs +", "+ data +", "+null+")";
          }
       }
       private static Collator col = Collator.getInstance();
       static {
-         col.setDecomposition(Collator.FULL_DECOMPOSITION);
-         col.setStrength(Collator.PRIMARY);
+          col.setDecomposition(Collator.FULL_DECOMPOSITION);
+          col.setStrength(Collator.PRIMARY);
       }
 		public static final int LOCK_TIMEOUT = 1000;
 		public static final int NEW_KEY_TIMEOUT_SECONDS = 60 * 5;
-		public static final int EXPIRE_KEYS_TIMEOUT_SECONDS = NEW_KEY_TIMEOUT_SECONDS + (60 * 2);
+		public static final int EXPIRE_KEYS_TIMEOUT_SECONDS = NEW_KEY_TIMEOUT_SECONDS + 60 * 2;
 		public static final int MAX_TIME_TRAVEL_SECONDS = 60 * 5;
 		public static final int COOKIE_TIMEOUT = 240;
       public static final String COOKIE_CONTEXT = "org_freedesktop_java";
@@ -127,9 +128,9 @@ public class Transport
 			while (null != (s = r.readLine())) {
 				String[] line = s.split(" ");
 				long timestamp = Long.parseLong(line[1]);
-				if (line[0].equals(ID) && (! (timestamp < 0 ||
-								(now + MAX_TIME_TRAVEL_SECONDS) < timestamp ||
-								(now - EXPIRE_KEYS_TIMEOUT_SECONDS) > timestamp))) {
+				if (line[0].equals(ID) && !(timestamp < 0 ||
+								now + MAX_TIME_TRAVEL_SECONDS < timestamp ||
+								now - EXPIRE_KEYS_TIMEOUT_SECONDS > timestamp)) {
 					cookie = line[2];
 					break;
 				}
@@ -150,10 +151,10 @@ public class Transport
 
          // acquire lock
          long start = System.currentTimeMillis();
-         while (!lock.createNewFile() && LOCK_TIMEOUT > (System.currentTimeMillis()-start));
+         while (!lock.createNewFile() && LOCK_TIMEOUT > System.currentTimeMillis()-start);
 
          // read old file
-         Vector<String> lines = new Vector<String>();
+         Vector<String> lines = new Vector<>();
          if (cookiefile.exists()) {
             BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(cookiefile)));
             String s = null;
@@ -161,7 +162,7 @@ public class Transport
                String[] line = s.split(" ");
                long time = Long.parseLong(line[1]);
                // expire stale cookies
-               if ((timestamp - time) < COOKIE_TIMEOUT)
+               if (timestamp - time < COOKIE_TIMEOUT)
                   lines.add(s);
             }
             r.close();
@@ -172,8 +173,7 @@ public class Transport
 
          // write temp file
          PrintWriter w = new PrintWriter(new FileOutputStream(temp));
-         for (String l: lines)
-            w.println(l);
+          lines.forEach(w::println);
          w.close();
 
          // atomically move to old file
@@ -275,7 +275,7 @@ public class Transport
 
       public Command receive(InputStream s) throws IOException
       {
-         StringBuffer sb = new StringBuffer();
+         StringBuilder sb = new StringBuilder();
          top: while (true) {
             int c = s.read();
             switch (c) {
@@ -292,7 +292,7 @@ public class Transport
          }
          if (Debug.debug) Debug.print(Debug.VERBOSE, "received: "+sb);
          try {
-            return new Command(sb.toString());         
+            return new Command(sb.toString());
          } catch (Exception e) {
             if (Debug.debug && AbstractConnection.EXCEPTION_DEBUG) Debug.print(Debug.ERR, e);
             return new Command();
@@ -300,7 +300,7 @@ public class Transport
       }
       public void send(OutputStream out, int command, String... data) throws IOException
       {
-         StringBuffer sb = new StringBuffer();
+         StringBuilder sb = new StringBuilder();
          switch (command) {
             case COMMAND_AUTH:
                sb.append("AUTH");
@@ -339,7 +339,7 @@ public class Transport
       {
          switch (auth) {
             case AUTH_SHA:
-               String[] reply=stupidlyDecode(c.getData()).split(" ");
+               String[] reply= stupidlyDecode(c.getData()).split(" ");
                if (Debug.debug) Debug.print(Debug.VERBOSE, Arrays.toString(reply));
                if (3 != reply.length) {
                   if (Debug.debug) Debug.print(Debug.DEBUG, "Reply is not length 3");
@@ -353,7 +353,7 @@ public class Transport
                   md = MessageDigest.getInstance("SHA");
                } catch (NoSuchAlgorithmException NSAe) {
                   if (Debug.debug && AbstractConnection.EXCEPTION_DEBUG) Debug.print(Debug.ERR, NSAe);
-                  return ERROR; 
+                  return ERROR;
                }
                byte[] buf = new byte[8];
                Message.marshallintBig(System.currentTimeMillis(), buf, 0, 8);
@@ -361,7 +361,7 @@ public class Transport
                md.reset();
                long start = System.currentTimeMillis();
                String cookie = null;
-               while (null == cookie && (System.currentTimeMillis()-start) < LOCK_TIMEOUT)
+               while (null == cookie && System.currentTimeMillis()-start < LOCK_TIMEOUT)
                   cookie = findCookie(context, ID);
                if (null == cookie) {
                   if (Debug.debug) Debug.print(Debug.DEBUG, "Did not find a cookie in context "+context+" with ID "+ID);
@@ -387,7 +387,7 @@ public class Transport
             md = MessageDigest.getInstance("SHA");
          } catch (NoSuchAlgorithmException NSAe) {
             if (Debug.debug && AbstractConnection.EXCEPTION_DEBUG) Debug.print(Debug.ERR, NSAe);
-            return ERROR; 
+            return ERROR;
          }
          switch (auth) {
             case AUTH_NONE:
@@ -405,16 +405,17 @@ public class Transport
                      long id = System.currentTimeMillis();
                      byte[] buf = new byte[8];
                      Message.marshallintBig(id, buf, 0, 8);
-                     challenge = stupidlyEncode(md.digest(buf));
+                      challenge = stupidlyEncode(md.digest(buf));
                      Random r = new Random();
                      r.nextBytes(buf);
-                     cookie = stupidlyEncode(md.digest(buf));
-                     try { addCookie(context, ""+id, id/1000, cookie);
+                      cookie = stupidlyEncode(md.digest(buf));
+                     try {
+                         addCookie(context, ""+id, id/1000, cookie);
                      } catch (IOException IOe) {
                         if (Debug.debug && AbstractConnection.EXCEPTION_DEBUG) Debug.print(Debug.ERR, IOe);
                      }
-                     if (Debug.debug) Debug.print(Debug.DEBUG, "Sending challenge: "+context+' '+id+' '+challenge);
-                     c.setResponse(stupidlyEncode(context+' '+id+' '+challenge));
+                     if (Debug.debug) Debug.print(Debug.DEBUG, "Sending challenge: "+context+' '+id+' '+ challenge);
+                     c.setResponse(stupidlyEncode(context+' '+id+' '+ challenge));
                      return CONTINUE;
                   default:
                      return ERROR;
@@ -424,7 +425,7 @@ public class Transport
                if (response.length < 2) return ERROR;
                String cchal = response[0];
                String hash = response[1];
-               String prehash = challenge+":"+cchal+":"+cookie;
+               String prehash = challenge +":"+cchal+":"+ cookie;
                byte[] buf = md.digest(prehash.getBytes());
                String posthash = stupidlyEncode(buf);
                if (Debug.debug) Debug.print(Debug.DEBUG, "Authenticating Hash; data="+prehash+" remote hash="+hash+" local hash="+posthash);
@@ -445,13 +446,13 @@ public class Transport
                return new String[] { "DBUS_COOKIE_SHA1" };
             case AUTH_ANON:
                return new String[] { "ANONYMOUS" };
-            case AUTH_SHA+AUTH_EXTERNAL:
+            case AUTH_SHA + AUTH_EXTERNAL:
                return new String[] { "EXTERNAL", "DBUS_COOKIE_SHA1" };
-            case AUTH_SHA+AUTH_ANON:
+            case AUTH_SHA + AUTH_ANON:
                return new String[] { "ANONYMOUS", "DBUS_COOKIE_SHA1" };
-            case AUTH_EXTERNAL+AUTH_ANON:
+            case AUTH_EXTERNAL + AUTH_ANON:
                return new String[] { "ANONYMOUS", "EXTERNAL" };
-            case AUTH_EXTERNAL+AUTH_ANON+AUTH_SHA:
+            case AUTH_EXTERNAL + AUTH_ANON + AUTH_SHA:
                return new String[] { "ANONYMOUS", "EXTERNAL", "DBUS_COOKIE_SHA1" };
             default:
                return new String[] { };
@@ -493,7 +494,7 @@ public class Transport
                            out.write(new byte[] { 0 });
                         else 
                            us.sendCredentialByte((byte) 0);
-                        send(out, COMMAND_AUTH);
+                         send(out, COMMAND_AUTH);
                         state = WAIT_DATA;
                         break;
                      case WAIT_DATA:
@@ -502,42 +503,42 @@ public class Transport
                         case COMMAND_DATA:
                            switch (do_challenge(current, c)) {
                               case CONTINUE:
-                                 send(out, COMMAND_DATA, c.getResponse());
+                                  send(out, COMMAND_DATA, c.getResponse());
                                  break;
                               case OK:
-                                 send(out, COMMAND_DATA, c.getResponse());
+                                  send(out, COMMAND_DATA, c.getResponse());
                                  state = WAIT_OK;
                                  break;
                               case ERROR:
-                                 send(out, COMMAND_ERROR, c.getResponse());
+                                  send(out, COMMAND_ERROR, c.getResponse());
                                  break;
                            }
                            break;
                         case COMMAND_REJECTED:
                            failed |= current;
-                           int available = c.getMechs() & (~failed);
+                           int available = c.getMechs() & ~failed;
                            if (0 != (available & AUTH_EXTERNAL)){
-                              send(out, COMMAND_AUTH, "EXTERNAL", Uid);
+                               send(out, COMMAND_AUTH, "EXTERNAL", Uid);
                               current = AUTH_EXTERNAL;
                            } else if (0 != (available & AUTH_SHA)) {
-                              send(out, COMMAND_AUTH, "DBUS_COOKIE_SHA1", Uid);
+                               send(out, COMMAND_AUTH, "DBUS_COOKIE_SHA1", Uid);
                               current = AUTH_SHA;
                            } else if (0 != (available & AUTH_ANON)) {
-                              send(out, COMMAND_AUTH, "ANONYMOUS");
+                               send(out, COMMAND_AUTH, "ANONYMOUS");
                               current = AUTH_ANON;
                            }
                            else state = FAILED;
                            break;
                         case COMMAND_ERROR:
-                           send(out, COMMAND_CANCEL);
+                            send(out, COMMAND_CANCEL);
                            state = WAIT_REJECT;
                            break;
                         case COMMAND_OK:
-                           send(out, COMMAND_BEGIN);
+                            send(out, COMMAND_BEGIN);
                            state = AUTHENTICATED;
                            break;
                         default:
-                           send(out, COMMAND_ERROR, "Got invalid command");
+                            send(out, COMMAND_ERROR, "Got invalid command");
                            break;
                      }
                      break;
@@ -545,32 +546,32 @@ public class Transport
                      c = receive(in);
                         switch (c.getCommand()) {
                            case COMMAND_OK:
-                              send(out, COMMAND_BEGIN);
+                               send(out, COMMAND_BEGIN);
                               state = AUTHENTICATED;
                               break;
                            case COMMAND_ERROR:
                            case COMMAND_DATA:
-                              send(out, COMMAND_CANCEL);
+                               send(out, COMMAND_CANCEL);
                               state = WAIT_REJECT;
                               break;
                            case COMMAND_REJECTED:
                               failed |= current;
-                              int available = c.getMechs() & (~failed);
+                              int available = c.getMechs() & ~failed;
                               state = WAIT_DATA;
                               if (0 != (available & AUTH_EXTERNAL)) {
-                                 send(out, COMMAND_AUTH, "EXTERNAL", Uid);
+                                  send(out, COMMAND_AUTH, "EXTERNAL", Uid);
                                  current = AUTH_EXTERNAL;
                               } else if (0 != (available & AUTH_SHA)) {
-                                 send(out, COMMAND_AUTH, "DBUS_COOKIE_SHA1", Uid);
+                                  send(out, COMMAND_AUTH, "DBUS_COOKIE_SHA1", Uid);
                                  current = AUTH_SHA;
                               } else if (0 != (available & AUTH_ANON)) {
-                                 send(out, COMMAND_AUTH, "ANONYMOUS");
+                                  send(out, COMMAND_AUTH, "ANONYMOUS");
                                  current = AUTH_ANON;
                               }
                               else state = FAILED;
                               break;
                            default:
-                              send(out, COMMAND_ERROR, "Got invalid command");
+                               send(out, COMMAND_ERROR, "Got invalid command");
                               break;
                         }
                         break;
@@ -579,15 +580,15 @@ public class Transport
                         switch (c.getCommand()) {
                            case COMMAND_REJECTED:
                               failed |= current;
-                              int available = c.getMechs() & (~failed);
+                              int available = c.getMechs() & ~failed;
                               if (0 != (available & AUTH_EXTERNAL)) {
-                                 send(out, COMMAND_AUTH, "EXTERNAL", Uid);
+                                  send(out, COMMAND_AUTH, "EXTERNAL", Uid);
                                  current = AUTH_EXTERNAL;
                               } else if (0 != (available & AUTH_SHA)) {
-                                 send(out, COMMAND_AUTH, "DBUS_COOKIE_SHA1", Uid);
+                                  send(out, COMMAND_AUTH, "DBUS_COOKIE_SHA1", Uid);
                                  current = AUTH_SHA;
                               } else if (0 != (available & AUTH_ANON)) {
-                                 send(out, COMMAND_AUTH, "ANONYMOUS");
+                                  send(out, COMMAND_AUTH, "ANONYMOUS");
                                  current = AUTH_ANON;
                               }
                               else state = FAILED;
@@ -621,34 +622,34 @@ public class Transport
                         switch (c.getCommand()) {
                            case COMMAND_AUTH:
                               if (null == c.getData()) {
-                                 send(out, COMMAND_REJECTED, getTypes(types));
+                                  send(out, COMMAND_REJECTED, getTypes(types));
                               } else {
                                  switch (do_response(current, Uid, kernelUid, c)) {
                                     case CONTINUE:
-                                       send(out, COMMAND_DATA, c.getResponse());
+                                        send(out, COMMAND_DATA, c.getResponse());
                                        current = c.getMechs();
                                        state = WAIT_DATA;
                                        break;
                                     case OK:
-                                       send(out, COMMAND_OK, guid);
+                                        send(out, COMMAND_OK, guid);
                                        state = WAIT_BEGIN;
                                        current = 0;
                                        break;
                                     case REJECT:
-                                       send(out, COMMAND_REJECTED, getTypes(types));
+                                        send(out, COMMAND_REJECTED, getTypes(types));
                                        current = 0;
                                        break;
                                  }
                               }
                               break;
                            case COMMAND_ERROR:
-                              send(out, COMMAND_REJECTED, getTypes(types));
+                               send(out, COMMAND_REJECTED, getTypes(types));
                               break;
                            case COMMAND_BEGIN:
                               state = FAILED;
                               break;
                            default:
-                              send(out, COMMAND_ERROR, "Got invalid command");
+                               send(out, COMMAND_ERROR, "Got invalid command");
                               break;
                         }
                         break;
@@ -658,30 +659,30 @@ public class Transport
                            case COMMAND_DATA:
                               switch (do_response(current, Uid, kernelUid, c)) {
                                  case CONTINUE:
-                                    send(out, COMMAND_DATA, c.getResponse());
+                                     send(out, COMMAND_DATA, c.getResponse());
                                     state = WAIT_DATA;
                                     break;
                                  case OK:
-                                    send(out, COMMAND_OK, guid);
+                                     send(out, COMMAND_OK, guid);
                                     state = WAIT_BEGIN;
                                     current = 0;
                                     break;
                                  case REJECT:
-                                    send(out, COMMAND_REJECTED, getTypes(types));
+                                     send(out, COMMAND_REJECTED, getTypes(types));
                                     current = 0;
                                     break;
                               }
                               break;
                            case COMMAND_ERROR:
                            case COMMAND_CANCEL:
-                              send(out, COMMAND_REJECTED, getTypes(types));
+                               send(out, COMMAND_REJECTED, getTypes(types));
                               state = WAIT_AUTH;
                               break;
                            case COMMAND_BEGIN:
                               state = FAILED;
                               break;
                            default:
-                              send(out, COMMAND_ERROR, "Got invalid command");
+                               send(out, COMMAND_ERROR, "Got invalid command");
                               break;
                         }
                         break;
@@ -690,14 +691,14 @@ public class Transport
                         switch (c.getCommand()) {
                            case COMMAND_ERROR:
                            case COMMAND_CANCEL:
-                              send(out, COMMAND_REJECTED, getTypes(types));
+                               send(out, COMMAND_REJECTED, getTypes(types));
                               state = WAIT_AUTH;
                               break;
                            case COMMAND_BEGIN:
                               state = AUTHENTICATED;
                               break;
                            default:
-                              send(out, COMMAND_ERROR, "Got invalid command");
+                               send(out, COMMAND_ERROR, "Got invalid command");
                               break;
                         }
                         break;
@@ -726,27 +727,27 @@ public class Transport
    }
    public Transport(BusAddress address) throws IOException
    {
-      connect(address);
+       connect(address);
    }
    public Transport(String address) throws IOException, ParseException
    {
-      connect(new BusAddress(address));
+       connect(new BusAddress(address));
    }
    public Transport(String address, int timeout) throws IOException, ParseException
    {
-      connect(new BusAddress(address), timeout);
+       connect(new BusAddress(address), timeout);
    }
    public void connect(String address) throws IOException, ParseException
    {
-      connect(new BusAddress(address), 0);
+       connect(new BusAddress(address), 0);
    }
    public void connect(String address, int timeout) throws IOException, ParseException
    {
-      connect(new BusAddress(address), timeout);
+       connect(new BusAddress(address), timeout);
    }
    public void connect(BusAddress address) throws IOException
    {
-      connect(address, 0);
+       connect(address, 0);
    }
    public void connect(BusAddress address, int timeout) throws IOException
    {
@@ -793,12 +794,12 @@ public class Transport
          in = s.getInputStream();
          out = s.getOutputStream();
       } else {
-         throw new IOException(_("unknown address type ")+address.getType());
+         throw new IOException(getResource("unknown address type ")+address.getType());
       }
       
-      if (!(new SASL()).auth(mode, types, address.getParameter("guid"), out, in, us)) {
+      if (!new SASL().auth(mode, types, address.getParameter("guid"), out, in, us)) {
          out.close();
-         throw new IOException(_("Failed to auth"));
+         throw new IOException(getResource("Failed to auth"));
       }
       if (null != us) {
          if (Debug.debug) Debug.print(Debug.VERBOSE, "Setting timeout to "+timeout+" on Socket");
@@ -811,14 +812,14 @@ public class Transport
          if (Debug.debug) Debug.print(Debug.VERBOSE, "Setting timeout to "+timeout+" on Socket");
          s.setSoTimeout(timeout);
       }
-      mout = new MessageWriter(out);
-      min = new MessageReader(in);
+       mout = new MessageWriter(out);
+       min = new MessageReader(in);
    }
    public void disconnect() throws IOException
    {
       if (Debug.debug) Debug.print(Debug.INFO, "Disconnecting Transport");
-      min.close();
-      mout.close();
+       min.close();
+       mout.close();
    }
 }
 

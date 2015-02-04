@@ -37,8 +37,8 @@ public class TextField extends Field
    {
       this.name = name;
       this.label = label;
-      this.defval = "";
-      this.length = 0;
+       this.defval = "";
+       this.length = 0;
    }
    public TextField(String name, String label, String defval)
    {
@@ -48,7 +48,7 @@ public class TextField extends Field
          this.defval = "";
       else
          this.defval = defval;
-      this.length = 0;
+       this.length = 0;
    }
    public TextField(String name, String label, String defval, int length)
    {
@@ -62,7 +62,7 @@ public class TextField extends Field
    }
    protected String print()
    {
-      return "<input type=\"text\" name=\""+name+"\" value=\""+CGITools.escapeChar(defval,'"')+"\" "+(length==0?"":"size=\""+length+"\"")+" />";
+      return "<input type=\"text\" name=\""+ name +"\" value=\""+CGITools.escapeChar(defval,'"')+"\" "+(length ==0?"":"size=\""+ length +"\"")+" />";
    }
 }
 

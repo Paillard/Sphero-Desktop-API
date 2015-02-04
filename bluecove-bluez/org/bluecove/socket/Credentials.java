@@ -59,11 +59,7 @@ public class Credentials {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof Credentials) {
-            return (this.pid == ((Credentials) o).pid) && (this.uid == ((Credentials) o).uid) && (this.gid == ((Credentials) o).gid);
-        } else {
-            return false;
-        }
+        return o instanceof Credentials && this.pid == ((Credentials) o).pid && this.uid == ((Credentials) o).uid && this.gid == ((Credentials) o).gid;
     }
 
 }

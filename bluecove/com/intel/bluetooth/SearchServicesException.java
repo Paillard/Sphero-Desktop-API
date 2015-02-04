@@ -35,8 +35,7 @@ class SearchServicesException extends IOException {
 	private static final long serialVersionUID = 1L;
 
 	public SearchServicesException() {
-		super();
-	}
+    }
 
 	public SearchServicesException(String s) {
 		super(s);

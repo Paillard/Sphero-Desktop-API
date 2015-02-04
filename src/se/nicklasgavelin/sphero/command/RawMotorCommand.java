@@ -1,5 +1,7 @@
 package se.nicklasgavelin.sphero.command;
 
+import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
+
 /**
  * Command to steer the direction and speed of the internal motors of the
  * Sphero.
@@ -17,12 +19,12 @@ public class RawMotorCommand extends CommandMessage
 	 * 
 	 * @author Nicklas Gavelin
 	 */
-	public static enum MOTOR_MODE
+	public enum MOTOR_MODE
 	{
 		FORWARD( 1 ), REVERSE( 2 );
 		private int mode;
 
-		private MOTOR_MODE( int mode )
+		MOTOR_MODE(int mode)
 		{
 			this.mode = mode;
 		}

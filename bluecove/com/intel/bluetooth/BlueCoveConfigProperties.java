@@ -39,19 +39,19 @@ public interface BlueCoveConfigProperties {
      * BlueCove debug can be enabled using log4j configuration. Initialization
      * property.
      */
-    public static final String PROPERTY_DEBUG = "bluecove.debug";
+    String PROPERTY_DEBUG = "bluecove.debug";
 
     /**
      * BlueCove log when enabled is printed to System.out. You can disable this
      * feature. Initialization property.
      */
-    public static final String PROPERTY_DEBUG_STDOUT = "bluecove.debug.stdout";
+    String PROPERTY_DEBUG_STDOUT = "bluecove.debug.stdout";
 
     /**
      * BlueCove log is redirected to log4j when log4j classes are available in
      * classpath. You can disable this feature. Initialization property.
      */
-    public static final String PROPERTY_DEBUG_LOG4J = "bluecove.debug.log4j";
+    String PROPERTY_DEBUG_LOG4J = "bluecove.debug.log4j";
 
     /**
      * If automatic Bluetooth Stack detection is not enough this can be used to
@@ -59,7 +59,7 @@ public interface BlueCoveConfigProperties {
      * "winsock". Use "emulator" value to start jsr-82 emulator. By default
      * winsock is selected if available. Initialization property.
      */
-    public static final String PROPERTY_STACK = "bluecove.stack";
+    String PROPERTY_STACK = "bluecove.stack";
 
     /**
      * Used to optimize stack detection. If -Dbluecove.stack.first=widcomm then
@@ -67,48 +67,48 @@ public interface BlueCoveConfigProperties {
      * BlueCove will switch to winsock. By default intelbth.dll is loaded first.
      * Initialization property.
      */
-    public static final String PROPERTY_STACK_FIRST = "bluecove.stack.first";
+    String PROPERTY_STACK_FIRST = "bluecove.stack.first";
 
     /**
      * "false" to disable the load of native library from resources.
      * Initialization property.
      */
-    public static final String PROPERTY_NATIVE_RESOURCE = "bluecove.native.resource";
+    String PROPERTY_NATIVE_RESOURCE = "bluecove.native.resource";
 
     /**
      * Load library (.dll) from specified location. Initialization property.
      * 
      * Path separated by system-dependent path-separator (: or ;) accepted.
      */
-    public static final String PROPERTY_NATIVE_PATH = "bluecove.native.path";
+    String PROPERTY_NATIVE_PATH = "bluecove.native.path";
 
     /**
      * Linux implementation class. Initialization property.
      */
-    public static final String PROPERTY_BLUEZ_CLASS = "bluecove.bluez.class";
+    String PROPERTY_BLUEZ_CLASS = "bluecove.bluez.class";
     
     /**
      * If Stack support multiple bluetooth adapters select one by its system ID.
      * (Linux BlueZ and Emulator) Initialization property.
      */
-    public static final String PROPERTY_LOCAL_DEVICE_ID = "bluecove.deviceID";
+    String PROPERTY_LOCAL_DEVICE_ID = "bluecove.deviceID";
 
     /**
      * If Stack support multiple bluetooth adapters select one by its bluetooth
      * address. (Linux BlueZ and Emulator) Initialization property.
      */
-    public static final String PROPERTY_LOCAL_DEVICE_ADDRESS = "bluecove.deviceAddress";
+    String PROPERTY_LOCAL_DEVICE_ADDRESS = "bluecove.deviceAddress";
 
     /**
      * JSR-82 simulator class. Initialization property.
      */
-    public static final String PROPERTY_EMULATOR_CLASS = "bluecove.emulator.class";
+    String PROPERTY_EMULATOR_CLASS = "bluecove.emulator.class";
     
     /**
      * JSR-82 air simulator server can be on remote computer, default
      * 'localhost'. Initialization property.
      */
-    public static final String PROPERTY_EMULATOR_HOST = "bluecove.emu.rmiRegistryHost";
+    String PROPERTY_EMULATOR_HOST = "bluecove.emu.rmiRegistryHost";
 
     /**
      * JSR-82 air simulator server listen on different port, default 8090.
@@ -116,20 +116,20 @@ public interface BlueCoveConfigProperties {
      * Use 0 on the client to enable in process server, RMI will not be used.
      * Initialization property.
      */
-    public static final String PROPERTY_EMULATOR_PORT = "bluecove.emu.rmiRegistryPort";
+    String PROPERTY_EMULATOR_PORT = "bluecove.emu.rmiRegistryPort";
 
     /**
      * JSR-82 air simulator server and RMI registry can be started inside client
      * JVM, default 'false'. Initialization property.
      */
-    public static final String PROPERTY_EMULATOR_RMI_REGISTRY = "bluecove.emu.rmiRegistry";
+    String PROPERTY_EMULATOR_RMI_REGISTRY = "bluecove.emu.rmiRegistry";
 
     /**
      * Some properties can't be changed at runtime once the Stack was
      * initialized.
      */
-    public static final String[] INITIALIZATION_PROPERTIES = new String[] { PROPERTY_STACK, PROPERTY_STACK_FIRST, PROPERTY_NATIVE_RESOURCE,
-            PROPERTY_NATIVE_RESOURCE, PROPERTY_BLUEZ_CLASS, PROPERTY_LOCAL_DEVICE_ID, PROPERTY_LOCAL_DEVICE_ADDRESS, PROPERTY_EMULATOR_CLASS, PROPERTY_EMULATOR_HOST, PROPERTY_EMULATOR_PORT };
+    String[] INITIALIZATION_PROPERTIES = {PROPERTY_STACK, PROPERTY_STACK_FIRST, PROPERTY_NATIVE_RESOURCE,
+            PROPERTY_NATIVE_RESOURCE, PROPERTY_BLUEZ_CLASS, PROPERTY_LOCAL_DEVICE_ID, PROPERTY_LOCAL_DEVICE_ADDRESS, PROPERTY_EMULATOR_CLASS, PROPERTY_EMULATOR_HOST, PROPERTY_EMULATOR_PORT};
 
     /**
      * The amount of time in milliseconds for which the implementation will
@@ -137,7 +137,7 @@ public interface BlueCoveConfigProperties {
      * BluetoothConnectionException. Defaults to 2 minutes. WIDCOMM and OS X
      * only.
      */
-    public static final String PROPERTY_CONNECT_TIMEOUT = "bluecove.connect.timeout";
+    String PROPERTY_CONNECT_TIMEOUT = "bluecove.connect.timeout";
 
     /**
      * On MS stack retry connection automatically when received WSAENETUNREACH
@@ -145,34 +145,34 @@ public interface BlueCoveConfigProperties {
      * 
      * @since bluecove 2.1.0
      */
-    public static final String PROPERTY_CONNECT_UNREACHABLE_RETRY = "bluecove.connect.unreachable_retry";
+    String PROPERTY_CONNECT_UNREACHABLE_RETRY = "bluecove.connect.unreachable_retry";
 
     /**
      * Device Inquiry time in seconds defaults to 11 seconds. MS Stack and OS X
      * only.
      */
-    public static final String PROPERTY_INQUIRY_DURATION = "bluecove.inquiry.duration";
+    String PROPERTY_INQUIRY_DURATION = "bluecove.inquiry.duration";
 
-    static final int PROPERTY_INQUIRY_DURATION_DEFAULT = 11;
+    int PROPERTY_INQUIRY_DURATION_DEFAULT = 11;
 
     /**
      * Set true to make Device Inquiry call DiscoveryListener?.deviceDiscovered
      * without waiting for updated service class. WIDCOMM only.
      */
-    public static final String PROPERTY_INQUIRY_REPORT_ASAP = "bluecove.inquiry.report_asap";
+    String PROPERTY_INQUIRY_REPORT_ASAP = "bluecove.inquiry.report_asap";
 
     /**
      * You can increase OBEX transfer speed by changing mtu to bigger value.
      * Default is 1024
      */
-    public static final String PROPERTY_OBEX_MTU = "bluecove.obex.mtu";
+    String PROPERTY_OBEX_MTU = "bluecove.obex.mtu";
 
     /**
      * The amount of time in milliseconds for which the implementation will
      * attempt to successfully transmit a packet before it throws
      * InterruptedIOException. Defaults to 2 minutes.
      */
-    public static final String PROPERTY_OBEX_TIMEOUT = "bluecove.obex.timeout";
+    String PROPERTY_OBEX_TIMEOUT = "bluecove.obex.timeout";
 
     /**
      * Remove JSR-82 1.1 restriction for legal PSM values are in the range
@@ -181,7 +181,7 @@ public interface BlueCoveConfigProperties {
      * For JSR-82 1.2 Reserved Ranges @see <A HREF="https://opensource.motorola.com/sf/discussion/do/listPosts/projects.jsr82/discussion.jsr_82_1_2_open_discussion.topc1808"
      * >JSR-82 1.2</A>
      */
-    public static final String PROPERTY_JSR_82_PSM_MINIMUM_OFF = "bluecove.jsr82.psm_minimum_off";
+    String PROPERTY_JSR_82_PSM_MINIMUM_OFF = "bluecove.jsr82.psm_minimum_off";
     
     /**
      * In some cases BlueCove has a control how String are encoded in SDP records. 
@@ -192,24 +192,24 @@ public interface BlueCoveConfigProperties {
      * 
      * Defaults to false.
      */
-    public static final String PROPERTY_SDP_STRING_ENCODING_ASCII = "bluecove.sdp.string_encoding_ascii";
+    String PROPERTY_SDP_STRING_ENCODING_ASCII = "bluecove.sdp.string_encoding_ascii";
 
 	/**
 	 * To be able to use some of android bluetooth APIs, we need a reference to
 	 * an android context object
 	 */
-	public static final String PROPERTY_ANDROID_CONTEXT = "bluecove.android.context";
+    String PROPERTY_ANDROID_CONTEXT = "bluecove.android.context";
 
 	/**
 	 * In android, device can't be discoverable forever. you have to set time in seconds.
 	 * After this time, device will return automatically to non-discoverable.
 	 */
-	public static final String PROPERTY_ANDROID_DISCOVERABLE_DURATION = "bluecove.android.discoverable_duration";
+    String PROPERTY_ANDROID_DISCOVERABLE_DURATION = "bluecove.android.discoverable_duration";
 
 	/**
 	 * Android APIs don't give utilities to examine the service record. So, set this property
 	 * with comma-separated UUIDs you wish services containing them to be
 	 * considered as OBEX services.
 	 */
-	public static final String PROPERTY_ANDROID_OBEX_UUIDS = "bluecove.android.obex_uuids";
+    String PROPERTY_ANDROID_OBEX_UUIDS = "bluecove.android.obex_uuids";
 }

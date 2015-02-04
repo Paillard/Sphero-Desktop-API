@@ -27,7 +27,6 @@
 
 package cx.ath.matthew.io;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -51,7 +50,7 @@ public class DOMPrinter
    public static void printNode(Node n, OutputStream os)
    {
       PrintStream p = new PrintStream(os);
-      printNode(n, p);
+       printNode(n, p);
    }
    /**
     * Print the given node and all its children.
@@ -74,7 +73,7 @@ public class DOMPrinter
             p.print(">");
             NodeList nl = n.getChildNodes();
             for (int i = 0; i < nl.getLength(); i++)
-               printNode(nl.item(i), p);
+                printNode(nl.item(i), p);
             p.print("</"+n.getNodeName()+">");
          } else {
             p.print("/>");
@@ -98,7 +97,7 @@ public class DOMPrinter
          p.println(">");
       }
       Element e = d.getDocumentElement();
-      printNode(e, p);
+       printNode(e, p);
    }
    /**
     * Print the given document and all its children.
@@ -108,7 +107,7 @@ public class DOMPrinter
    public static void printDOM(Document d, OutputStream os)
    {
       PrintStream p = new PrintStream(os);
-      printDOM(d, p);
+       printDOM(d, p);
    }
 }
 

@@ -8,13 +8,14 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import se.nicklasgavelin.log.Logging.Appender;
 
 /**
  * Log appender for Log4j
  * 
  * @author Nicklas Gavelin, nicklas.gavelin@gmail.com, Luleå University of Technology
  */
-public class Log4JLogger implements Logging.Appender
+public class Log4JLogger implements Appender
 {
 	private static final String FROM = Logging.class.getName();
 	private Logger logger;
@@ -27,8 +28,8 @@ public class Log4JLogger implements Logging.Appender
 	 */
 	protected Log4JLogger()
 	{
-		logger = Logger.getLogger( Logging.class.getCanonicalName() );
-		logger.addAppender( new ConsoleAppender( new PatternLayout( "[ %C ][ %d ][ %p ] %m\n" ) ) );
+        logger = Logger.getLogger( Logging.class.getCanonicalName() );
+        logger.addAppender(new ConsoleAppender(new PatternLayout("[ %C ][ %d ][ %p ] %m\n")));
 	}
 
 	/**
@@ -44,16 +45,16 @@ public class Log4JLogger implements Logging.Appender
 		switch ( l )
 		{
 			case DEBUG:
-				this.logger.log( FROM, Level.DEBUG, message, t );
+                this.logger.log(FROM, Level.DEBUG, message, t);
 				break;
 			case ERROR:
-				this.logger.log( FROM, Level.ERROR, message, t );
+                this.logger.log(FROM, Level.ERROR, message, t);
 				break;
 			case INFO:
-				this.logger.log( FROM, Level.INFO, message, t );
+                this.logger.log(FROM, Level.INFO, message, t);
 				break;
 			case WARN:
-				this.logger.log( FROM, Level.WARN, message, t );
+                this.logger.log(FROM, Level.WARN, message, t);
 				break;
 		}
 	}
@@ -72,11 +73,11 @@ public class Log4JLogger implements Logging.Appender
 			case DEBUG:
 				return this.logger.isDebugEnabled();
 			case ERROR:
-				return this.logger.isEnabledFor( Level.ERROR );
+				return this.logger.isEnabledFor(Level.ERROR);
 			case INFO:
-				return this.logger.isEnabledFor( Level.INFO );
+				return this.logger.isEnabledFor(Level.INFO);
 			case WARN:
-				return this.logger.isEnabledFor( Level.WARN );
+				return this.logger.isEnabledFor(Level.WARN);
 			default:
 				return false;
 		}

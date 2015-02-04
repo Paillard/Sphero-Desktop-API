@@ -25,40 +25,38 @@ class DBusMap<K, V> implements Map<K, V>
    {
       this.entries=entries;
    }
-   class Entry implements Map.Entry<K,V>, Comparable<Entry>
+   class Entry implements Map.Entry<K,V>, Comparable<DBusMap.Entry>
    {
       private int entry;
       public Entry(int i)
       {
-         this.entry = i;
+          entry = i;
       }
-      public boolean  equals(Object o)
-      {
-         if (null == o) return false;
-         if (!(o instanceof DBusMap.Entry)) return false;
-         return this.entry == ((Entry) o).entry;
+      public boolean  equals(Object o) {
+          if (null == o) return false;
+          return o instanceof DBusMap.Entry && entry == ((DBusMap.Entry) o).entry;
       }
       @SuppressWarnings("unchecked")
       public K getKey()
       {
-         return (K) entries[entry][0];
+         return (K) DBusMap.this.entries[this.entry][0];
       }
       @SuppressWarnings("unchecked")
       public V getValue()
       {
-         return (V) entries[entry][1];
+         return (V) DBusMap.this.entries[this.entry][1];
       }
       public int hashCode()
       {
-         return entries[entry][0].hashCode();
+         return DBusMap.this.entries[this.entry][0].hashCode();
       }
       public V setValue(V value)
       {
          throw new UnsupportedOperationException();
       }
-      public int compareTo(Entry e)
+      public int compareTo(DBusMap.Entry e)
       {
-         return entry - e.entry;
+         return this.entry - e.entry;
       }
    }
 
@@ -68,42 +66,42 @@ class DBusMap<K, V> implements Map<K, V>
    }
    public boolean containsKey(Object key)
    {
-      for (int i = 0; i < entries.length; i++)
-         if (key == entries[i][0] || (key != null && key.equals(entries[i][0])))
-            return true;
+       for (Object[] entry : this.entries)
+           if (key == entry[0] || key != null && key.equals(entry[0]))
+               return true;
       return false;
    }
    public boolean containsValue(Object value)
    {
-      for (int i = 0; i < entries.length; i++)
-         if (value == entries[i][1] || (value != null && value.equals(entries[i][1])))
-            return true;
+       for (Object[] entry : this.entries)
+           if (value == entry[1] || value != null && value.equals(entry[1]))
+               return true;
       return false;
    }
    public Set<Map.Entry<K,V>> entrySet()
    {
-      Set<Map.Entry<K,V>> s = new TreeSet<Map.Entry<K,V>>();
-      for (int i = 0; i < entries.length; i++) 
-         s.add(new Entry(i));
+      Set<Map.Entry<K,V>> s = new TreeSet<>();
+      for (int i = 0; i < this.entries.length; i++)
+         s.add(new DBusMap.Entry(i));
       return s;
    }
    @SuppressWarnings("unchecked")
    public V get(Object key)
    {
-      for (int i = 0; i < entries.length; i++)
-         if (key == entries[i][0] || (key != null && key.equals(entries[i][0])))
-            return (V) entries[i][1];
+       for (Object[] entry : this.entries)
+           if (key == entry[0] || key != null && key.equals(entry[0]))
+               return (V) entry[1];
       return null;
    }
    public boolean isEmpty() 
    { 
-      return entries.length == 0;
+      return this.entries.length == 0;
    }
    @SuppressWarnings("unchecked")
    public Set<K> keySet()
    {
-      Set<K> s = new TreeSet<K>();
-      for (Object[] entry: entries)
+      Set<K> s = new TreeSet<>();
+      for (Object[] entry: this.entries)
          s.add((K) entry[0]);
       return s;
    }
@@ -121,32 +119,29 @@ class DBusMap<K, V> implements Map<K, V>
    }
    public int size()
    {
-      return entries.length;
+      return this.entries.length;
    }
    @SuppressWarnings("unchecked")
    public Collection<V> values()
    {
-      List<V> l = new Vector<V>();
-      for (Object[] entry: entries)
+      List<V> l = new Vector<>();
+      for (Object[] entry: this.entries)
          l.add((V) entry[1]);
       return l;
    }
    public int hashCode() 
    {
-      return Arrays.deepHashCode(entries);
+      return Arrays.deepHashCode(this.entries);
    }
    @SuppressWarnings("unchecked")
-   public boolean equals(Object o) 
-   {
-      if (null == o) return false;
-      if (!(o instanceof Map)) return false;
-      return ((Map<K,V>) o).entrySet().equals(entrySet());
+   public boolean equals(Object o) {
+       if (null == o) return false;
+       return o instanceof Map && ((Map<K, V>) o).entrySet().equals(this.entrySet());
    }
    public String toString()
    {
       String s = "{ ";
-      for (int i = 0; i < entries.length; i++) 
-         s += entries[i][0] + " => " + entries[i][1] + ",";
+       for (Object[] entry : this.entries) s += entry[0] + " => " + entry[1] + ",";
       return s.replaceAll(".$", " }");
    }
 }
