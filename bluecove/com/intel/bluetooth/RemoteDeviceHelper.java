@@ -29,6 +29,7 @@ import com.intel.bluetooth.WeakVectorFactory.WeakVector;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.bluetooth.BluetoothStateException;
@@ -102,12 +103,12 @@ public abstract class RemoteDeviceHelper {
             if (!hasConnections()) {
                 return;
             }
-            Vector c2shutdown = new Vector();
+            Vector c2shutdown;
             synchronized (connections) {
                 c2shutdown = Utils.clone(connections.elements());
             }
-            for (Enumeration en = c2shutdown.elements(); en.hasMoreElements();) {
-                BluetoothConnectionAccess c = (BluetoothConnectionAccess) en.nextElement();
+            for (Iterator iterator = c2shutdown.iterator(); iterator.hasNext();) {
+                BluetoothConnectionAccess c = (BluetoothConnectionAccess) iterator.next();
                 try {
                     c.shutdown();
                 } catch (IOException e) {
@@ -399,8 +400,8 @@ public abstract class RemoteDeviceHelper {
     static RemoteDevice[] remoteDeviceListToArray(Vector devices) {
         RemoteDevice[] devicesArray = new RemoteDevice[devices.size()];
         int i = 0;
-        for (Enumeration en = devices.elements(); en.hasMoreElements();) {
-            devicesArray[i++] = (RemoteDevice) en.nextElement();
+        for (Iterator iterator = devices.iterator(); iterator.hasNext();) {
+            devicesArray[i++] = (RemoteDevice) iterator.next();
         }
         return devicesArray;
     }
@@ -414,8 +415,8 @@ public abstract class RemoteDeviceHelper {
         int c = 0;
         Hashtable devicesCashed = devicesCashed(getBluetoothStack());
         synchronized (devicesCashed) {
-            for (Enumeration en = devicesCashed.elements(); en.hasMoreElements();) {
-                c += ((RemoteDeviceWithExtendedInfo) en.nextElement()).connectionsCount();
+            for (Iterator iterator = devicesCashed.values().iterator(); iterator.hasNext();) {
+                c += ((RemoteDeviceWithExtendedInfo) iterator.next()).connectionsCount();
             }
         }
         return c;
@@ -443,8 +444,8 @@ public abstract class RemoteDeviceHelper {
         int c = 0;
         Hashtable devicesCashed = devicesCashed(getBluetoothStack());
         synchronized (devicesCashed) {
-            for (Enumeration en = devicesCashed.elements(); en.hasMoreElements();) {
-                if (((RemoteDeviceWithExtendedInfo) en.nextElement()).hasConnections()) {
+            for (Iterator iterator = devicesCashed.values().iterator(); iterator.hasNext();) {
+                if (((RemoteDeviceWithExtendedInfo) iterator.next()).hasConnections()) {
                     c++;
                 }
             }
@@ -455,8 +456,8 @@ public abstract class RemoteDeviceHelper {
     static void shutdownConnections(BluetoothStack bluetoothStack) {
         Hashtable devicesCashed = devicesCashed(bluetoothStack);
         synchronized (devicesCashed) {
-            for (Enumeration en = devicesCashed.elements(); en.hasMoreElements();) {
-                ((RemoteDeviceWithExtendedInfo) en.nextElement()).shutdownConnections();
+            for (Iterator iterator = devicesCashed.values().iterator(); iterator.hasNext();) {
+                ((RemoteDeviceWithExtendedInfo) iterator.next()).shutdownConnections();
             }
         }
     }
@@ -507,7 +508,7 @@ public abstract class RemoteDeviceHelper {
     }
 
     static Object getStackAttributes(BluetoothStack bluetoothStack, RemoteDevice device, Object key) {
-        RemoteDeviceWithExtendedInfo devInfo = null;
+        RemoteDeviceWithExtendedInfo devInfo;
         if (device instanceof RemoteDeviceWithExtendedInfo) {
             devInfo = (RemoteDeviceWithExtendedInfo) device;
         } else {
@@ -695,8 +696,8 @@ public abstract class RemoteDeviceHelper {
                 return null;
             }
             Vector devicesPaired = new Vector();
-            for (Enumeration en = devicesCashed.elements(); en.hasMoreElements();) {
-                RemoteDeviceWithExtendedInfo d = (RemoteDeviceWithExtendedInfo) en.nextElement();
+            for (Iterator iterator = devicesCashed.values().iterator(); iterator.hasNext();) {
+                RemoteDeviceWithExtendedInfo d = (RemoteDeviceWithExtendedInfo) iterator.next();
                 if (d.isTrustedDevice()) {
                     devicesPaired.addElement(d);
                 }
@@ -713,8 +714,8 @@ public abstract class RemoteDeviceHelper {
             }
             RemoteDevice[] devices = new RemoteDevice[devicesCashed.size()];
             int k = 0;
-            for (Enumeration en = devicesCashed.elements(); en.hasMoreElements();) {
-                devices[k++] = (RemoteDevice) en.nextElement();
+            for (Iterator iterator = devicesCashed.values().iterator(); iterator.hasNext();) {
+                devices[k++] = (RemoteDevice) iterator.next();
             }
             return devices;
         default:

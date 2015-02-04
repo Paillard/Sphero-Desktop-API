@@ -49,7 +49,7 @@ class DeviceInquiryThread extends Thread {
 
 	private boolean terminated;
 
-	private Object inquiryStartedEvent = new Object();
+	private final Object inquiryStartedEvent = new Object();
 
 	private static int threadNumber;
 

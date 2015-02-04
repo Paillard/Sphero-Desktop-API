@@ -6,7 +6,7 @@
 package se.nicklasgavelin.sphero;
 
 import java.awt.Color;
-import se.nicklasgavelin.sphero.command.RawMotorCommand;
+
 import se.nicklasgavelin.sphero.command.RawMotorCommand.MOTOR_MODE;
 import se.nicklasgavelin.util.Value;
 

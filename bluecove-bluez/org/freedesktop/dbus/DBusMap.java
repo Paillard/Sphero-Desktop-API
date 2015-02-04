@@ -25,7 +25,7 @@ class DBusMap<K, V> implements Map<K, V>
    {
       this.entries=entries;
    }
-   class Entry implements Map.Entry<K,V>, Comparable<DBusMap.Entry>
+   class Entry implements Map.Entry<K,V>, Comparable<Entry>
    {
       private int entry;
       public Entry(int i)
@@ -33,30 +33,29 @@ class DBusMap<K, V> implements Map<K, V>
           entry = i;
       }
       public boolean  equals(Object o) {
-          if (null == o) return false;
-          return o instanceof DBusMap.Entry && entry == ((DBusMap.Entry) o).entry;
+          return null != o && o instanceof DBusMap<?, ?>.Entry && entry == ((Entry) o).entry;
       }
       @SuppressWarnings("unchecked")
       public K getKey()
       {
-         return (K) DBusMap.this.entries[this.entry][0];
+         return (K) entries[entry][0];
       }
       @SuppressWarnings("unchecked")
       public V getValue()
       {
-         return (V) DBusMap.this.entries[this.entry][1];
+         return (V) entries[entry][1];
       }
       public int hashCode()
       {
-         return DBusMap.this.entries[this.entry][0].hashCode();
+         return entries[entry][0].hashCode();
       }
       public V setValue(V value)
       {
          throw new UnsupportedOperationException();
       }
-      public int compareTo(DBusMap.Entry e)
+      public int compareTo(Entry e)
       {
-         return this.entry - e.entry;
+         return entry - e.entry;
       }
    }
 
@@ -66,14 +65,14 @@ class DBusMap<K, V> implements Map<K, V>
    }
    public boolean containsKey(Object key)
    {
-       for (Object[] entry : this.entries)
+       for (Object[] entry : entries)
            if (key == entry[0] || key != null && key.equals(entry[0]))
                return true;
       return false;
    }
    public boolean containsValue(Object value)
    {
-       for (Object[] entry : this.entries)
+       for (Object[] entry : entries)
            if (value == entry[1] || value != null && value.equals(entry[1]))
                return true;
       return false;
@@ -81,27 +80,27 @@ class DBusMap<K, V> implements Map<K, V>
    public Set<Map.Entry<K,V>> entrySet()
    {
       Set<Map.Entry<K,V>> s = new TreeSet<>();
-      for (int i = 0; i < this.entries.length; i++)
-         s.add(new DBusMap.Entry(i));
+      for (int i = 0; i < entries.length; i++)
+         s.add(new DBusMap<K,V>.Entry(i));
       return s;
    }
    @SuppressWarnings("unchecked")
    public V get(Object key)
    {
-       for (Object[] entry : this.entries)
+       for (Object[] entry : entries)
            if (key == entry[0] || key != null && key.equals(entry[0]))
                return (V) entry[1];
       return null;
    }
    public boolean isEmpty() 
    { 
-      return this.entries.length == 0;
+      return entries.length == 0;
    }
    @SuppressWarnings("unchecked")
    public Set<K> keySet()
    {
       Set<K> s = new TreeSet<>();
-      for (Object[] entry: this.entries)
+      for (Object[] entry: entries)
          s.add((K) entry[0]);
       return s;
    }
@@ -119,29 +118,28 @@ class DBusMap<K, V> implements Map<K, V>
    }
    public int size()
    {
-      return this.entries.length;
+      return entries.length;
    }
    @SuppressWarnings("unchecked")
    public Collection<V> values()
    {
       List<V> l = new Vector<>();
-      for (Object[] entry: this.entries)
+      for (Object[] entry: entries)
          l.add((V) entry[1]);
       return l;
    }
    public int hashCode() 
    {
-      return Arrays.deepHashCode(this.entries);
+      return Arrays.deepHashCode(entries);
    }
    @SuppressWarnings("unchecked")
    public boolean equals(Object o) {
-       if (null == o) return false;
-       return o instanceof Map && ((Map<K, V>) o).entrySet().equals(this.entrySet());
+       return null != o && o instanceof Map && ((Map<K, V>) o).entrySet().equals(entrySet());
    }
    public String toString()
    {
       String s = "{ ";
-       for (Object[] entry : this.entries) s += entry[0] + " => " + entry[1] + ",";
+       for (Object[] entry : entries) s += entry[0] + " => " + entry[1] + ",";
       return s.replaceAll(".$", " }");
    }
 }

@@ -107,7 +107,7 @@ abstract class BluetoothL2CAPConnection implements L2CAPConnection, BluetoothCon
 	 *
 	 * @see javax.bluetooth.L2CAPConnection#receive(byte[])
 	 */
-	public int receive(byte[] inBuf) throws IOException {
+	public int receive(byte... inBuf) throws IOException {
 		if (isClosed) {
 			throw new IOException("Connection closed");
 		}
@@ -122,7 +122,7 @@ abstract class BluetoothL2CAPConnection implements L2CAPConnection, BluetoothCon
 	 *
 	 * @see javax.bluetooth.L2CAPConnection#send(byte[])
 	 */
-	public void send(byte[] data) throws IOException {
+	public void send(byte... data) throws IOException {
 		if (isClosed) {
 			throw new IOException("Connection closed");
 		}

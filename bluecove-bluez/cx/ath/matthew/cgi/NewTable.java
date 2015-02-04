@@ -31,8 +31,8 @@ public class NewTable extends Field {
     private String cssClass;
 	
 	public NewTable (String name, String css) {
-        String name1 = name;
-        this.cssClass = css;
+        //String name1 = name;
+        cssClass = css;
 	}
 	
 	protected String print() {

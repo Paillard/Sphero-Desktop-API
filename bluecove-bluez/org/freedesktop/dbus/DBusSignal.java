@@ -10,7 +10,9 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext.getResource;
+import cx.ath.matthew.debug.Debug;
+import org.freedesktop.dbus.exceptions.DBusException;
+import org.freedesktop.dbus.exceptions.MessageFormatException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.GenericDeclaration;
@@ -21,10 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import org.freedesktop.dbus.exceptions.DBusException;
-import org.freedesktop.dbus.exceptions.MessageFormatException;
-
-import cx.ath.matthew.debug.Debug;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 public class DBusSignal extends Message
 {
@@ -92,7 +91,7 @@ public class DBusSignal extends Message
    
    static DBusSignal createSignal(Class<? extends DBusSignal> c, String source, String objectpath, String sig, long serial, Object... parameters) throws DBusException
    {
-      String type = "";
+      String type;
       if (null != c.getEnclosingClass()) {
          if (null != c.getEnclosingClass().getAnnotation(DBusInterfaceName.class))
             type = c.getEnclosingClass().getAnnotation(DBusInterfaceName.class).value();
@@ -190,7 +189,7 @@ public class DBusSignal extends Message
          member = tc.getAnnotation(DBusMemberName.class).value();
       else
          member = tc.getSimpleName();
-      String iface = null;
+      String iface;
       Class<?> enc = tc.getEnclosingClass();
       if (null == enc ||
             !DBusInterface.class.isAssignableFrom(enc) ||
@@ -211,7 +210,7 @@ public class DBusSignal extends Message
       hargs.add(new Object[] { HeaderField.INTERFACE, new Object[] { ArgumentType.STRING_STRING, iface } });
       hargs.add(new Object[] { HeaderField.MEMBER, new Object[] { ArgumentType.STRING_STRING, member } });
 
-      String sig = null;
+      String sig;
       if (0 < args.length) {
          try {
             Type[] types = typeCache.get(tc);

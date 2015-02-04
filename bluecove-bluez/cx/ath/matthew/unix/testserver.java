@@ -33,7 +33,7 @@ import java.io.IOException;
 
 public class testserver
 {
-   public static void main(String args[]) throws IOException
+   public static void main(String... args) throws IOException
    {
       UnixServerSocket ss = new UnixServerSocket(new UnixSocketAddress("testsock", true));
       UnixSocket s = ss.accept();

@@ -25,17 +25,11 @@
 package org.bluez.v3;
 
 import com.intel.bluetooth.BlueCoveImpl;
-import com.intel.bluetooth.BluetoothConsts;
 import com.intel.bluetooth.BluetoothConsts.DeviceClassConsts;
 import com.intel.bluetooth.DebugLog;
 import org.bluez.BlueZAPI;
-import org.bluez.Error;
-import org.bluez.v3.Adapter.DiscoveryCompleted;
-import org.bluez.v3.Adapter.DiscoveryStarted;
-import org.bluez.v3.Adapter.RemoteClassUpdated;
-import org.bluez.v3.Adapter.RemoteDeviceFound;
-import org.bluez.v3.Adapter.RemoteNameUpdated;
-import org.freedesktop.DBus;
+import org.bluez.Error.*;
+import org.bluez.v3.Adapter.*;
 import org.freedesktop.DBus.Error.NoReply;
 import org.freedesktop.dbus.*;
 import org.freedesktop.dbus.exceptions.DBusException;
@@ -44,10 +38,7 @@ import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import javax.bluetooth.DiscoveryAgent;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * 
@@ -76,11 +67,11 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#findAdapter(java.lang.String)
      */
-    public Path findAdapter(String pattern) throws Error.InvalidArguments {
+    public Path findAdapter(String pattern) throws InvalidArguments {
         String path;
         try {
             path = dbusManager.FindAdapter(pattern);
-        } catch (Error.NoSuchAdapter e) {
+        } catch (NoSuchAdapter e) {
             return null;
         }
         if (path == null) {
@@ -95,11 +86,11 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#defaultAdapter()
      */
-    public Path defaultAdapter() throws Error.InvalidArguments {
+    public Path defaultAdapter() throws InvalidArguments {
         String path;
         try {
             path = dbusManager.DefaultAdapter();
-        } catch (Error.NoSuchAdapter e) {
+        } catch (NoSuchAdapter e) {
             return null;
         }
         if (path == null) {
@@ -270,9 +261,9 @@ public class BlueZAPIV3 implements BlueZAPI {
     public String getAdapterName() {
         try {
             return adapter.GetName();
-        } catch (Error.NotReady e) {
+        } catch (NotReady e) {
             return null;
-        } catch (Error.Failed e) {
+        } catch (Failed e) {
             return null;
         }
     }
@@ -300,7 +291,7 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#setAdapterDiscoverable(int)
      */
-    public boolean setAdapterDiscoverable(int mode) throws DBusException {
+    public boolean setAdapterDiscoverable(int mode) {
         String modeStr;
         switch (mode) {
         case DiscoveryAgent.NOT_DISCOVERABLE:
@@ -379,7 +370,7 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#deviceInquiry(org.bluez.BlueZAPI.DeviceInquiryListener )
      */
-    public void deviceInquiry(BlueZAPI.DeviceInquiryListener listener) throws DBusException, InterruptedException {
+    public void deviceInquiry(DeviceInquiryListener listener) throws DBusException, InterruptedException {
 
         Object discoveryCompletedEvent = new Object();
 
@@ -438,7 +429,7 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#deviceInquiryCancel()
      */
-    public void deviceInquiryCancel() throws DBusException {
+    public void deviceInquiryCancel() {
         adapter.CancelDiscovery();
     }
 
@@ -510,15 +501,11 @@ public class BlueZAPIV3 implements BlueZAPI {
         List<String> addresses = new Vector<>();
         String[] bonded = adapter.ListBondings();
         if (bonded != null) {
-            for (String aBonded : bonded) {
-                addresses.add(aBonded);
-            }
+            Collections.addAll(addresses, bonded);
         }
         String[] trusted = adapter.ListTrusts();
         if (trusted != null) {
-            for (String aTrusted : trusted) {
-                addresses.add(aTrusted);
-            }
+            Collections.addAll(addresses, trusted);
         }
         return addresses;
     }
@@ -564,7 +551,7 @@ public class BlueZAPIV3 implements BlueZAPI {
 
             PasskeyAgent passkeyAgent = new PasskeyAgent() {
 
-                public String Request(String path, String address) throws Error.Rejected, Error.Canceled {
+                public String Request(String path, String address) throws Rejected, Canceled {
                     if (deviceAddress.equals(address)) {
                         DebugLog.debug("PasskeyAgent.Request");
                         return passkey;
@@ -632,7 +619,7 @@ public class BlueZAPIV3 implements BlueZAPI {
      * 
      * @see org.bluez.BlueZAPI#removeAuthenticationWithRemoteDevice(java.lang.String)
      */
-    public void removeAuthenticationWithRemoteDevice(String deviceAddress) throws DBusException {
+    public void removeAuthenticationWithRemoteDevice(String deviceAddress) {
         adapter.RemoveBonding(deviceAddress);
     }
 

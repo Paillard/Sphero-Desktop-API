@@ -5,11 +5,12 @@
 
 package experimental.sensor;
 
+import se.nicklasgavelin.sphero.Robot;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
-import se.nicklasgavelin.sphero.Robot;
 
 /**
  *
@@ -28,8 +29,8 @@ public class TouchSensor extends Timer
     public TouchSensor( Robot r, int eventDelay )
     {
         this.r = r;
-        this.sensordata = new LinkedList<>();
-        this.listeners = new LinkedList<>();
+        sensordata = new LinkedList<>();
+        listeners = new LinkedList<>();
         this.eventDelay = eventDelay;
     }
 
@@ -42,29 +43,29 @@ public class TouchSensor extends Timer
     {
         synchronized(sensordata)
         {
-            this.sensordata.add(ax);
+            sensordata.add(ax);
 
-            if( !this.started)
+            if( !started)
             {
-                this.schedule( new TouchCheckEvent(), eventDelay);
+                schedule( new TouchCheckEvent(), eventDelay);
             }
         }
     }
 
     public void addTouchListener( TouchListener l )
     {
-        if( !this.listeners.contains(l) );
-        this.listeners.add(l);
+        if( !listeners.contains(l) )
+            listeners.add(l);
     }
 
     public void removeTouchListener( TouchListener l )
     {
-        this.listeners.remove(l);
+        listeners.remove(l);
     }
 
     public void notifyListeners()
     {
-        for( TouchListener l : this.listeners)
+        for( TouchListener l : listeners)
             l.touchEvent(r);
     }
 
@@ -74,11 +75,11 @@ public class TouchSensor extends Timer
         @Override
         public void run()
         {
-            synchronized(TouchSensor.this.sensordata)
+            synchronized(sensordata)
             {
-                if(TouchSensor.this.sensordata.isEmpty() )
+                if(sensordata.isEmpty() )
                 {
-                    TouchSensor.this.started = false;
+                    started = false;
                     return;
                 }
 
@@ -87,38 +88,38 @@ public class TouchSensor extends Timer
                 int dY = 0;
                 int dZ = 0;
 
-                for( AccelerometerSensorData s : TouchSensor.this.sensordata)
+                for( AccelerometerSensorData s : sensordata)
                 {
                     dX += s.getAxis3Sensor().x;
                     dY += s.getAxis3Sensor().y;
                     dZ += s.getAxis3Sensor().z;
                 }
 
-                dX = dX / TouchSensor.this.sensordata.size();
-                dY = dY / TouchSensor.this.sensordata.size();
-                dZ = dZ / TouchSensor.this.sensordata.size();
+                dX = dX / sensordata.size();
+                dY = dY / sensordata.size();
+                dZ = dZ / sensordata.size();
 
                 // Now check if it's above our threshold
                 double k = Math.sqrt(dX*dX + dY*dY + dZ*dZ);
 //                System.out.println( "k=" + k );
-                if( k > threshold )
+                if( k > threshold)
                 {
                     long time = System.currentTimeMillis();
                     long BACKOFF = 1500;
                     if(  time - touched > BACKOFF)
                     {
                         // Update touched time
-                        TouchSensor.this.touched = time;
+                        touched = time;
 
                         // Notify listeners
-                        TouchSensor.this.notifyListeners();
+                        notifyListeners();
                     }
                 }
 
-                TouchSensor.this.sensordata.clear();
+                sensordata.clear();
 
                 // Set started to false
-                TouchSensor.this.started = false;
+                started = false;
             }
         }
     }

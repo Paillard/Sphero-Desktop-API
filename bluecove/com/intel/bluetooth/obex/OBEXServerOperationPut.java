@@ -144,7 +144,7 @@ class OBEXServerOperationPut extends OBEXServerOperation implements OBEXOperatio
 	 * 
 	 * @see com.intel.bluetooth.obex.OBEXOperationDelivery#deliverPacket(boolean, byte[])
 	 */
-	public void deliverPacket(boolean finalPacket, byte[] buffer) throws IOException {
+	public void deliverPacket(boolean finalPacket, byte... buffer) throws IOException {
 		if (session.requestSent) {
 			// TODO Consider moving readRequestPacket() to the begging of the function
             readRequestPacket();

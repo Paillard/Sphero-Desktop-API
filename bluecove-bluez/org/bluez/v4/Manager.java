@@ -32,12 +32,10 @@
  */
 package org.bluez.v4;
 
-import org.bluez.Error;
 import org.bluez.Error.Failed;
 import org.bluez.Error.InvalidArguments;
 import org.bluez.Error.NoSuchAdapter;
 import org.bluez.Error.OutOfMemory;
-import org.bluez.dbus.DBusProperties;
 import org.bluez.dbus.DBusProperties.DBusProperty;
 import org.bluez.dbus.DBusProperties.DBusPropertyAccessType;
 import org.bluez.dbus.DBusProperties.PropertiesAccess;

@@ -23,20 +23,17 @@ class RemoteObject
       this.iface = iface;
       this.autostart = autostart;
    }
-   public boolean equals(Object o)
-   {
-      if (!(o instanceof RemoteObject)) return false;
-      RemoteObject them = (RemoteObject) o;
+   public boolean equals(Object o) {
+       if (!(o instanceof RemoteObject)) return false;
+       RemoteObject them = (RemoteObject) o;
 
-      if (!them.objectpath.equals(this.objectpath)) return false;
-      
-      if (null == this.busname && null != them.busname) return false;
-      if (null != this.busname && null == them.busname) return false;
-      if (null != them.busname && !them.busname.equals(this.busname)) return false;
-      
-      if (null == this.iface && null != them.iface) return false;
-      if (null != this.iface && null == them.iface) return false;
-       return !(null != them.iface && !them.iface.equals(this.iface));
+       if (!them.objectpath.equals(objectpath)) return false;
+
+       if (null == busname && null != them.busname) return false;
+       if (null != busname && null == them.busname) return false;
+       if (null != them.busname && !them.busname.equals(busname)) return false;
+
+       return !(null == iface && null != them.iface) && !(null != iface && null == them.iface) && !(null != them.iface && !them.iface.equals(iface));
 
    }
    public int hashCode()

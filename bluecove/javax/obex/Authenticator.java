@@ -116,5 +116,5 @@ public interface Authenticator {
 	 *         <code>null</code> is returned then the authentication request
 	 *         failed
 	 */
-    byte[] onAuthenticationResponse(byte[] userName);
+    byte[] onAuthenticationResponse(byte... userName);
 }

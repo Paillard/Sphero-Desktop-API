@@ -52,8 +52,7 @@ public class ExecOutputStream extends FilterOutputStream
     * @param os Writes to this OutputStream
     * @param p Filters data through stdin/out on this Process
     */
-   public ExecOutputStream(OutputStream os, Process p) throws IOException
-   {
+   public ExecOutputStream(OutputStream os, Process p) {
       super(os);
        proc = p;
        stdin = p.getOutputStream();
@@ -75,7 +74,7 @@ public class ExecOutputStream extends FilterOutputStream
     * @param os Writes to this OutputStream
     * @param cmd Creates a Process from this string array (command, arg, ...) to filter data through stdin/out 
     */
-   public ExecOutputStream(OutputStream os, String[] cmd) throws IOException
+   public ExecOutputStream(OutputStream os, String... cmd) throws IOException
    { this(os, Runtime.getRuntime().exec(cmd)); }
    /**
     * Create a new ExecOutputStream on the given OutputStream
@@ -84,7 +83,7 @@ public class ExecOutputStream extends FilterOutputStream
     * @param cmd Creates a Process from this string to filter data through stdin/out 
     * @param env Setup the environment for the command
     */
-   public ExecOutputStream(OutputStream os, String cmd, String[] env) throws IOException
+   public ExecOutputStream(OutputStream os, String cmd, String... env) throws IOException
    { this(os, Runtime.getRuntime().exec(cmd, env)); }
    /**
     * Create a new ExecOutputStream on the given OutputStream
@@ -93,7 +92,7 @@ public class ExecOutputStream extends FilterOutputStream
     * @param cmd Creates a Process from this string array (command, arg, ...) to filter data through stdin/out 
     * @param env Setup the environment for the command
     */
-   public ExecOutputStream(OutputStream os, String[] cmd, String[] env) throws IOException
+   public ExecOutputStream(OutputStream os, String[] cmd, String... env) throws IOException
    { this(os, Runtime.getRuntime().exec(cmd, env)); }
 
    public void close() throws IOException

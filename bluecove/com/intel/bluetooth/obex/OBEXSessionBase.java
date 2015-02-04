@@ -301,10 +301,7 @@ abstract class OBEXSessionBase implements Connection, BluetoothConnectionAccess 
      * @see com.intel.bluetooth.BluetoothConnectionAccess#isClosed()
      */
     public boolean isClosed() {
-        if (conn == null) {
-            return true;
-        }
-        return this.conn instanceof BluetoothConnectionAccess && ((BluetoothConnectionAccess) conn).isClosed();
+        return conn == null || this.conn instanceof BluetoothConnectionAccess && ((BluetoothConnectionAccess) conn).isClosed();
     }
 
     /*

@@ -29,7 +29,7 @@ public class ListDBus
       System.out.println("Java D-Bus Version "+System.getProperty("Version"));
       System.exit(1);
    }
-   public static void main(String args[]) throws Exception
+   public static void main(String... args) throws Exception
    {
       boolean owners = false;
       boolean users = false;

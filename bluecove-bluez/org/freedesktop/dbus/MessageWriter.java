@@ -10,13 +10,14 @@
 */
 package org.freedesktop.dbus;
 
-import java.io.BufferedOutputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-
 import cx.ath.matthew.debug.Debug;
 import cx.ath.matthew.unix.USOutputStream;
 import cx.ath.matthew.utils.Hexdump;
+
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
 
 public class MessageWriter
 {
@@ -48,13 +49,13 @@ public class MessageWriter
          if (Debug.debug) {
             Debug.print(Debug.DEBUG, "Writing all "+m.getWireData().length+" buffers simultaneously to Unix Socket");
             for (byte[] buf: m.getWireData()) 
-               Debug.print(Debug.VERBOSE, "("+buf+"):"+ (null==buf? "": Hexdump.format(buf)));
+               Debug.print(Debug.VERBOSE, "("+ Arrays.toString(buf) +"):"+ (null==buf? "": Hexdump.format(buf)));
          }
          ((USOutputStream) out).write(m.getWireData());
       } else
          for (byte[] buf: m.getWireData()) {
             if (Debug.debug)
-               Debug.print(Debug.VERBOSE, "("+buf+"):"+ (null==buf? "": Hexdump.format(buf)));
+               Debug.print(Debug.VERBOSE, "("+ Arrays.toString(buf) +"):"+ (null==buf? "": Hexdump.format(buf)));
             if (null == buf) break;
              out.write(buf);
          }

@@ -10,31 +10,19 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext.getResource;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Vector;
-
+import cx.ath.matthew.debug.Debug;
 import org.freedesktop.dbus.Message.ArgumentType;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.types.DBusListType;
 import org.freedesktop.dbus.types.DBusMapType;
 import org.freedesktop.dbus.types.DBusStructType;
 
-import cx.ath.matthew.debug.Debug;
+import java.lang.reflect.*;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.freedesktop.dbus.Gettext.getResource;
 
 /**
  * Contains static methods for marshalling values.
@@ -50,7 +38,7 @@ public class Marshalling
     * @return The DBus types.
     * @throws DBusException If the given type cannot be converted to a DBus type.
     */
-   public static String getDBusType(Type[] c) throws DBusException
+   public static String getDBusType(Type... c) throws DBusException
    {
       StringBuilder sb = new StringBuilder();
       for (Type t: c) 
@@ -174,9 +162,8 @@ public class Marshalling
             Type[] ts = p.getActualTypeArguments();
             Vector<String> vs = new Vector<>();
             for (Type t: ts)
-               for (String s: recursiveGetDBusType(t, false, level + 1))
-                  vs.add(s);
-            return vs.toArray(new String[0]);
+                Collections.addAll(vs, recursiveGetDBusType(t, false, level + 1));
+            return vs.toArray(new String[vs.size()]);
          }
          else
             throw new DBusException(getResource("Exporting non-exportable parameterized type ")+c);
@@ -271,8 +258,8 @@ public class Marshalling
                   }
 
                   Vector<Type> contained = new Vector<>();
-                  int c = getJavaType(dbus.substring(i + 1, j - 1), contained, -1);
-                  rv.add(new DBusStructType(contained.toArray(new Type[0])));
+                  int c;// = getJavaType(dbus.substring(i + 1, j - 1), contained, -1);
+                  rv.add(new DBusStructType(contained.toArray(new Type[contained.size()])));
                   i = j;
                   break;                     
                case ArgumentType.ARRAY:
@@ -421,7 +408,7 @@ public class Marshalling
             && parameter instanceof String) {
          Vector<Type> rv = new Vector<>();
           getJavaType((String) parameter, rv, -1);
-         parameter = rv.toArray(new Type[0]);
+         parameter = rv.toArray(new Type[rv.size()]);
       }
 
       // its an object path, get/create the proxy

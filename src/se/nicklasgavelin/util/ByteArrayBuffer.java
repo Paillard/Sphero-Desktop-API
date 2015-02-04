@@ -44,7 +44,7 @@ public class ByteArrayBuffer
 	 * 
 	 * @param b The byte array to append
 	 */
-	public ByteArrayBuffer append( byte[] b )
+	public ByteArrayBuffer append( byte... b )
 	{
         for (byte aB : b) this.append(aB);
 

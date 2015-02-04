@@ -10,21 +10,20 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext.getResource;
+import cx.ath.matthew.debug.Debug;
+import org.freedesktop.DBus.Introspectable;
+import org.freedesktop.dbus.exceptions.DBusException;
 
-import java.lang.reflect.Proxy;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 import java.net.ServerSocket;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Random;
 import java.util.Vector;
 
-import org.freedesktop.DBus.Introspectable;
-import org.freedesktop.dbus.exceptions.DBusException;
-
-import cx.ath.matthew.debug.Debug;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 /** Handles a peer to peer connection between two applications withou a bus daemon.
  * <p>
@@ -129,8 +128,8 @@ public class DirectConnection extends AbstractConnection
 
          RemoteObject ro = new RemoteObject(null, path, null, false);
          DBusInterface newi =  (DBusInterface)
-            Proxy.newProxyInstance(ifcs.get(0).getClassLoader(), 
-                                   ifcs.toArray(new Class[0]),
+            Proxy.newProxyInstance(ifcs.get(0).getClassLoader(),
+                    ifcs.toArray(new Class[ifcs.size()]),
                                    new RemoteInvocationHandler(this, ro));
           importedObjects.put(newi, ro);
          return newi;
@@ -142,7 +141,7 @@ public class DirectConnection extends AbstractConnection
    
    DBusInterface getExportedObject(String path) throws DBusException
    {
-      ExportedObject o = null;
+      ExportedObject o;
       synchronized (exportedObjects) {
          o = exportedObjects.get(path);
       }

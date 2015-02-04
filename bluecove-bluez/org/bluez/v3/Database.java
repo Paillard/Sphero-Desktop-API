@@ -32,7 +32,6 @@
  */
 package org.bluez.v3;
 
-import org.bluez.Error;
 import org.bluez.Error.DoesNotExist;
 import org.bluez.Error.Failed;
 import org.bluez.Error.InvalidArguments;
@@ -90,7 +89,7 @@ public interface Database extends DBusInterface {
     /**
      * Adds a new service record and returns the assigned record handle.
      */
-    UInt32 AddServiceRecord(byte[] b) throws InvalidArguments, Failed;
+    UInt32 AddServiceRecord(byte... b) throws InvalidArguments, Failed;
 
     /**
      * Adds a new service record and returns the assigned record handle.
@@ -102,7 +101,7 @@ public interface Database extends DBusInterface {
      * 
      * @since BlueZ 3.10
      */
-    void UpdateServiceRecord(UInt32 handle, byte[] sdprecord) throws InvalidArguments, NotAvailable, Failed;
+    void UpdateServiceRecord(UInt32 handle, byte... sdprecord) throws InvalidArguments, NotAvailable, Failed;
 
     /**
      * Updates a given service record provided in the XML format.

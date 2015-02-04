@@ -8,7 +8,6 @@ import se.nicklasgavelin.sphero.Robot;
 import se.nicklasgavelin.sphero.RobotListener;
 import se.nicklasgavelin.sphero.command.CommandMessage;
 import se.nicklasgavelin.sphero.command.FrontLEDCommand;
-import se.nicklasgavelin.sphero.exception.InvalidRobotAddressException;
 import se.nicklasgavelin.sphero.exception.RobotBluetoothException;
 import se.nicklasgavelin.sphero.response.InformationResponseMessage;
 import se.nicklasgavelin.sphero.response.ResponseMessage;
@@ -38,9 +37,9 @@ public class Example_Site_API extends JFrame
      * @param args Will be ignored
      */
     @SuppressWarnings( "unused" )
-    public static void main( String[] args )
+    public static void main( String... args )
     {
-        Example_Site_API example_Site_API = new Example_Site_API();
+        /*Example_Site_API example_Site_API = */new Example_Site_API();
         // new Thread( new Example_Site_API() ).start();
     }
 
@@ -53,17 +52,17 @@ public class Example_Site_API extends JFrame
         setLayout( new GridLayout( 2, 1 ) );
 
         // Connect button
-        this.connectButton = new JButton( "Connect to available devices" );
-        this.disconnectButton = new JButton( "Disconnect from all devices" );
+        connectButton = new JButton( "Connect to available devices" );
+        disconnectButton = new JButton( "Disconnect from all devices" );
 
         // Bind action to our connect button
-        this.connectButton.addActionListener(e -> {
+        connectButton.addActionListener(e -> {
             // Check if we have something previous to stop
-            if (this.ct != null)
+            if (ct != null)
                 ct.stopThread();
 
             // Create a new thread
-            this.ct = new ConnectThread();
+            ct = new ConnectThread();
             ct.start();
 
             // Toggle our button
@@ -184,13 +183,14 @@ public class Example_Site_API extends JFrame
                         {
                             System.out.println("Start color transition");
                             // Send a rgb transition command macro
-                            r.rgbTransition( 0, 255, 0, 255, 0, 0, 50 );
+                            // r.rgbTransition( 0, 255, 0, 255, 0, 0, 50 );
 
                             // Send a direct command
-                            r.sendCommand( new FrontLEDCommand( 1F ) );
+                            r.roll(240f, 1f);
+                            // System.out.println("rbg("+red+", "+blue+", "+green+")");
                         }
 
-                        Thread.sleep( 15000 );
+                        Thread.sleep( 5000 );
                     }
                     catch( InterruptedException e )
                     {
@@ -222,14 +222,14 @@ public class Example_Site_API extends JFrame
 
             // Try and see if we can find any Spheros in the found devices
             // Check if the Bluetooth device is a Sphero device or not
-// We got a valid device (Sphero device), connect to it and
-// have some fun with colors.
-// Create our robot from the Bluetooth device that we got
-// Add ourselves as listeners for the responses
-// Check if we can connect
-// Add robots to our connected robots list
-// Send direct command
-            devices.stream().filter(d -> Robot.isValidDevice(d)).forEach(d -> {
+            // We got a valid device (Sphero device), connect to it and
+            // have some fun with colors.
+            // Create our robot from the Bluetooth device that we got
+            // Add ourselves as listeners for the responses
+            // Check if we can connect
+            // Add robots to our connected robots list
+            // Send direct command
+            devices.stream().filter(Robot::isValidDevice).forEach(d -> {
                 System.out.println("Found robot " + d.getAddress());
 
                 // We got a valid device (Sphero device), connect to it and
@@ -253,8 +253,6 @@ public class Example_Site_API extends JFrame
                         r.sendCommand(new FrontLEDCommand(1));
                     } else
                         System.err.println("Failed to connect to robot");
-                } catch (InvalidRobotAddressException ex) {
-                    ex.printStackTrace();
                 } catch (RobotBluetoothException ex) {
                     ex.printStackTrace();
                 }
@@ -263,7 +261,7 @@ public class Example_Site_API extends JFrame
             // Disable the thread and set connected button state
             if(robots.isEmpty() )
             {
-                this.stopThread();
+                stopThread();
                 setConnectEnabled( true );
             }
         }

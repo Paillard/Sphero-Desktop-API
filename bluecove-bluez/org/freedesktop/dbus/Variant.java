@@ -104,7 +104,6 @@ public class Variant<T>
    /** Compare this Variant with another by comparing contents */
    @SuppressWarnings("unchecked")
    public boolean equals(Object other) {
-       if (null == other) return false;
-       return other instanceof Variant && this.o.equals(((Variant<?>) other).o);
+       return null != other && other instanceof Variant && this.o.equals(((Variant<?>) other).o);
    }
 }

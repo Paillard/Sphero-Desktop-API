@@ -10,31 +10,6 @@
 */
 package org.freedesktop.dbus.viewer;
 
-import static org.freedesktop.dbus.Gettext.getResource;
-
-import java.awt.BorderLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.table.TableModel;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.freedesktop.DBus;
 import org.freedesktop.DBus.Introspectable;
 import org.freedesktop.dbus.DBusConnection;
@@ -47,6 +22,23 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.swing.*;
+import javax.swing.table.TableModel;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.freedesktop.dbus.Gettext.getResource;
 
 /**
  * A viewer for DBus
@@ -87,10 +79,7 @@ public class DBusViewer
                 public void windowClosing(WindowEvent e)
                 {
                     frame.dispose();
-                    for (DBusConnection connection : connections)
-                    {
-                        connection.disconnect();
-                    }
+                    connections.forEach(org.freedesktop.dbus.DBusConnection::disconnect);
                     System.exit(0);
                 }
             });
@@ -103,7 +92,7 @@ public class DBusViewer
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args)
+	public static void main(String... args)
 	{
 		new DBusViewer(CONNECTION_TYPES);
 	}
@@ -133,62 +122,38 @@ public class DBusViewer
                     TableModel tableModel = listDBusConnection(users,
                             owners, conn);
 
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            int index = tabbedPane.indexOfTab(key);
-                            JTable table = new JTable(tableModel);
+                    SwingUtilities.invokeLater(() -> {
+                        int index = tabbedPane.indexOfTab(key);
+                        JTable table = new JTable(tableModel);
 
 
 
-                            JScrollPane scrollPane = new JScrollPane(table);
+                        JScrollPane scrollPane = new JScrollPane(table);
 
-                            JPanel tab = new JPanel(new BorderLayout());
-                            tab.add(scrollPane, BorderLayout.CENTER);
+                        JPanel tab = new JPanel(new BorderLayout());
+                        tab.add(scrollPane, BorderLayout.CENTER);
 
-                            JPanel southPanel = new JPanel();
-                            JButton button = new JButton(new IntrospectAction(table));
-                            southPanel.add(button);
+                        JPanel southPanel = new JPanel();
+                        JButton button = new JButton(new IntrospectAction(table));
+                        southPanel.add(button);
 
-                            tab.add(southPanel, BorderLayout.SOUTH);
+                        tab.add(southPanel, BorderLayout.SOUTH);
 
-                            tabbedPane.setComponentAt(index,
-                                    tab);
+                        tabbedPane.setComponentAt(index,
+                                tab);
 
-                        }
                     });
                 }
-                catch (DBusException e)
+                catch (DBusException | DBusExecutionException e)
                 {
                     e.printStackTrace();
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            int index = tabbedPane.indexOfTab(key);
-                            JLabel label = (JLabel) tabbedPane
-                                    .getComponentAt(index);
-                            label
-                                    .setText(getResource("Could not load Dbus information for ")
-                                            + key + ":" + e.getMessage());
-                        }
-                    });
-                }
-                catch (DBusExecutionException e)
-                {
-                    e.printStackTrace();
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            int index = tabbedPane.indexOfTab(key);
-                            JLabel label = (JLabel) tabbedPane
-                                    .getComponentAt(index);
-                            label
-                                    .setText(getResource("Could not load Dbus information for ")
-                                            + key + ":" + e.getMessage());
-                        }
+                    SwingUtilities.invokeLater(() -> {
+                        int index = tabbedPane.indexOfTab(key);
+                        JLabel label = (JLabel) tabbedPane
+                                .getComponentAt(index);
+                        label
+                                .setText(getResource("Could not load Dbus information for ")
+                                        + key + ":" + e.getMessage());
                     });
                 }
             }
@@ -212,7 +177,6 @@ public class DBusViewer
 		
 		for (String name : names)
 		{
-			List<DBusEntry> results  = new ArrayList<>();
 			try
 			{
 				//String objectpath = '/' + name.replace('.', '/');
@@ -224,7 +188,7 @@ public class DBusViewer
 			{
 				e.printStackTrace();
 			}
-            results = p.getResult();
+            List<DBusEntry> results = p.getResult();
 			p.reset();
 
 			if (!results.isEmpty()) {

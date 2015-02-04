@@ -288,6 +288,6 @@ public class ServerRequestHandler {
      *            the user name returned in the authentication response;
      *            <code>null</code> if no user name was provided in the response
      */
-    public void onAuthenticationFailure(byte[] userName) {
+    public void onAuthenticationFailure(byte... userName) {
     }
 }

@@ -55,7 +55,7 @@ class ArrayFrob
          return ns;
    }
    @SuppressWarnings("unchecked")
-   public static <T> Object unwrap(T[] ns) throws IllegalArgumentException
+   public static <T> Object unwrap(T... ns) throws IllegalArgumentException
    {
       Class<? extends T[]> ac = (Class<? extends T[]>) ns.getClass();
       Class<T> cc = (Class<T>) ac.getComponentType();
@@ -66,7 +66,7 @@ class ArrayFrob
          Array.set(o, i, ns[i]);
       return o;
    }
-   public static <T> List<T> listify(T[] ns) throws IllegalArgumentException
+   public static <T> List<T> listify(T... ns) throws IllegalArgumentException
    {
       return Arrays.asList(ns);
    }
@@ -163,8 +163,7 @@ class ArrayFrob
    public static Object[] type(Object[] old, Class<Object> c)
    {
       Object[] ns = (Object[]) Array.newInstance(c, old.length);
-      for (int i = 0; i < ns.length; i++)
-         ns[i] = old[i];
+       System.arraycopy(old, 0, ns, 0, ns.length);
       return ns;
    }
 }

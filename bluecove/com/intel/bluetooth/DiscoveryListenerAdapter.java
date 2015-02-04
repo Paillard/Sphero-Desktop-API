@@ -68,7 +68,7 @@ class DiscoveryListenerAdapter implements DiscoveryListener {
 	 * @see javax.bluetooth.DiscoveryListener#servicesDiscovered(int,
 	 *      javax.bluetooth.ServiceRecord[])
 	 */
-	public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
+	public void servicesDiscovered(int transID, ServiceRecord... servRecord) {
 	}
 
 }

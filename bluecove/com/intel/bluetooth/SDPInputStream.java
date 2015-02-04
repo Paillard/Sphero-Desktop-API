@@ -23,11 +23,10 @@
  */
 package com.intel.bluetooth;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.bluetooth.DataElement;
 import javax.bluetooth.UUID;
+import java.io.IOException;
+import java.io.InputStream;
 
 class SDPInputStream extends InputStream {
 
@@ -62,7 +61,7 @@ class SDPInputStream extends InputStream {
         return result;
     }
 	
-	private String hexString(byte[] b) {
+	private String hexString(byte... b) {
 		StringBuilder buf = new StringBuilder();
         for (byte aB : b) {
             buf.append(Integer.toHexString(aB >> 4 & 0xf));
@@ -121,7 +120,7 @@ class SDPInputStream extends InputStream {
 				throw new IOException();
 			}
 		case 3: // UUID
-            UUID uuid = null;
+            UUID uuid;
 
             switch (sizeDescriptor) {
             case 1:
@@ -140,7 +139,7 @@ class SDPInputStream extends InputStream {
             return new DataElement(DataElement.UUID, uuid);
             case 4: // STRING
 		{
-			int length = -1;
+			int length;
 
 			switch (sizeDescriptor) {
 			case 5:

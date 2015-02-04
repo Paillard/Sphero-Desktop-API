@@ -10,22 +10,21 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext.getResource;
+import cx.ath.matthew.debug.Debug;
+import cx.ath.matthew.utils.Hexdump;
+import org.freedesktop.dbus.Message.MessageType;
+import org.freedesktop.dbus.exceptions.DBusException;
+import org.freedesktop.dbus.exceptions.MessageProtocolVersionException;
+import org.freedesktop.dbus.exceptions.MessageTypeException;
 
 import java.io.BufferedInputStream;
 import java.io.EOFException;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.text.MessageFormat;
 
-import cx.ath.matthew.debug.Debug;
-import cx.ath.matthew.utils.Hexdump;
-
-import org.freedesktop.dbus.Message.MessageType;
-import org.freedesktop.dbus.exceptions.DBusException;
-import org.freedesktop.dbus.exceptions.MessageTypeException;
-import org.freedesktop.dbus.exceptions.MessageProtocolVersionException;
+import static org.freedesktop.dbus.Gettext.getResource;
 
 public class MessageReader
 {
@@ -83,7 +82,7 @@ public class MessageReader
       }
 
       /* Parse the variable header length */
-      int headerlen = 0;
+      int headerlen;
       if (null == header) {
          headerlen = (int) Message.demarshallint(tbuf, 0, endian, 4);
          if (0 != headerlen % 8)

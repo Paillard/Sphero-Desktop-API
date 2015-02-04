@@ -22,18 +22,15 @@ class SignalTuple
       this.object = object;
       this.source = source;
    }
-   public boolean equals(Object o)
-   {
-      if (!(o instanceof SignalTuple)) return false;
-      SignalTuple other = (SignalTuple) o;
-      if (null == this.type && null != other.type) return false;
-      if (null != this.type && !this.type.equals(other.type)) return false;
-      if (null == this.name && null != other.name) return false;
-      if (null != this.name && !this.name.equals(other.name)) return false;
-      if (null == this.object && null != other.object) return false;
-      if (null != this.object && !this.object.equals(other.object)) return false;
-      if (null == this.source && null != other.source) return false;
-       return !(null != this.source && !this.source.equals(other.source));
+   public boolean equals(Object o) {
+       if (!(o instanceof SignalTuple)) return false;
+       SignalTuple other = (SignalTuple) o;
+       if (null == type && null != other.type) return false;
+       if (null != type && !type.equals(other.type)) return false;
+       if (null == name && null != other.name) return false;
+       if (null != name && !name.equals(other.name)) return false;
+       if (null == object && null != other.object) return false;
+       return !(null != object && !object.equals(other.object)) && !(null == source && null != other.source) && !(null != source && !source.equals(other.source));
    }
    public int hashCode()
    {

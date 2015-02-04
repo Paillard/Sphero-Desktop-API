@@ -7,10 +7,9 @@ package se.nicklasgavelin.configuration;
 
 import java.awt.Color;
 import java.util.Properties;
-import se.nicklasgavelin.log.Logging;
+
 import se.nicklasgavelin.log.Logging.Level;
 import se.nicklasgavelin.sphero.RobotSetting;
-import se.nicklasgavelin.sphero.command.RawMotorCommand;
 import se.nicklasgavelin.sphero.command.RawMotorCommand.MOTOR_MODE;
 
 /**

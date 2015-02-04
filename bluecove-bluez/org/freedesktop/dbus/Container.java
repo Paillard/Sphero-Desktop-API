@@ -23,7 +23,7 @@ import java.lang.reflect.Type;
 abstract class Container
 {
    private static Map<Type,Type[]> typecache = new HashMap<>();
-   static void putTypeCache(Type k, Type[] v)
+   static void putTypeCache(Type k, Type... v)
    {
        typecache.put(k, v);
    }

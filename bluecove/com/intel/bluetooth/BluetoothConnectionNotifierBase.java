@@ -24,23 +24,22 @@
  */
 package com.intel.bluetooth;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DataElement;
 import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.ServiceRegistrationException;
 import javax.microedition.io.Connection;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  *
  */
 abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothConnectionNotifierServiceRecordAccess {
 
-	private static Hashtable stackConnections = new Hashtable();
+	private static final Hashtable stackConnections = new Hashtable();
 
 	protected BluetoothStack bluetoothStack;
 
@@ -60,10 +59,10 @@ abstract class BluetoothConnectionNotifierBase implements Connection, BluetoothC
 		if (connections == null) {
 			return;
 		}
-		Vector c2shutdown = new Vector();
+		Vector c2shutdown;
 		c2shutdown = Utils.clone(connections.elements());
-		for (Enumeration en = c2shutdown.elements(); en.hasMoreElements();) {
-			BluetoothConnectionNotifierBase c = (BluetoothConnectionNotifierBase) en.nextElement();
+		for (Iterator iterator = c2shutdown.iterator(); iterator.hasNext();) {
+			BluetoothConnectionNotifierBase c = (BluetoothConnectionNotifierBase) iterator.next();
 			try {
 				c.shutdown();
 			} catch (IOException e) {

@@ -296,7 +296,7 @@ public class BluetoothDevice implements DiscoveryListener
 	 * @param records Discovered service records
 	 */
 	@Override
-	public void servicesDiscovered( int transId, ServiceRecord[] records )
+	public void servicesDiscovered( int transId, ServiceRecord... records )
 	{
 		if(this.activeSearch == transId )
 		{

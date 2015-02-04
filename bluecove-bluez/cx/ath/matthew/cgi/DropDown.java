@@ -85,7 +85,7 @@ public class DropDown extends Field
    {
       this.name = name;
       this.label = label;
-      this.values = values.toArray(new Object[] {});
+      this.values = values.toArray(new Object[values.size()]);
       this.defval = defval;
       this.indexed = indexed;
    }
@@ -102,7 +102,7 @@ public class DropDown extends Field
    {
       this.name = name;
       this.label = label;
-      this.values = values.toArray(new Object[] {});
+      this.values = values.toArray(new Object[values.size()]);
       if (defval < 0)
          this.defval = null;
       else

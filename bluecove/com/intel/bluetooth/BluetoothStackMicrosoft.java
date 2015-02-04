@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 class BluetoothStackMicrosoft implements BluetoothStack {
@@ -400,8 +401,8 @@ class BluetoothStackMicrosoft implements BluetoothStack {
                     int discType = runDeviceInquiryImpl(this, inquiryThread, accessCode, DeviceInquiryThread
                             .getConfigDeviceInquiryDuration(), listener);
                     if (discType == DiscoveryListener.INQUIRY_COMPLETED) {
-                        for (Enumeration en = deviceDiscoveryDevices.keys(); en.hasMoreElements();) {
-                            RemoteDevice remoteDevice = (RemoteDevice) en.nextElement();
+                        for (Iterator iterator = deviceDiscoveryDevices.keySet().iterator(); iterator.hasNext();) {
+                            RemoteDevice remoteDevice = (RemoteDevice) iterator.next();
                             DeviceClass deviceClass = (DeviceClass) deviceDiscoveryDevices.get(remoteDevice);
                             listener.deviceDiscovered(remoteDevice, deviceClass);
                             // If cancelInquiry has been called
@@ -519,7 +520,7 @@ class BluetoothStackMicrosoft implements BluetoothStack {
         return sst != null && sst.setTerminated();
     }
 
-	public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int[] attrIDs)
+	public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int... attrIDs)
 			throws IOException {
 		if (attrIDs.length > ATTR_RETRIEVABLE_MAX) {
 			throw new IllegalArgumentException();
@@ -646,7 +647,7 @@ class BluetoothStackMicrosoft implements BluetoothStack {
 
 		// Allow to interrupt connection thread
 		Object event = new Object();
-		BluetoothStackMicrosoft.ConnectThread connectThread = new BluetoothStackMicrosoft.ConnectThread(event, socket, params);
+		ConnectThread connectThread = new ConnectThread(event, socket, params);
 		UtilsJavaSE.threadSetDaemon(connectThread);
 
 		boolean timeoutHappend = false;
@@ -713,8 +714,7 @@ class BluetoothStackMicrosoft implements BluetoothStack {
 			int channel = getsockchannel(socket);
 			DebugLog.debug("service channel ", channel);
 
-			long serviceRecordHandle = socket;
-			serviceRecord.populateRFCOMMAttributes(serviceRecordHandle, channel, params.uuid, params.name, params.obex);
+            serviceRecord.populateRFCOMMAttributes(socket, channel, params.uuid, params.name, params.obex);
 
 			/*
 			 * register service
@@ -816,7 +816,7 @@ class BluetoothStackMicrosoft implements BluetoothStack {
 	 * 
 	 * @see com.intel.bluetooth.BluetoothStack#l2Encrypt(long,long,boolean)
 	 */
-	public boolean rfEncrypt(long address, long handle, boolean on) throws IOException {
+	public boolean rfEncrypt(long address, long handle, boolean on) {
 		return false;
 	}
 
@@ -914,7 +914,7 @@ class BluetoothStackMicrosoft implements BluetoothStack {
 	 * 
 	 * @see com.intel.bluetooth.BluetoothStack#l2receive(long, byte[])
 	 */
-	public int l2Receive(long handle, byte[] inBuf) throws IOException {
+	public int l2Receive(long handle, byte... inBuf) throws IOException {
 		throw new NotSupportedIOException(getStackID());
 	}
 

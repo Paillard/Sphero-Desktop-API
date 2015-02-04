@@ -1,9 +1,8 @@
 package se.nicklasgavelin.sphero.command;
 
-import java.awt.Color;
-
-import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
 import se.nicklasgavelin.util.Value;
+
+import java.awt.*;
 
 /**
  * Command to adjust the color displayed by the RGB LED on the Sphero.
@@ -49,7 +48,7 @@ public class RGBLEDCommand extends CommandMessage
 	 */
 	public int getRed()
 	{
-		return this.red;
+		return red;
 	}
 
 	/**
@@ -59,7 +58,7 @@ public class RGBLEDCommand extends CommandMessage
 	 */
 	public int getGreen()
 	{
-		return this.green;
+		return green;
 	}
 
 	/**
@@ -69,16 +68,16 @@ public class RGBLEDCommand extends CommandMessage
 	 */
 	public int getBlue()
 	{
-		return this.blue;
+		return blue;
 	}
 
 	@Override
 	protected byte[] getPacketData()
 	{
 		byte[] data = new byte[ 3 ];
-		data[0] = this.red;
-		data[1] = this.green;
-		data[2] = this.blue;
+		data[0] = red;
+		data[1] = green;
+		data[2] = blue;
 
 		return data;
 	}

@@ -46,17 +46,17 @@ public class SelectServiceHandler implements DiscoveryListener {
 
 	private DiscoveryAgent agent;
 
-	private Object inquiryCompletedEvent = new Object();
+	private final Object inquiryCompletedEvent = new Object();
 
 	private boolean inquiryCompleted;
 
-	private Object serviceSearchCompletedEvent = new Object();
+	private final Object serviceSearchCompletedEvent = new Object();
 
 	private boolean serviceSearchCompleted;
 
 	private Hashtable devicesProcessed = new Hashtable();
 
-	private Vector serviceSearchDeviceQueue = new Vector();
+	private final Vector serviceSearchDeviceQueue = new Vector();
 
 	private ServiceRecord servRecordDiscovered;
 
@@ -282,7 +282,7 @@ public class SelectServiceHandler implements DiscoveryListener {
 		}
 	}
 
-	public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
+	public void servicesDiscovered(int transID, ServiceRecord... servRecord) {
 		if (servRecord.length > 0 && this.servRecordDiscovered == null) {
             servRecordDiscovered = servRecord[0];
 			synchronized (serviceSearchCompletedEvent) {

@@ -33,6 +33,6 @@ import org.freedesktop.dbus.exceptions.DBusException;
  */
 public interface DBusSerializable
 {
-   Object[] serialize() throws DBusException;
+   Object[] serialize();
 }
             

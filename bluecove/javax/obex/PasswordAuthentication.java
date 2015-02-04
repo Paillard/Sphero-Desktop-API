@@ -51,7 +51,7 @@ public class PasswordAuthentication {
      * @exception NullPointerException
      *                if <code>password</code> is <code>null</code>
      */
-    public PasswordAuthentication(byte[] userName, byte[] password) {
+    public PasswordAuthentication(byte[] userName, byte... password) {
         if (password == null) {
             throw new NullPointerException("password is null");
         }

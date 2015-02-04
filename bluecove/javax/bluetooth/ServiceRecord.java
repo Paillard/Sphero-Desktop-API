@@ -203,7 +203,7 @@ public interface ServiceRecord {
 	 * @throws java.lang.RuntimeException  if this {@code ServiceRecord} describes a service on the local
 	 * device rather than a service on a remote device
 	 */
-    boolean populateRecord(int[] attrIDs) throws IOException;
+    boolean populateRecord(int... attrIDs) throws IOException;
 
 	/**
 	 * Returns a {@link java.lang.String} including optional parameters that can

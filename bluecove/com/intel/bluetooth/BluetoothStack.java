@@ -298,7 +298,7 @@ public interface BluetoothStack {
      *
      * @see javax.bluetooth.ServiceRecord#populateRecord(int[])
      */
-    boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int[] attrIDs) throws IOException;
+    boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int... attrIDs) throws IOException;
 
     // ---------------------- Client and Server RFCOMM connections
 
@@ -374,7 +374,7 @@ public interface BluetoothStack {
      * @see javax.bluetooth.RemoteDevice#encrypt(javax.microedition.io.Connection,
      *      boolean)
      */
-    boolean rfEncrypt(long address, long handle, boolean on) throws IOException;
+    boolean rfEncrypt(long address, long handle, boolean on);
 
     /**
      * @see java.io.InputStream#read()
@@ -482,7 +482,7 @@ public interface BluetoothStack {
     /**
      * @see javax.bluetooth.L2CAPConnection#receive(byte[])
      */
-    int l2Receive(long handle, byte[] inBuf) throws IOException;
+    int l2Receive(long handle, byte... inBuf) throws IOException;
 
     /**
      * @see javax.bluetooth.L2CAPConnection#send(byte[])

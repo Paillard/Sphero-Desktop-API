@@ -24,11 +24,10 @@
  */
 package com.intel.bluetooth;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.bluetooth.DataElement;
 import javax.bluetooth.UUID;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Read WIDCOMM SDP_DISC_ATTTR_VAL C struct and convert to DataElements
@@ -80,7 +79,7 @@ class BluetoothStackWIDCOMMSDPInputStream extends InputStream {
         return result;
     }
 
-    static String hexString(byte[] b) {
+    static String hexString(byte... b) {
         StringBuilder buf = new StringBuilder();
         for (byte aB : b) {
             buf.append(Integer.toHexString(aB >> 4 & 0xf));
@@ -189,7 +188,7 @@ class BluetoothStackWIDCOMMSDPInputStream extends InputStream {
                 }
                 break;
             case ATTR_TYPE_UUID:
-                UUID uuid = null;
+                UUID uuid;
                 switch (length) {
                 case 2:
                     uuid = new UUID(readLong(2));

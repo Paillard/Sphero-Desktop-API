@@ -36,7 +36,7 @@ public class UnixIOException extends IOException
     public UnixIOException(int no, String message)
    {
       super(message);
-       String message1 = message;
-       int no1 = no;
+/*       String message1 = message;
+       int no1 = no;*/
    }
 }

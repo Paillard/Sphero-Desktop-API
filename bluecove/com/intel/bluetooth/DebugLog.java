@@ -26,10 +26,7 @@ package com.intel.bluetooth;
 
 import com.intel.bluetooth.UtilsJavaSE.StackTraceLocation;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * BlueCove log system.
@@ -122,7 +119,7 @@ public abstract class DebugLog {
             initialize();
 		}
 		if (debugEnabled && debugCompiledOut) {
-			debugEnabled = false;
+			// debugEnabled = false;
 			System.err.println("BlueCove debug functions have been Compiled Out");
 		} else {
 			BlueCoveImpl.instance().enableNativeDebug(debugEnabled);
@@ -213,7 +210,7 @@ public abstract class DebugLog {
 		}
 	}
 
-	public static void debug(String message, byte[] data) {
+	public static void debug(String message, byte... data) {
         debug(message, data, 0, data == null ? 0 : data.length);
 	}
 
@@ -241,7 +238,7 @@ public abstract class DebugLog {
 		}
 	}
 
-	public static void debug(String message, int[] data) {
+	public static void debug(String message, int... data) {
         debug(message, data, 0, data == null ? 0 : data.length);
 	}
 
@@ -358,8 +355,8 @@ public abstract class DebugLog {
 	}
 
 	private static void callAppenders(int level, String message, Throwable throwable) {
-		for (Enumeration iter = loggerAppenders.elements(); iter.hasMoreElements();) {
-			LoggerAppender a = (LoggerAppender) iter.nextElement();
+		for (Iterator iterator = loggerAppenders.iterator(); iterator.hasNext();) {
+			LoggerAppender a = (LoggerAppender) iterator.next();
 			a.appendLog(level, message, throwable);
 		}
 	}

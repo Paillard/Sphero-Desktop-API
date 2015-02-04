@@ -34,8 +34,7 @@ public class TestSerializable<A> implements DBusSerializable
       this.b = b;
       this.c = new Vector<>(c);
    }
-   public Object[] serialize() throws DBusException
-   {
+   public Object[] serialize() {
       return new Object[] {a, b, c};
    }
    public int getInt() { return a; }

@@ -25,28 +25,20 @@
  */
 package com.intel.bluetooth;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
-import javax.bluetooth.BluetoothConnectionException;
-import javax.bluetooth.L2CAPConnection;
-import javax.bluetooth.UUID;
-import javax.microedition.io.Connection;
-import javax.microedition.io.ConnectionNotFoundException;
-import javax.microedition.io.Connector;
-import javax.microedition.io.InputConnection;
-import javax.microedition.io.OutputConnection;
-
 import com.intel.bluetooth.gcf.socket.ServerSocketConnection;
 import com.intel.bluetooth.gcf.socket.SocketConnection;
 import com.intel.bluetooth.obex.OBEXClientSessionImpl;
 import com.intel.bluetooth.obex.OBEXConnectionParams;
 import com.intel.bluetooth.obex.OBEXSessionNotifierImpl;
+
+import javax.bluetooth.BluetoothConnectionException;
+import javax.bluetooth.L2CAPConnection;
+import javax.bluetooth.UUID;
+import javax.microedition.io.*;
+import java.io.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * 
@@ -123,8 +115,8 @@ public abstract class MicroeditionConnector {
 	}
 
 	static void copyAll(Hashtable dest, Hashtable src) {
-		for (Enumeration en = src.keys(); en.hasMoreElements();) {
-			Object key = en.nextElement();
+		for (Iterator iterator = src.keySet().iterator(); iterator.hasNext();) {
+			Object key = iterator.next();
 			dest.put(key, src.get(key));
 		}
 	}
@@ -164,7 +156,7 @@ public abstract class MicroeditionConnector {
 		 * parse URL
 		 */
 
-		String host = null;
+		String host;
 		String portORuuid = null;
 
 		Hashtable values = new Hashtable();

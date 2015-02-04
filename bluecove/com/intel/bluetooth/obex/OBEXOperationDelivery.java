@@ -31,6 +31,6 @@ import java.io.IOException;
  */
 interface OBEXOperationDelivery extends OBEXOperation {
 
-	void deliverPacket(boolean finalPacket, byte buffer[]) throws IOException;
+	void deliverPacket(boolean finalPacket, byte... buffer) throws IOException;
 
 }

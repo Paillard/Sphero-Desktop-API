@@ -436,7 +436,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	}
 
 	@Override
-	public void servicesDiscovered( int arg0, ServiceRecord[] arg1 )
+	public void servicesDiscovered( int arg0, ServiceRecord... arg1 )
 	{
 		/*
 		 * if( arg1.length == 0 ) System.out.println("No service record found");

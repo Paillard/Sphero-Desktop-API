@@ -43,7 +43,7 @@ class MD5DigestWrapper {
 		}
 	}
 
-	void update(byte[] input) {
+	void update(byte... input) {
         md5impl.update(input);
 	}
 

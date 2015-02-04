@@ -23,15 +23,14 @@
  */
 package com.intel.bluetooth.obex;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.intel.bluetooth.DebugLog;
 
 import javax.obex.HeaderSet;
 import javax.obex.Operation;
 import javax.obex.ResponseCodes;
-
-import com.intel.bluetooth.DebugLog;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 abstract class OBEXClientOperation implements Operation, OBEXOperationReceive, OBEXOperationDelivery {
 
@@ -74,7 +73,7 @@ abstract class OBEXClientOperation implements Operation, OBEXOperationReceive, O
 
 	private boolean authenticationResponseCreated;
 
-	protected Object lock;
+	protected final Object lock;
 
 	OBEXClientOperation(OBEXClientSessionImpl session, char operationId, OBEXHeaderSetImpl sendHeaders)
 			throws IOException {
@@ -119,7 +118,7 @@ abstract class OBEXClientOperation implements Operation, OBEXOperationReceive, O
 	 * 
 	 * @see com.intel.bluetooth.obex.OBEXOperationDelivery#deliverPacket(boolean, byte[])
 	 */
-	public void deliverPacket(boolean finalPacket, byte[] buffer) throws IOException {
+	public void deliverPacket(boolean finalPacket, byte... buffer) throws IOException {
 		if (requestEnded) {
 			return;
 		}
@@ -377,12 +376,8 @@ abstract class OBEXClientOperation implements Operation, OBEXOperationReceive, O
 	 */
 	public long getLength() {
 		Long len;
-		try {
-			len = (Long) replyHeaders.getHeader(HeaderSet.LENGTH);
-		} catch (IOException e) {
-			return -1;
-		}
-		if (len == null) {
+        len = (Long) replyHeaders.getHeader(HeaderSet.LENGTH);
+        if (len == null) {
 			return -1;
 		}
 		return len;
@@ -395,12 +390,8 @@ abstract class OBEXClientOperation implements Operation, OBEXOperationReceive, O
 	 * the OBEX Type header or <code>null</code> if the OBEX Type header was not included.
 	 */
 	public String getType() {
-		try {
-			return (String) replyHeaders.getHeader(HeaderSet.TYPE);
-		} catch (IOException e) {
-			return null;
-		}
-	}
+        return (String) replyHeaders.getHeader(HeaderSet.TYPE);
+    }
 
 	public DataInputStream openDataInputStream() throws IOException {
 		return new DataInputStream(openInputStream());

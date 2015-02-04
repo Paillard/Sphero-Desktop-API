@@ -343,14 +343,14 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 		listener.servicesDiscovered(startedNotify.getTransID(), records);
 	}
 
-	public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int[] attrIDs)
+	public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int... attrIDs)
 			throws IOException {
 		return false;
 	}
 
 	// --- Client RFCOMM connections
 
-	private native long connectionRfOpenImpl(long address, byte[] uuidValue) throws IOException;
+	private native long connectionRfOpenImpl(long address, byte... uuidValue) throws IOException;
 
 	public long connectionRfOpenClientConnection(BluetoothConnectionParams params) throws IOException {
 		if (params.authenticate || params.encrypt) {
@@ -429,7 +429,7 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 	 * 
 	 * @see com.intel.bluetooth.BluetoothStack#l2Encrypt(long,long,boolean)
 	 */
-	public boolean rfEncrypt(long address, long handle, boolean on) throws IOException {
+	public boolean rfEncrypt(long address, long handle, boolean on) {
 		return false;
 	}
 
@@ -527,7 +527,7 @@ class BluetoothStackBlueSoleil implements BluetoothStack, DeviceInquiryRunnable,
 	 * 
 	 * @see com.intel.bluetooth.BluetoothStack#l2receive(long, byte[])
 	 */
-	public int l2Receive(long handle, byte[] inBuf) throws IOException {
+	public int l2Receive(long handle, byte... inBuf) throws IOException {
 		throw new NotSupportedIOException(getStackID());
 	}
 

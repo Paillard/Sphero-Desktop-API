@@ -45,7 +45,7 @@ public class UnixSocket
    private native int native_getUID(int sock);
    private native int native_getGID(int sock);
    private native void native_send_creds(int sock, byte data) throws IOException;
-   private native byte native_recv_creds(int sock, int[] creds) throws IOException;
+   private native byte native_recv_creds(int sock, int... creds) throws IOException;
 
    private UnixSocketAddress address;
    private USOutputStream os;

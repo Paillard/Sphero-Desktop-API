@@ -194,8 +194,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
     }
 
     private long convertBTAddress(String anAddress) {
-        long btAddress = Long.parseLong(anAddress.replaceAll(":", ""), 16);
-        return btAddress;
+        return Long.parseLong(anAddress.replaceAll(":", ""), 16);
     }
 
     public void initialize() throws BluetoothStateException {
@@ -383,7 +382,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         }
         try {
             return blueZ.setAdapterDiscoverable(mode);
-        } catch (DBusException | DBusExecutionException e) {
+        } catch (DBusExecutionException e) {
             throw (BluetoothStateException) UtilsJavaSE.initCause(new BluetoothStateException(e.getMessage()), e);
         }
     }
@@ -555,7 +554,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         if (preKnownDevices == null) {
             return null;
         }
-        Vector<RemoteDevice> devices = preKnownDevices.stream().map(addres -> RemoteDeviceHelper.createRemoteDevice(this, convertBTAddress(addres), null, true)).collect(Collectors.toCollection(() -> new Vector<>()));
+        Vector<RemoteDevice> devices = preKnownDevices.stream().map(addres -> RemoteDeviceHelper.createRemoteDevice(this, convertBTAddress(addres), null, true)).collect(Collectors.toCollection(Vector::new));
         return RemoteDeviceHelper.remoteDeviceListToArray(devices);
     }
 
@@ -622,7 +621,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
                 elements = BlueZServiceRecordXML.parsXMLRecord(record.getValue());
             } catch (IOException e) {
                 DebugLog.error("Error parsing service record", e);
-                continue nextRecord;
+                continue;
             }
             for (Entry<Integer, DataElement> element : elements.entrySet()) {
                 sr.populateAttributeValue(element.getKey(), element.getValue());
@@ -649,7 +648,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         DebugLog.debug("SearchServices finished", sst.getTransID());
         Vector<ServiceRecord> records = sst.getServicesRecords();
         if (!records.isEmpty()) {
-            ServiceRecord[] servRecordArray = (ServiceRecord[]) Utils.vector2toArray(records, new ServiceRecord[records.size()]);
+            ServiceRecord[] servRecordArray = (ServiceRecord[]) Utils.vector2toArray(records, (Object)new ServiceRecord[records.size()]);
             listener.servicesDiscovered(sst.getTransID(), servRecordArray);
         }
         if (respCode != DiscoveryListener.SERVICE_SEARCH_ERROR && sst.isTerminated()) {
@@ -671,9 +670,9 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
         return sst != null && sst.setTerminated();
     }
 
-    public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int[] attrIDs) throws IOException {
+    public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int... attrIDs) throws IOException {
         DebugLog.debug("populateServicesRecordAttributeValues()");
-        long remoteDeviceAddress = RemoteDeviceHelper.getAddress(serviceRecord.getHostDevice());
+        /*long remoteDeviceAddress = */RemoteDeviceHelper.getAddress(serviceRecord.getHostDevice());
         throw new UnsupportedOperationException("populateServicesRecordAttributeValues Not supported yet.");
     }
 
@@ -729,7 +728,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
      * 
      * @see com.intel.bluetooth.BluetoothStack#l2Encrypt(long,long,boolean)
      */
-    public boolean rfEncrypt(long address, long handle, boolean on) throws IOException {
+    public boolean rfEncrypt(long address, long handle, boolean on) {
         // TODO
         return false;
     }
@@ -913,7 +912,7 @@ class BluetoothStackBlueZDBus implements BluetoothStack, DeviceInquiryRunnable, 
      * 
      * @see com.intel.bluetooth.BluetoothStack#l2receive(long, byte[])
      */
-    public native int l2Receive(long handle, byte[] inBuf) throws IOException;
+    public native int l2Receive(long handle, byte... inBuf) throws IOException;
 
     /*
      * (non-Javadoc)

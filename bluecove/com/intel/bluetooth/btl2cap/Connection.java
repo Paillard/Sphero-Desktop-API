@@ -128,7 +128,7 @@ public class Connection extends BluetoothConnectionAccessAdapter implements Crea
 	 *
 	 * @see javax.bluetooth.L2CAPConnection#receive(byte[])
 	 */
-	public int receive(byte[] inBuf) throws IOException {
+	public int receive(byte... inBuf) throws IOException {
 		return ((L2CAPConnection) impl).receive(inBuf);
 	}
 
@@ -137,7 +137,7 @@ public class Connection extends BluetoothConnectionAccessAdapter implements Crea
 	 *
 	 * @see javax.bluetooth.L2CAPConnection#send(byte[])
 	 */
-	public void send(byte[] data) throws IOException {
+	public void send(byte... data) throws IOException {
 		((L2CAPConnection) impl).send(data);
 	}
 

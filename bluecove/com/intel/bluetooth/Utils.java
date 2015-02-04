@@ -73,7 +73,7 @@ public abstract class Utils {
 		return UUIDToByteArray(uuid.toString());
 	}
 
-	public static String UUIDByteArrayToString(byte[] uuidValue) {
+	public static String UUIDByteArrayToString(byte... uuidValue) {
 		StringBuilder buf = new StringBuilder();
         for (byte anUuidValue : uuidValue) {
             buf.append(Integer.toHexString(anUuidValue >> 4 & 0xf));
@@ -157,7 +157,7 @@ public abstract class Utils {
 	 * @param value
 	 * @return a clone of the array
 	 */
-	public static byte[] clone(byte[] value) {
+	public static byte[] clone(byte... value) {
 		if (value == null) {
 			return null;
 		}
@@ -175,7 +175,7 @@ public abstract class Utils {
 		return copy;
 	}
 
-	static String newStringUTF8(byte bytes[]) {
+	static String newStringUTF8(byte... bytes) {
 		try {
 			return new String(bytes, "UTF-8");
 		} catch (IllegalArgumentException e) {
@@ -195,7 +195,7 @@ public abstract class Utils {
 		}
 	}
 
-	static String newStringASCII(byte bytes[]) {
+	static String newStringASCII(byte... bytes) {
 		try {
 			return new String(bytes, "US-ASCII");
 		} catch (IllegalArgumentException e) {
@@ -219,7 +219,7 @@ public abstract class Utils {
 	 * J2ME/J9 compatibility instead of Vector.toArray
 	 *
 	 */
-	static Object[] vector2toArray(Vector vector, Object[] anArray) {
+	static Object[] vector2toArray(Vector vector, Object... anArray) {
 		vector.copyInto(anArray);
 		return anArray;
 	}

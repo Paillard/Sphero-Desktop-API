@@ -9,7 +9,7 @@ import java.util.Arrays;
  */
 public class Array
 {
-	public static String stringify( byte[] data )
+	public static String stringify( byte... data )
 	{
 		String s = "";
 		for( byte b : data )
@@ -27,7 +27,7 @@ public class Array
 	 * 
 	 * @return The concatenated arrays
 	 */
-	public static byte[] concat( byte[] first, byte[] second )
+	public static byte[] concat( byte[] first, byte... second )
 	{
 		byte[] result = Arrays.copyOf( first, first.length + second.length );
 		System.arraycopy( second, 0, result, first.length, second.length );
@@ -44,7 +44,7 @@ public class Array
 	 * 
 	 * @return The concatenated arrays
 	 */
-	public static <T> T[] concat( T[] first, T[] second )
+	public static <T> T[] concat( T[] first, T... second )
 	{
 		T[] result = Arrays.copyOf( first, first.length + second.length );
 		System.arraycopy( second, 0, result, first.length, second.length );

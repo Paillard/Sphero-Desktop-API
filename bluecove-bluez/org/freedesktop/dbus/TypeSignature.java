@@ -20,7 +20,7 @@ public class TypeSignature
    {
       this.sig = sig;
    }
-   public TypeSignature(Type[] types) throws DBusException
+   public TypeSignature(Type... types) throws DBusException
    {
       StringBuilder sb = new StringBuilder();
       for (Type t: types) {

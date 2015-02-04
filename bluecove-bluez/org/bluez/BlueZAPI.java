@@ -81,11 +81,11 @@ public interface BlueZAPI {
 
     boolean isAdapterPowerOn();
 
-    boolean setAdapterDiscoverable(int mode) throws DBusException;
+    boolean setAdapterDiscoverable(int mode);
 
     void deviceInquiry(BlueZAPI.DeviceInquiryListener listener) throws DBusException, InterruptedException;
 
-    void deviceInquiryCancel() throws DBusException;
+    void deviceInquiryCancel();
 
     String getRemoteDeviceFriendlyName(String deviceAddress) throws DBusException, IOException;
 
@@ -104,7 +104,7 @@ public interface BlueZAPI {
 
     boolean authenticateRemoteDevice(String deviceAddress, String passkey) throws DBusException;
 
-    void removeAuthenticationWithRemoteDevice(String deviceAddress) throws DBusException;
+    void removeAuthenticationWithRemoteDevice(String deviceAddress);
 
     long registerSDPRecord(String sdpXML) throws DBusExecutionException, DBusException;
 

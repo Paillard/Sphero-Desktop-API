@@ -33,7 +33,7 @@ public class SaveMacroCommand extends CommandMessage
 	 * @param destination The destination on the Sphero
 	 * @param macro The macro command as a byte array
 	 */
-	public SaveMacroCommand( byte flags, byte destination, byte[] macro )
+	public SaveMacroCommand( byte flags, byte destination, byte... macro )
 	{
 		super( COMMAND_MESSAGE_TYPE.SAVE_MACRO );
 
@@ -49,7 +49,7 @@ public class SaveMacroCommand extends CommandMessage
 	 * @param destination The destination on the Sphero
 	 * @param macro The macro command as a byte array
 	 */
-	public SaveMacroCommand( int flags, int destination, byte[] macro )
+	public SaveMacroCommand( int flags, int destination, byte... macro )
 	{
 		this( (byte) flags, (byte) destination, macro );
 	}

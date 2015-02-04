@@ -44,7 +44,7 @@ public class two_part_test_server implements TwoPartInterface, DBusSigHandler<Tw
    {
       System.out.println("Got: "+s.o);
    }
-   public static void main(String[] args) throws Exception
+   public static void main(String... args) throws Exception
    {
       DBusConnection conn = DBusConnection.getConnection(DBusConnection.SESSION);
       conn.requestBusName("org.freedesktop.dbus.test.two_part_server");

@@ -44,7 +44,7 @@ public class ServerSocketConnection implements
 		return localHost.getHostAddress();
 	}
 
-	public int getLocalPort() throws IOException {
+	public int getLocalPort() {
 		return serverSocket.getLocalPort();
 	}
 

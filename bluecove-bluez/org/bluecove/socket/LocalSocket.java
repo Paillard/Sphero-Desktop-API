@@ -347,6 +347,6 @@ public class LocalSocket extends Socket {
             throw new SocketException("Socket is already closed");
         }
         Object value = impl.getOption(LocalSocketOptions.SO_PASSCRED);
-        return value instanceof Integer && ((Integer) value).intValue() > 0;
+        return value instanceof Integer && (Integer) value > 0;
     }
 }

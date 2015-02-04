@@ -459,8 +459,8 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
                 try {
                     sr.populateRecord(uuidFilerAttrIDs);
                     // Apply JSR-82 filter, all UUID should be present
-                    for (int u = 0; u < uuidSet1.length; u++) {
-                        if (!(sr.hasServiceClassUUID(uuidSet1[u]) || sr.hasProtocolClassUUID(uuidSet1[u]))) {
+                    for (UUID anUuidSet1 : uuidSet1) {
+                        if (!(sr.hasServiceClassUUID(anUuidSet1) || sr.hasProtocolClassUUID(anUuidSet1))) {
                             if (debug) {
                                 DebugLog.debug("filtered ServiceRecord (" + i + ")", sr);
                             }
@@ -487,7 +487,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
             }
             if (!records.isEmpty()) {
                 DebugLog.debug("SERVICE_SEARCH_COMPLETED " + sst.getTransID());
-                ServiceRecord[] fileteredRecords = (ServiceRecord[]) Utils.vector2toArray(records, new ServiceRecord[records.size()]);
+                ServiceRecord[] fileteredRecords = (ServiceRecord[]) Utils.vector2toArray(records, (Object)new ServiceRecord[records.size()]);
                 listener1.servicesDiscovered(sst.getTransID(), fileteredRecords);
                 return DiscoveryListener.SERVICE_SEARCH_COMPLETED;
             } else {
@@ -515,7 +515,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
 
     private native byte[] getServiceAttributeImpl(long address, long serviceRecordIndex, int attrID);
 
-    public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int[] attrIDs) throws IOException {
+    public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int... attrIDs) throws IOException {
         if (attrIDs.length > ATTR_RETRIEVABLE_MAX) {
             throw new IllegalArgumentException();
         }
@@ -568,7 +568,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
      * 
      * @see com.intel.bluetooth.BluetoothStack#l2Encrypt(long,long,boolean)
      */
-    public boolean rfEncrypt(long address, long handle, boolean on) throws IOException {
+    public boolean rfEncrypt(long address, long handle, boolean on) {
         return false;
     }
 
@@ -616,7 +616,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
 
     private native void sdpServiceUpdateServiceRecordPublish(long handle, char handleType) throws ServiceRegistrationException;
 
-    private native void sdpServiceAddAttribute(long handle, char handleType, int attrID, int attrType, long numberValue, byte[] arrayValue)
+    private native void sdpServiceAddAttribute(long handle, char handleType, int attrID, int attrType, long numberValue, byte... arrayValue)
             throws ServiceRegistrationException;
 
     private native void sdpServiceSequenceAttributeStart(long handle, char handleType, int attrID, int attrType) throws ServiceRegistrationException;
@@ -833,7 +833,7 @@ class BluetoothStackOSX implements BluetoothStack, BluetoothStackExtension {
      * 
      * @see com.intel.bluetooth.BluetoothStack#l2receive(long, byte[])
      */
-    public native int l2Receive(long handle, byte[] inBuf) throws IOException;
+    public native int l2Receive(long handle, byte... inBuf) throws IOException;
 
     /*
      * (non-Javadoc)

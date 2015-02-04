@@ -229,7 +229,7 @@ public class ResponseMessage
 		 * 
 		 * @param data The data for the packet
 		 */
-		public ResponseHeader( byte[] data )
+		public ResponseHeader( byte... data )
 		{
 			this( data, 0 );
 		}
@@ -508,7 +508,7 @@ public class ResponseMessage
 		 * 
 		 * @param code The response code id
 		 */
-        RESPONSE_CODE(int[] _codes, RESPONSE_TYPE[] types)
+        RESPONSE_CODE(int[] _codes, RESPONSE_TYPE... types)
 		{
             this.codes = new EnumMap<>( RESPONSE_TYPE.class );
 
@@ -516,7 +516,7 @@ public class ResponseMessage
                 this.codes.put(types[i], (byte) _codes[i]);
 		}
 
-		RESPONSE_CODE(byte[] _codes, RESPONSE_TYPE[] types)
+		RESPONSE_CODE(byte[] _codes, RESPONSE_TYPE... types)
 		{
             this.codes = new EnumMap<>( RESPONSE_TYPE.class );
 

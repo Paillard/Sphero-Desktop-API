@@ -34,7 +34,7 @@ class OBEXOperationOutputStream extends OutputStream {
 
 	private int bufferLength;
 
-	private Object lock = new Object();
+	private final Object lock = new Object();
 
 	private boolean isClosed;
 

@@ -172,7 +172,7 @@ public interface DiscoveryListener {
 	 * @see DiscoveryAgent#searchServices(int[], javax.bluetooth.UUID[],
 	 * javax.bluetooth.RemoteDevice, javax.bluetooth.DiscoveryListener)
 	 */
-    void servicesDiscovered(int transID, ServiceRecord[] servRecord);
+    void servicesDiscovered(int transID, ServiceRecord... servRecord);
 
 	/**
 	 * Called when a service search is completed or was terminated because of an

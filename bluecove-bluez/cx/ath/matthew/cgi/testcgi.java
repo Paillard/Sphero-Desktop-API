@@ -32,7 +32,7 @@ import java.util.Map;
 
 class testcgi extends CGI
 {
-   protected void cgi(Map POST, Map GET, Map ENV, Map COOKIE, String[] params) throws Exception
+   protected void cgi(Map POST, Map GET, Map ENV, Map COOKIE, String... params) throws Exception
    {
        header("Content-type", "text/plain");
        setcookie("testcgi", "You have visited us already");
@@ -69,7 +69,7 @@ class testcgi extends CGI
       }   
    }
 
-   public static void main(String[] args)
+   public static void main(String... args)
    {
       CGI cgi = new testcgi();
       cgi.doCGI(args);

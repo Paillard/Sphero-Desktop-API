@@ -40,7 +40,7 @@ class OBEXOperationInputStream extends InputStream {
 
 	private int appendPos;
 
-	private Object lock = new Object();
+	private final Object lock = new Object();
 
 	private boolean isClosed;
 

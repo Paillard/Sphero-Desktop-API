@@ -29,6 +29,7 @@ package javax.bluetooth;
 import com.intel.bluetooth.Utils;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -912,8 +913,8 @@ public class DataElement {
 		case DATSEQ: {
 			StringBuilder buf = new StringBuilder("DATSEQ {\n");
 
-			for (Enumeration e = ((Vector) value).elements(); e.hasMoreElements();) {
-				buf.append(e.nextElement());
+			for (Iterator iterator = ((Vector) value).iterator(); iterator.hasNext();) {
+				buf.append(iterator.next());
 				buf.append("\n");
 			}
 
@@ -924,8 +925,8 @@ public class DataElement {
 		case DATALT:
             StringBuilder buf = new StringBuilder("DATALT {\n");
 
-            for (Enumeration e = ((Vector) value).elements(); e.hasMoreElements();) {
-                buf.append(e.nextElement());
+            for (Iterator iterator = ((Vector) value).iterator(); iterator.hasNext();) {
+                buf.append(iterator.next());
                 buf.append("\n");
             }
 

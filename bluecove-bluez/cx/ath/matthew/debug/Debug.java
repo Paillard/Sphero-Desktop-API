@@ -78,7 +78,7 @@ public class Debug
         @param message The debug message.
         @param lines Other lines of a multiple-line debug message.
        */
-      void filter(PrintStream output, int level, String location, String extra, String message, String[] lines);
+      void filter(PrintStream output, int level, String location, String extra, String message, String... lines);
    }
    /** Highest priority messages */
    public static final int CRIT = 1;
@@ -148,12 +148,8 @@ public class Debug
    /** @deprecated In Java 1.5 calling class is automatically identified, no need to pass it in. */
    //TODO: 1.5 @Deprecated()
    @Deprecated
-   public static boolean debugging(Class c, int loglevel)
-   {
-      if (debug) {
-          return null == c || debugging(c.getName(), loglevel);
-      }
-      return false;
+   public static boolean debugging(Class c, int loglevel) {
+       return debug && (null == c || debugging(c.getName(), loglevel));
    }
    public static boolean debugging(String s, int loglevel)
    {
@@ -346,7 +342,7 @@ public class Debug
      @see #setHexDump to enable hex dumping.
      @see #setByteArrayCount to change how many bytes are printed. 
      @see #setByteArrayWidth to change the formatting width of hex. */
-   public static void print(int loglevel, byte[] b)
+   public static void print(int loglevel, byte... b)
    {
       if (debug) {
          String timestr = "";
@@ -458,7 +454,7 @@ public class Debug
                timestr = "{" + (now- last) + "} ";
                 last = now;
             }
-             _print(o.getClass(), loglevel, data[0] + "." + data[1] + "()" + data[2], timestr, o.toString(), null);
+             _print(o.getClass(), loglevel, data[0] + "." + data[1] + "()" + data[2], timestr, o.toString(), (String)null);
          }
       }
    }
@@ -539,14 +535,14 @@ public class Debug
     */
    public static void setThrowableTraces(boolean ttrace)
    {
-       boolean ttrace1 = ttrace;
+       // boolean ttrace1 = ttrace;
    }
    /**
      Enable or disable timing in Debug messages.
     */
    public static void setTiming(boolean timing)
    {
-       boolean timing1 = timing;
+       // boolean timing1 = timing;
    }
    /**
      Enable or disable line numbers.
@@ -560,7 +556,7 @@ public class Debug
     */
    public static void setHexDump(boolean hexdump)
    {
-       boolean hexdump1 = hexdump;
+       // boolean hexdump1 = hexdump;
    }
    /**
      Set the size of hexdumps.
@@ -568,7 +564,7 @@ public class Debug
     */
    public static void setByteArrayCount(int count)
    {
-       int balen = count;
+       // int balen = count;
    }
    /**
      Set the formatted width of hexdumps.
@@ -576,7 +572,7 @@ public class Debug
     */
    public static void setByteArrayWidth(int width)
    {
-       int bawidth = width;
+       // int bawidth = width;
    }
    /**
      Add a filter command for a specific type.
@@ -590,7 +586,7 @@ public class Debug
    {
        filterMap.put(c, f);
    }
-   private static void _print(Class c, int level, String loc, String extra, String message, String[] lines)
+   private static void _print(Class c, int level, String loc, String extra, String message, String... lines)
    {
       //TODO 1.5: FilterCommand f = filterMap.get(c);
       FilterCommand f = (FilterCommand) filterMap.get(c);

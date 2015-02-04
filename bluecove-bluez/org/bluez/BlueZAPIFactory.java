@@ -26,7 +26,6 @@ package org.bluez;
 
 import org.bluez.v3.BlueZAPIV3;
 import org.bluez.v4.BlueZAPIV4;
-import org.freedesktop.DBus;
 import org.freedesktop.DBus.Error.UnknownMethod;
 import org.freedesktop.dbus.DBusConnection;
 import org.freedesktop.dbus.exceptions.DBusException;

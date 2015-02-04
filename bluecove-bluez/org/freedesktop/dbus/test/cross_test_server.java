@@ -17,7 +17,6 @@ import java.util.TreeSet;
 import java.util.Set;
 import java.util.Vector;
 
-import org.freedesktop.DBus;
 import org.freedesktop.DBus.Binding;
 import org.freedesktop.DBus.Binding.SingleTests;
 import org.freedesktop.DBus.Binding.TestClient;
@@ -159,84 +158,84 @@ public class cross_test_server implements Tests, SingleTests, DBusSigHandler<Tri
          return input;
       }
    @Description("Returns whatever it is passed")
-      public <T> Variant<T>[] IdentityArray(Variant<T>[] input) 
+      public <T> Variant<T>[] IdentityArray(Variant<T>... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityArray");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityArray");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public byte[] IdentityByteArray(byte[] input) 
+      public byte[] IdentityByteArray(byte... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityByteArray");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityByteArray");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public boolean[] IdentityBoolArray(boolean[] input) 
+      public boolean[] IdentityBoolArray(boolean... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityBoolArray");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityBoolArray");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public short[] IdentityInt16Array(short[] input) 
+      public short[] IdentityInt16Array(short... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityInt16Array");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityInt16Array");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public UInt16[] IdentityUInt16Array(UInt16[] input) 
+      public UInt16[] IdentityUInt16Array(UInt16... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityUInt16Array");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityUInt16Array");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public int[] IdentityInt32Array(int[] input) 
+      public int[] IdentityInt32Array(int... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityInt32Array");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityInt32Array");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public UInt32[] IdentityUInt32Array(UInt32[] input) 
+      public UInt32[] IdentityUInt32Array(UInt32... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityUInt32Array");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityUInt32Array");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public long[] IdentityInt64Array(long[] input) 
+      public long[] IdentityInt64Array(long... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityInt64Array");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityInt64Array");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public UInt64[] IdentityUInt64Array(UInt64[] input) 
+      public UInt64[] IdentityUInt64Array(UInt64... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityUInt64Array");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityUInt64Array");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public double[] IdentityDoubleArray(double[] input) 
+      public double[] IdentityDoubleArray(double... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityDoubleArray");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityDoubleArray");
          return input;
       }
    @Description("Returns whatever it is passed")
-      public String[] IdentityStringArray(String[] input) 
+      public String[] IdentityStringArray(String... input)
       {
           done.add("org.freedesktop.DBus.Binding.Tests.IdentityStringArray");
           notdone.remove("org.freedesktop.DBus.Binding.Tests.IdentityStringArray");
          return input;
       }
    @Description("Returns the sum of the values in the input list")
-   public long Sum(int[] a)
+   public long Sum(int... a)
    {
        done.add("org.freedesktop.DBus.Binding.Tests.Sum");
        notdone.remove("org.freedesktop.DBus.Binding.Tests.Sum");
@@ -245,7 +244,7 @@ public class cross_test_server implements Tests, SingleTests, DBusSigHandler<Tri
       return sum;
    }
    @Description("Returns the sum of the values in the input list")
-   public UInt32 Sum(byte[] a)
+   public UInt32 Sum(byte... a)
    {
        done.add("org.freedesktop.DBus.Binding.SingleTests.Sum");
        notdone.remove("org.freedesktop.DBus.Binding.SingleTests.Sum");
@@ -324,7 +323,7 @@ public class cross_test_server implements Tests, SingleTests, DBusSigHandler<Tri
       }
    }
 
-   public static void main(String[] args)
+   public static void main(String... args)
    { try {
       DBusConnection conn = DBusConnection.getConnection(DBusConnection.SESSION);
       conn.requestBusName("org.freedesktop.DBus.Binding.TestServer");

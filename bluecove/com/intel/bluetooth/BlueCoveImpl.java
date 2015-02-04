@@ -31,8 +31,8 @@ import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -166,7 +166,7 @@ public class BlueCoveImpl {
 
     private static BlueCoveImpl.BluetoothStackHolder threadStackIDDefault;
 
-    private static Hashtable resourceConfigProperties = new Hashtable();
+    private static final Hashtable resourceConfigProperties = new Hashtable();
 
     private static Hashtable/* <BluetoothStack, BluetoothStackHolder> */stacks = new Hashtable();
 
@@ -227,8 +227,8 @@ public class BlueCoveImpl {
                 return;
             }
             if (!stacks.isEmpty()) {
-                for (Enumeration en = stacks.elements(); en.hasMoreElements();) {
-                    BlueCoveImpl.BluetoothStackHolder s = (BlueCoveImpl.BluetoothStackHolder) en.nextElement();
+                for (Iterator iterator = stacks.values().iterator(); iterator.hasNext();) {
+                    BluetoothStackHolder s = (BluetoothStackHolder) iterator.next();
                     if (s.bluetoothStack != null) {
                         try {
                             s.bluetoothStack.destroy();
@@ -264,7 +264,7 @@ public class BlueCoveImpl {
 
         public void run() {
             Object monitor = shutdownHookThread.monitor;
-            synchronized (monitor) {
+            synchronized (shutdownHookThread.monitor) {
                 shutdownHookThread.shutdownStart = 1;
                 monitor.notifyAll();
                 if (!stacks.isEmpty()) {
@@ -431,7 +431,7 @@ public class BlueCoveImpl {
 
     private BluetoothStack detectStack() throws BluetoothStateException {
 
-        BluetoothStack detectorStack = null;
+        BluetoothStack detectorStack;
 
         String stackFirstDetector = getConfigProperty(BlueCoveConfigProperties.PROPERTY_STACK_FIRST);
 
@@ -514,7 +514,7 @@ public class BlueCoveImpl {
         stackSelected = stack.getStackID();
         copySystemProperties(stack);
         if (!stackSelected.equals(STACK_EMULATOR)) {
-//            System.out.println("BlueCove version " + version + " on " + stackSelected);
+            System.out.println("BlueCove version " + version + " on " + stackSelected);
         }
         return stack;
     }
@@ -753,8 +753,8 @@ public class BlueCoveImpl {
      * Shutdown all BluetoothStacks interfaces initialized by BlueCove
      */
     public static synchronized void shutdown() {
-        for (Enumeration en = stacks.elements(); en.hasMoreElements();) {
-            BlueCoveImpl.BluetoothStackHolder s = (BlueCoveImpl.BluetoothStackHolder) en.nextElement();
+        for (Iterator iterator = stacks.values().iterator(); iterator.hasNext();) {
+            BluetoothStackHolder s = (BluetoothStackHolder) iterator.next();
             s.configProperties.clear();
             if (s.bluetoothStack != null) {
                 BluetoothConnectionNotifierBase.shutdownConnections(s.bluetoothStack);
@@ -885,12 +885,11 @@ public class BlueCoveImpl {
     }
 
     static String[] getSystemPropertiesList() {
-        String[] p = { BluetoothConsts.PROPERTY_BLUETOOTH_MASTER_SWITCH, BluetoothConsts.PROPERTY_BLUETOOTH_SD_ATTR_RETRIEVABLE_MAX,
+        return new String[]{ BluetoothConsts.PROPERTY_BLUETOOTH_MASTER_SWITCH, BluetoothConsts.PROPERTY_BLUETOOTH_SD_ATTR_RETRIEVABLE_MAX,
                 BluetoothConsts.PROPERTY_BLUETOOTH_CONNECTED_DEVICES_MAX, BluetoothConsts.PROPERTY_BLUETOOTH_L2CAP_RECEIVEMTU_MAX,
                 BluetoothConsts.PROPERTY_BLUETOOTH_SD_TRANS_MAX, BluetoothConsts.PROPERTY_BLUETOOTH_CONNECTED_INQUIRY_SCAN,
                 BluetoothConsts.PROPERTY_BLUETOOTH_CONNECTED_PAGE_SCAN, BluetoothConsts.PROPERTY_BLUETOOTH_CONNECTED_INQUIRY,
                 BluetoothConsts.PROPERTY_BLUETOOTH_CONNECTED_PAGE };
-        return p;
     }
 
     static void clearSystemProperties() {
@@ -1076,9 +1075,7 @@ public class BlueCoveImpl {
 
     private BluetoothStack detectStackPrivileged() throws BluetoothStateException {
         try {
-            return (BluetoothStack) AccessController.doPrivileged((PrivilegedExceptionAction) () -> {
-                return detectStack();
-            }, (AccessControlContext) accessControlContext);
+            return (BluetoothStack) AccessController.doPrivileged((PrivilegedExceptionAction) this::detectStack, (AccessControlContext) accessControlContext);
         } catch (PrivilegedActionException e) {
             Throwable cause = UtilsJavaSE.getCause(e);
             if (cause instanceof BluetoothStateException) {

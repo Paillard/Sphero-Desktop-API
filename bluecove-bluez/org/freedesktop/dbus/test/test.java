@@ -10,18 +10,7 @@
 */
 package org.freedesktop.dbus.test;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import java.text.Collator;
-
+import org.freedesktop.DBus;
 import org.freedesktop.DBus.Error.MatchRuleInvalid;
 import org.freedesktop.DBus.Error.ServiceUnknown;
 import org.freedesktop.DBus.Error.UnknownObject;
@@ -33,14 +22,13 @@ import org.freedesktop.dbus.*;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import org.freedesktop.dbus.exceptions.NotConnected;
-
-import org.freedesktop.DBus;
-import org.freedesktop.dbus.test.TestSignalInterface.EmptySignal;
-import org.freedesktop.dbus.test.TestSignalInterface.TestArraySignal;
-import org.freedesktop.dbus.test.TestSignalInterface.TestObjectSignal;
-import org.freedesktop.dbus.test.TestSignalInterface.TestPathSignal;
-import org.freedesktop.dbus.test.TestSignalInterface.TestSignal;
+import org.freedesktop.dbus.test.TestSignalInterface.*;
 import org.freedesktop.dbus.test.TestSignalInterface2.TestRenamedSignal;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.text.Collator;
+import java.util.*;
 
 class testnewclass implements TestNewInterface
 {
@@ -73,7 +61,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
       }
       return out;
    }
-   public float testfloat(float[] f)
+   public float testfloat(float... f)
    {
       if (f.length < 4 ||
             f[0] != 17.093f ||
@@ -125,7 +113,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
    /** Local classes MUST implement this to return false */
    public boolean isRemote() { return false; }
    /** The method we are exporting to the Bus. */
-   public List<Integer> sampleArray(List<String> ss, Integer[] is, long[] ls)
+   public List<Integer> sampleArray(List<String> ss, Integer[] is, long... ls)
    {
       System.out.println("Got an array:");
       for (String s: ss)
@@ -274,7 +262,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
       { throw new DBusExecutionException(DBe.getMessage()); }
       return n;
    }
-   public void sig(Type[] s)
+   public void sig(Type... s)
    {
       if (s.length != 2
          || !s[0].equals(Byte.class) 
@@ -294,7 +282,7 @@ class testclass implements TestRemoteInterface, TestRemoteInterface2, TestSignal
          || !"moo".equals(((Map<Object,Object>) v.getValue()).get("cow")))
          test.fail("Didn't send variant correctly");
    }
-	public void reg13291(byte[] as, byte[] bs)
+	public void reg13291(byte[] as, byte... bs)
 	{
 		if (as.length != bs.length) test.fail("didn't receive identical byte arrays");
 		for (int i = 0; i < as.length;  i++)
@@ -536,7 +524,7 @@ public class test
    static DBusConnection serverconn;
    static DBusConnection clientconn;
    @SuppressWarnings("unchecked")
-   public static void main(String[] args) 
+   public static void main(String... args)
    { try {
       System.out.println("Creating Connection");
        serverconn = DBusConnection.getConnection(DBusConnection.SESSION);
@@ -584,7 +572,6 @@ public class test
       // explicitly unexport object
        serverconn.unExportObject("/BadTest");
       // implicitly unexport object
-      tclass2 = null;
       System.gc();
       System.runFinalization();
       System.gc();
@@ -605,7 +592,7 @@ public class test
       
       System.out.println("Getting our introspection data");
       /** This gets a remote object matching our bus name and exported object path. */
-      Introspectable intro = clientconn.getRemoteObject("foo.bar.Test", "/", Introspectable.class);
+      Introspectable intro/* = clientconn.getRemoteObject("foo.bar.Test", "/", Introspectable.class)*/;
       /** Get introspection data */
       String data;/* = intro.Introspect();
       if (null == data || !data.startsWith("<!DOCTYPE"))
@@ -673,7 +660,7 @@ public class test
       System.out.println("sending it to sleep");
       tri.waitawhile();
       System.out.println("testing floats");
-      if (17.093f != tri.testfloat(new float[] { 17.093f, -23f, 0.0f, 31.42f }))
+      if (17.093f != tri.testfloat(17.093f, -23f, 0.0f, 31.42f))
           fail("testfloat returned the wrong thing");
       System.out.println("Structs of Structs");
       List<List<Integer>> lli = new Vector<>();
@@ -727,7 +714,7 @@ public class test
       /* Test type signatures */
       Vector<Type> ts = new Vector<>();
       Marshalling.getJavaType("ya{si}", ts, -1);
-      tri.sig(ts.toArray(new Type[0]));
+      tri.sig(ts.toArray(new Type[ts.size()]));
 
       tri.newpathtest(new Path("/new/path/test"));
      
@@ -812,7 +799,7 @@ public class test
       l.add("hey");
       l.add("aloha");
       System.out.println("Sampling Arrays:");
-      List<Integer> is = tri2.sampleArray(l, new Integer[] { 1, 5, 7, 9 }, new long[] { 2, 6, 8, 12 });
+      List<Integer> is = tri2.sampleArray(l, new Integer[] { 1, 5, 7, 9 }, 2, 6, 8, 12);
       System.out.println("sampleArray returned an array:");
       for (Integer i: is)
          System.out.println("--"+i);

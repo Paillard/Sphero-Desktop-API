@@ -363,7 +363,7 @@ public interface DBus extends DBusInterface
       interface SingleTests extends DBusInterface
       {
          @Description("Returns the sum of the values in the input list")
-         UInt32 Sum(byte[] a);
+         UInt32 Sum(byte... a);
       }
       interface TestClient extends DBusInterface
       {
@@ -408,29 +408,29 @@ public interface DBus extends DBusInterface
          @Description("Returns whatever it is passed")
          String IdentityString(String input);
          @Description("Returns whatever it is passed")
-         <T> Variant<T>[] IdentityArray(Variant<T>[] input);
+         <T> Variant<T>[] IdentityArray(Variant<T>... input);
          @Description("Returns whatever it is passed")
-         byte[] IdentityByteArray(byte[] input);
+         byte[] IdentityByteArray(byte... input);
          @Description("Returns whatever it is passed")
-         boolean[] IdentityBoolArray(boolean[] input);
+         boolean[] IdentityBoolArray(boolean... input);
          @Description("Returns whatever it is passed")
-         short[] IdentityInt16Array(short[] input);
+         short[] IdentityInt16Array(short... input);
          @Description("Returns whatever it is passed")
-         UInt16[] IdentityUInt16Array(UInt16[] input);
+         UInt16[] IdentityUInt16Array(UInt16... input);
          @Description("Returns whatever it is passed")
-         int[] IdentityInt32Array(int[] input);
+         int[] IdentityInt32Array(int... input);
          @Description("Returns whatever it is passed")
-         UInt32[] IdentityUInt32Array(UInt32[] input);
+         UInt32[] IdentityUInt32Array(UInt32... input);
          @Description("Returns whatever it is passed")
-         long[] IdentityInt64Array(long[] input);
+         long[] IdentityInt64Array(long... input);
          @Description("Returns whatever it is passed")
-         UInt64[] IdentityUInt64Array(UInt64[] input);
+         UInt64[] IdentityUInt64Array(UInt64... input);
          @Description("Returns whatever it is passed")
-         double[] IdentityDoubleArray(double[] input);
+         double[] IdentityDoubleArray(double... input);
          @Description("Returns whatever it is passed")
-         String[] IdentityStringArray(String[] input);
+         String[] IdentityStringArray(String... input);
          @Description("Returns the sum of the values in the input list")
-         long Sum(int[] a);
+         long Sum(int... a);
          @Description("Given a map of A => B, should return a map of B => a list of all the As which mapped to B")
          Map<String, List<String>> InvertMapping(Map<String, String> a);
          @Description("This method returns the contents of a struct as separate values")

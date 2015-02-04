@@ -23,6 +23,8 @@
  */
 package com.intel.bluetooth;
 
+import com.sun.istack.internal.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -122,7 +124,7 @@ class BluetoothRFCommInputStream extends InputStream {
 	 * read()
 	 */
 
-	public int read(byte[] b, int off, int len) throws IOException {
+	public int read(@NotNull byte[] b, int off, int len) throws IOException {
 		if (off < 0 || len < 0 || off + len > b.length) {
 			throw new IndexOutOfBoundsException();
 		}

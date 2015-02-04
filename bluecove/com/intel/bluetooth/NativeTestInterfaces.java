@@ -39,15 +39,15 @@ class NativeTestInterfaces {
 		return NativeLibLoader.isAvailable(BlueCoveImpl.NATIVE_LIB_WIDCOMM);
 	}
 
-	static native byte[] testUUIDConversion(byte[] uuidValue);
+	static native byte[] testUUIDConversion(byte... uuidValue);
 
 	static native long testReceiveBufferCreate(int size);
 
 	static native void testReceiveBufferClose(long bufferHandler);
 
-	static native int testReceiveBufferWrite(long bufferHandler, byte[] send);
+	static native int testReceiveBufferWrite(long bufferHandler, byte... send);
 
-	static native int testReceiveBufferRead(long bufferHandler, byte[] rcv);
+	static native int testReceiveBufferRead(long bufferHandler, byte... rcv);
 
 	static native int testReceiveBufferRead(long bufferHandler);
 
@@ -63,7 +63,7 @@ class NativeTestInterfaces {
 
 	static native void testDebug(int argc, String message);
 
-	static native byte[] testOsXDataElementConversion(int testType, int type, long ldata, byte[] bdata);
+	static native byte[] testOsXDataElementConversion(int testType, int type, long ldata, byte... bdata);
 
 	static native void testOsXRunnableLoop(int testType, int runLoops);
 

@@ -4,7 +4,6 @@
  */
 package se.nicklasgavelin.sphero.macro.command;
 
-import se.nicklasgavelin.sphero.command.RawMotorCommand;
 import se.nicklasgavelin.sphero.command.RawMotorCommand.MOTOR_MODE;
 import se.nicklasgavelin.sphero.macro.MacroCommand;
 import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;

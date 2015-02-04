@@ -30,7 +30,7 @@ import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
 class test
 {
-   public static void main(String[] args) throws Exception
+   public static void main(String... args) throws Exception
    {
       PrintWriter out = new PrintWriter(new OutputStreamWriter(new ExecOutputStream(System.out, "xsltproc mcr.xsl -")));///java cx.ath.matthew.io.findeof")));
       

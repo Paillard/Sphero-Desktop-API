@@ -350,7 +350,7 @@ public abstract class NativeLibLoader {
 	}
 
 	private static boolean loadAsSystemResource(String libFileName, Class stackClass, StringBuffer loadErrors) {
-		InputStream is = null;
+		InputStream is;
 		try {
 			ClassLoader clo = null;
 			try {
@@ -388,7 +388,6 @@ public abstract class NativeLibLoader {
 			try {
 				is.close();
 			} catch (IOException ignore) {
-				is = null;
 			}
 		}
 		try {
@@ -431,7 +430,6 @@ public abstract class NativeLibLoader {
 				try {
 					fos.close();
 				} catch (IOException ignore) {
-					fos = null;
 				}
 			}
 		}
@@ -450,7 +448,7 @@ public abstract class NativeLibLoader {
 		}
 		String uname = System.getProperty("user.name");
 		int count = 0;
-		File fd = null;
+		File fd;
 		File dir = null;
 		selectDirectory: while (true) {
 			if (count > 10) {
@@ -460,7 +458,7 @@ public abstract class NativeLibLoader {
 			dir = new File(tmpDir, "bluecove_" + uname + "_" + count++);
 			if (dir.exists()) {
 				if (!dir.isDirectory()) {
-					continue selectDirectory;
+					continue;
 				}
 				// Remove all files.
 				try {
@@ -476,7 +474,7 @@ public abstract class NativeLibLoader {
 			}
 			if (!dir.exists() && !dir.mkdirs()) {
 				DebugLog.debug("Can't create temporary dir ", dir.getAbsolutePath());
-				continue selectDirectory;
+				continue;
 			}
 			try {
 				dir.deleteOnExit();

@@ -24,7 +24,7 @@ public class two_part_test_client
          return toString();
       }
    }
-   public static void main(String[] args) throws Exception
+   public static void main(String... args) throws Exception
    {
       System.out.println("get conn");
       DBusConnection conn = DBusConnection.getConnection(DBusConnection.SESSION);

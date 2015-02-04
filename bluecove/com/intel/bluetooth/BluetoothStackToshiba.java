@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.bluetooth.BluetoothStateException;
@@ -343,8 +344,8 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 				Hashtable previouslyFound = (Hashtable) deviceDiscoveryListenerFoundDevices.get(listener);
 				if (previouslyFound != null) {
 					Vector reported = (Vector) deviceDiscoveryListenerReportedDevices.get(listener);
-					for (Enumeration en = previouslyFound.keys(); en.hasMoreElements();) {
-						RemoteDevice remoteDevice = (RemoteDevice) en.nextElement();
+					for (Iterator iterator = previouslyFound.keySet().iterator(); iterator.hasNext();) {
+						RemoteDevice remoteDevice = (RemoteDevice) iterator.next();
 						if (reported.contains(remoteDevice)) {
 							continue;
 						}
@@ -425,9 +426,9 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 
 	private native long[] searchServicesImpl(SearchServicesThread startedNotify, short cid, byte[][] uuidSet);
 
-	private native byte[] populateWorkerImpl(short cid, long handle, int[] attrSet);
+	private native byte[] populateWorkerImpl(short cid, long handle, int... attrSet);
 
-	private boolean setAttributes(ServiceRecordImpl serviceRecord, int[] attrIDs, byte[] bytes) {
+	private boolean setAttributes(ServiceRecordImpl serviceRecord, int[] attrIDs, byte... bytes) {
 		boolean anyRetrived = false;
 
 		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
@@ -541,7 +542,7 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 		return false;
 	}
 
-	public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int[] attrIDs)
+	public boolean populateServicesRecordAttributeValues(ServiceRecordImpl serviceRecord, int... attrIDs)
 			throws IOException {
 		if (attrIDs.length > 0xFFFF) {
 			throw new IllegalArgumentException();
@@ -599,7 +600,7 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 	 * 
 	 * @see com.intel.bluetooth.BluetoothStack#l2Encrypt(long,long,boolean)
 	 */
-	public boolean rfEncrypt(long address, long handle, boolean on) throws IOException {
+	public boolean rfEncrypt(long address, long handle, boolean on) {
 		return false;
 	}
 
@@ -764,7 +765,7 @@ class BluetoothStackToshiba implements BluetoothStack, DeviceInquiryRunnable, Se
 	 * 
 	 * @see com.intel.bluetooth.BluetoothStack#l2receive(long, byte[])
 	 */
-	public int l2Receive(long handle, byte[] inBuf) throws IOException {
+	public int l2Receive(long handle, byte... inBuf) throws IOException {
 		// TODO Auto-generated method stub
 		return 0;
 	}

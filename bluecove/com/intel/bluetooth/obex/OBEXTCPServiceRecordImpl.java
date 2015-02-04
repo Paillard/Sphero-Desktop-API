@@ -96,7 +96,7 @@ class OBEXTCPServiceRecordImpl implements ServiceRecord {
 	/* (non-Javadoc)
 	 * @see javax.bluetooth.ServiceRecord#populateRecord(int[])
 	 */
-	public boolean populateRecord(int[] attrIDs) throws IOException {
+	public boolean populateRecord(int... attrIDs) throws IOException {
 		throw new IllegalArgumentException("Not a Bluetooth ServiceRecord");
 	}
 

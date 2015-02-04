@@ -32,7 +32,6 @@
  */
 package org.bluez.v3;
 
-import org.bluez.Error;
 import org.bluez.Error.Failed;
 import org.bluez.Error.InvalidArguments;
 import org.bluez.Error.NoSuchAdapter;

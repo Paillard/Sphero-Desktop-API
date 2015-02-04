@@ -290,7 +290,7 @@ public interface HeaderSet {
 	 *                if an error occurred in the transport layer during the
 	 *                operation or if the connection has been closed
 	 */
-    Object getHeader(int headerID) throws IOException;
+    Object getHeader(int headerID);
 
 	/**
 	 * Retrieves the list of headers that may be retrieved via the
@@ -307,7 +307,7 @@ public interface HeaderSet {
 	 *                if an error occurred in the transport layer during the
 	 *                operation or the connection has been closed
 	 */
-    int[] getHeaderList() throws IOException;
+    int[] getHeaderList();
 
 	/**
 	 * Sets the authentication challenge header. The <code>realm</code> will

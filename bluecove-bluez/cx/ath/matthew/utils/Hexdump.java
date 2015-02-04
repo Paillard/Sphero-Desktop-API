@@ -32,7 +32,7 @@ import java.io.PrintStream;
 public class Hexdump
 {
    public static final char[] hexchars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-   public static String toHex(byte[] buf)
+   public static String toHex(byte... buf)
    {
       return toHex(buf, 0, buf.length);
    }
@@ -54,7 +54,7 @@ public class Hexdump
       return sb.toString();
    }
    
-   public static String toAscii(byte[] buf)
+   public static String toAscii(byte... buf)
    {
       return toAscii(buf, 0, buf.length);
    }
@@ -73,7 +73,7 @@ public class Hexdump
       }
       return sb.toString();
    }
-   public static String format(byte[] buf)
+   public static String format(byte... buf)
    {
       return format(buf, 80);
    }
@@ -95,7 +95,7 @@ public class Hexdump
       } while (i < buf.length);
       return sb.toString();
    }
-   public static void print(byte[] buf)
+   public static void print(byte... buf)
    {
        print(buf, System.err);
    }
@@ -120,7 +120,7 @@ public class Hexdump
     * javafile.print(Hexdump.toByteArray(data));
     * javafile.println("};");
     */
-   public static String toByteArray(byte[] buf)
+   public static String toByteArray(byte... buf)
    {
       return toByteArray(buf, 0, buf.length);
    }

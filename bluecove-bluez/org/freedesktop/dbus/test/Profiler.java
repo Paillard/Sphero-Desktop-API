@@ -25,11 +25,11 @@ public interface Profiler extends DBusInterface
          super(path);
       }
    }
-   void array(int[] v);
-   void stringarray(String[] v);
+   void array(int... v);
+   void stringarray(String... v);
    void map(Map<String, String> m);
    void list(List<String> l);
-   void bytes(byte[] b);
+   void bytes(byte... b);
    void struct(ProfileStruct ps);
    void string(String s);
 	void NoReply();

@@ -10,7 +10,6 @@
 */
 package org.freedesktop.dbus.test;
 
-import org.freedesktop.DBus;
 import org.freedesktop.DBus.Description;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
@@ -28,7 +27,7 @@ public interface TestRemoteInterface2 extends DBusInterface
    @Description("Test passing structs and explicit variants, returning implicit variants")
    <T> T dostuff(TestStruct foo);
    @Description("Test arrays, boxed arrays and lists.")
-   List<Integer> sampleArray(List<String> l, Integer[] is, long[] ls);
+   List<Integer> sampleArray(List<String> l, Integer[] is, long... ls);
    @Description("Test passing objects as object paths.")
    DBusInterface getThis(DBusInterface t);
    @Description("Test bools work")

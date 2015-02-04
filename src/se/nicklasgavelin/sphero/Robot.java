@@ -4,25 +4,17 @@ import se.nicklasgavelin.bluetooth.BluetoothConnection;
 import se.nicklasgavelin.bluetooth.BluetoothDevice;
 import se.nicklasgavelin.configuration.ProjectProperties;
 import se.nicklasgavelin.log.Logging;
-import se.nicklasgavelin.sphero.RobotListener.EVENT_CODE;
 import se.nicklasgavelin.sphero.command.*;
-import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
-import se.nicklasgavelin.sphero.command.RawMotorCommand.MOTOR_MODE;
 import se.nicklasgavelin.sphero.exception.InvalidRobotAddressException;
 import se.nicklasgavelin.sphero.exception.RobotBluetoothException;
 import se.nicklasgavelin.sphero.exception.RobotInitializeConnectionFailed;
 import se.nicklasgavelin.sphero.macro.MacroCommand;
-import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.sphero.macro.MacroObject;
-import se.nicklasgavelin.sphero.macro.MacroObject.MacroObjectMode;
 import se.nicklasgavelin.sphero.macro.command.Delay;
 import se.nicklasgavelin.sphero.macro.command.Emit;
 import se.nicklasgavelin.sphero.macro.command.RGB;
 import se.nicklasgavelin.sphero.response.InformationResponseMessage;
 import se.nicklasgavelin.sphero.response.ResponseMessage;
-import se.nicklasgavelin.sphero.response.ResponseMessage.RESPONSE_CODE;
-import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader;
-import se.nicklasgavelin.sphero.response.ResponseMessage.ResponseHeader.RESPONSE_TYPE;
 import se.nicklasgavelin.sphero.response.regular.GetBluetoothInfoResponse;
 import se.nicklasgavelin.util.ByteArrayBuffer;
 import se.nicklasgavelin.util.Pair;
@@ -68,17 +60,17 @@ public class Robot
 	private BluetoothConnection btc;
 	private boolean connected;
 	// Listener/writer
-	private RobotStreamListener listeningThread;
-	private RobotSendingQueue sendingTimer;
-	private List<RobotListener> listeners;
+	private Robot.RobotStreamListener listeningThread;
+	private Robot.RobotSendingQueue sendingTimer;
+	private final List<RobotListener> listeners;
 	// Other
 	private String name;
 	// Robot macro
-	private MACRO_SETTINGS macroSettings;
+	private Robot.MACRO_SETTINGS macroSettings;
 	// Robot position and led color
-	private RobotMovement movement;
-	private RobotRawMovement rawMovement;
-	private RobotLED led;
+	private Robot.RobotMovement movement;
+	private Robot.RobotRawMovement rawMovement;
+	private Robot.RobotLED led;
 	// Pinger
 	private float PING_INTERVAL; // Time in milliseconds
 	// Address
@@ -90,7 +82,7 @@ public class Robot
 	// Robot controller
 	// private RobotController controller;
 	private static int error_num;
-	private static final String[] invalidAddressResponses = { "The bluetooth address is invalid, the Sphero device bluetooth address must start with " + ROBOT_ADDRESS_PREFIX, "The address is still invalid, the Sphero bluetooth address must start with " + ROBOT_ADDRESS_PREFIX, "Check your frigging bluetooth address, it still need to start with " + ROBOT_ADDRESS_PREFIX, "I give up... You are not taking me seriously. Why would I give a hoot about bluetooth addresses anyway (Still need to start with " + ROBOT_ADDRESS_PREFIX + ")" };
+	private static final String[] invalidAddressResponses = { "The bluetooth address is invalid, the Sphero device bluetooth address must start with " + Robot.ROBOT_ADDRESS_PREFIX, "The address is still invalid, the Sphero bluetooth address must start with " + Robot.ROBOT_ADDRESS_PREFIX, "Check your frigging bluetooth address, it still need to start with " + Robot.ROBOT_ADDRESS_PREFIX, "I give up... You are not taking me seriously. Why would I give a hoot about bluetooth addresses anyway (Still need to start with " + Robot.ROBOT_ADDRESS_PREFIX + ")" };
 
 	/**
 	 * Create a robot from a Bluetooth device. You need to call Robot.connect
@@ -103,7 +95,7 @@ public class Robot
 	 *             throws
 	 *             RobotBluetoothException
 	 */
-	public Robot( BluetoothDevice bt ) throws InvalidRobotAddressException, RobotBluetoothException
+	public Robot( BluetoothDevice bt ) throws RobotBluetoothException
 	{
 		this( bt, null );
 	}
@@ -141,19 +133,19 @@ public class Robot
 			this.rs = rs;
 
 		// Set ping interval
-        PING_INTERVAL = this.rs.socketPingInterval;
+        this.PING_INTERVAL = this.rs.socketPingInterval;
 
 		// Initialize the position and LEDs
-        this.movement = new RobotMovement();
-        this.rawMovement = new RobotRawMovement();
-        this.led = new RobotLED();
-        this.macroSettings = new MACRO_SETTINGS();
+        movement = new Robot.RobotMovement();
+        rawMovement = new Robot.RobotRawMovement();
+        led = new Robot.RobotLED();
+        macroSettings = new Robot.MACRO_SETTINGS();
 
 		// Discover the connection services that we can use
 		bt.discover();
 
 		// Create an empty array of listeners
-        this.listeners = new ArrayList<>();
+        listeners = new ArrayList<>();
 
 		Logging.debug( "Robot created successfully" );
 
@@ -164,10 +156,10 @@ public class Robot
             try
             {
                 // Wait for disconnect event
-                this.disconnect( false );
+                disconnect( false );
 
-                if(this.sendingTimer != null && this.sendingTimer.w != null )
-                    this.sendingTimer.w.join();
+                if(sendingTimer != null && sendingTimer.w != null )
+                    sendingTimer.w.join();
             }
             catch( InterruptedException ex )
             {
@@ -191,10 +183,10 @@ public class Robot
 	{
 		Logging.debug( "Adding listener of type " + l.getClass().getCanonicalName() );
 
-		synchronized(this.listeners)
+		synchronized(listeners)
 		{
-			if( !this.listeners.contains(l) )
-                this.listeners.add(l);
+			if( !listeners.contains(l) )
+                listeners.add(l);
 		}
 	}
 
@@ -206,11 +198,11 @@ public class Robot
 	 */
 	public void removeListener( RobotListener l )
 	{
-		synchronized(this.listeners)
+		synchronized(listeners)
 		{
 			// Check so that we can remove it
-			if(this.listeners.contains(l) )
-                this.listeners.remove(l);
+			if(listeners.contains(l) )
+                listeners.remove(l);
 		}
 	}
 
@@ -224,10 +216,10 @@ public class Robot
 	{
 		Logging.debug( "Notifying listeners about device respose " + dr + " for device command " + dc );
 
-		synchronized(this.listeners)
+		synchronized(listeners)
 		{
 			// Go through all listeners and notify them
-			for( RobotListener r : this.listeners)
+			for( RobotListener r : listeners)
 				r.responseReceived( this, dr, dc );
 		}
 	}
@@ -236,9 +228,9 @@ public class Robot
 	{
 		Logging.debug( "Nofifying listeners about information response " + dir );
 		
-		synchronized(this.listeners)
+		synchronized(listeners)
 		{
-			for( RobotListener r : this.listeners)
+			for( RobotListener r : listeners)
 				r.informationResponseReceived( this, dir );
 		}
 	}
@@ -248,14 +240,14 @@ public class Robot
 	 * 
 	 * @param event The event to notify about
 	 */
-	private void notifyListenerEvent( EVENT_CODE event )
+	private void notifyListenerEvent( RobotListener.EVENT_CODE event )
 	{
 		Logging.debug( "Notifying listeners about event " + event );
 
 		// Notify all listeners
-		synchronized(this.listeners)
+		synchronized(listeners)
 		{
-			for( RobotListener r : this.listeners)
+			for( RobotListener r : listeners)
 				r.event( this, event );
 		}
 	}
@@ -267,20 +259,20 @@ public class Robot
 	private void connectionClosedUnexpected()
 	{
 		// Cancel the sending of new messages
-        this.sendingTimer.cancel();
+        sendingTimer.cancel();
 
 		// Cancel the listening of incomming messages
-        this.listeningThread.stopThread();
+        listeningThread.stopThread();
 
 		// Close the bluetooth connection
-        this.btc.stop();
+        btc.stop();
 
 		// Notify about disconnect
-		if(this.connected)
+		if(connected)
 		{
-            this.connected = false;
+            connected = false;
 			Logging.error( "Connection closed unexpectedly for some reason, all threads have been closed down for the robot" );
-            this.notifyListenerEvent( EVENT_CODE.CONNECTION_CLOSED_UNEXPECTED );
+            notifyListenerEvent( RobotListener.EVENT_CODE.CONNECTION_CLOSED_UNEXPECTED );
 		}
 	}
 
@@ -299,7 +291,7 @@ public class Robot
 	 */
 	public boolean connect()
 	{
-		return this.connect( false );
+		return connect( false );
 	}
 
 	/**
@@ -317,7 +309,7 @@ public class Robot
 	{
 		try
 		{
-			return this.internalConnect();
+			return internalConnect();
 		}
 		catch( RobotBluetoothException e )
 		{
@@ -342,11 +334,11 @@ public class Robot
 	 */
 	private boolean internalConnect() throws RobotInitializeConnectionFailed, RobotBluetoothException
 	{
-		Logging.debug( "Trying to connect to " + this.getName() + ":" + this.getAddress() );
-        this.btc = bt.connect();
+		Logging.debug( "Trying to connect to " + getName() + ":" + getAddress() );
+        btc = this.bt.connect();
 
 		// Check if we could connect to the bluetooth device
-		if(this.btc == null )
+		if(btc == null )
 		{
 			Logging.error( "Failed to connect to the robot bluetooth connection" );
 			throw new RobotInitializeConnectionFailed( "Failed to connect due to bluetooth error" );
@@ -354,34 +346,34 @@ public class Robot
 
 		// We are now connected, continue with
 		// the initialization of everything else regarding the connection
-        this.connected = true;
+        connected = true;
 
 		// Create a listening thread and close any old ones down
-		if(this.listeningThread != null )
-            this.listeningThread.stopThread();
-        this.listeningThread = new RobotStreamListener(btc);
-        this.listeningThread.start();
+		if(listeningThread != null )
+            listeningThread.stopThread();
+        listeningThread = new Robot.RobotStreamListener(this.btc);
+        listeningThread.start();
 
 		// Create our sending timer
-		if(this.sendingTimer != null )
-            this.sendingTimer.cancel();
-        this.sendingTimer = new RobotSendingQueue(btc);
+		if(sendingTimer != null )
+            sendingTimer.cancel();
+        sendingTimer = new Robot.RobotSendingQueue(this.btc);
 
 		// Reset the robot
-        this.sendSystemCommand( new AbortMacroCommand() );
-        this.sendSystemCommand( new RollCommand(this.movement.getHeading(), this.movement.getVelocity(), this.movement.getStop() ) );
-        this.sendSystemCommand( new CalibrateCommand(this.movement.getHeading() ) );
-        this.sendSystemCommand( new FrontLEDCommand(this.led.getFrontLEDBrightness() ) );
-        this.sendSystemCommand( new RGBLEDCommand(this.getLed().getRGBColor() ) );
+        sendSystemCommand( new AbortMacroCommand() );
+        sendSystemCommand( new RollCommand(movement.getHeading(), movement.getVelocity(), movement.getStop() ) );
+        sendSystemCommand( new CalibrateCommand(movement.getHeading() ) );
+        sendSystemCommand( new FrontLEDCommand(led.getFrontLEDBrightness() ) );
+        sendSystemCommand( new RGBLEDCommand(getLed().getRGBColor() ) );
 
 		// Create our pinger
-        this.sendSystemCommand( new PingCommand( this ), PING_INTERVAL, PING_INTERVAL);
+        sendSystemCommand( new PingCommand( this ), this.PING_INTERVAL, this.PING_INTERVAL);
 
 		// Notify listeners
-        this.notifyListenerEvent(connected ? EVENT_CODE.CONNECTION_ESTABLISHED : EVENT_CODE.CONNECTION_FAILED);
+        notifyListenerEvent(this.connected ? RobotListener.EVENT_CODE.CONNECTION_ESTABLISHED : RobotListener.EVENT_CODE.CONNECTION_FAILED);
 
 		// Return connection status
-		return this.connected;
+		return connected;
 	}
 
 	/**
@@ -390,7 +382,7 @@ public class Robot
 	 */
 	public void disconnect()
 	{
-        this.disconnect( true );
+        disconnect( true );
 	}
 
 	private boolean disconnecting;
@@ -404,19 +396,19 @@ public class Robot
 	{
 		Logging.debug( "Disconnecting from the current robot" );
 
-		if(this.connected)
+		if(connected)
 		{
 			// Set notify status, a bit ugly but hey.. Quick hack!
-            notifyListenersDisconnect = notifyListeners;
+            this.notifyListenersDisconnect = notifyListeners;
 
 			// Close all connection
-            this.closeConnections();
+            closeConnections();
 		}
 		else
 		{
 			// Check if we want to notify listeners that there exists no active connection
 			if( notifyListeners )
-                this.notifyListenerEvent( EVENT_CODE.NO_CONNECTION_EXISTS );
+                notifyListenerEvent( RobotListener.EVENT_CODE.NO_CONNECTION_EXISTS );
 		}
 
 		// Set our connection flag to false
@@ -429,20 +421,20 @@ public class Robot
 	private void closeConnections()
 	{
 		// Check if we have something to disconnect from
-		if(this.connected)
+		if(connected)
 		{
-            this.connected = false;
-            this.disconnecting = true;
+            connected = false;
+            disconnecting = true;
 
 			// Stop our transmission of commands
-            this.sendingTimer.cancel();
+            sendingTimer.cancel();
 
 			// Send a direct command to motorStop any movement (eludes the .cancel
 			// command)
-            this.sendingTimer.forceCommand(new AbortMacroCommand());
-            this.sendingTimer.forceCommand(new RollCommand(0, 0, true));
-            this.sendingTimer.forceCommand(new FrontLEDCommand(0));
-            this.sendingTimer.forceCommand(new RGBLEDCommand(Color.BLACK));
+            sendingTimer.forceCommand(new AbortMacroCommand());
+            sendingTimer.forceCommand(new RollCommand(0, 0, true));
+            sendingTimer.forceCommand(new FrontLEDCommand(0));
+            sendingTimer.forceCommand(new RGBLEDCommand(Color.BLACK));
 		}
 	}
 
@@ -459,7 +451,7 @@ public class Robot
 	 */
 	public void sendCommand( CommandMessage command )
 	{
-        this.sendingTimer.enqueue(command, false);
+        sendingTimer.enqueue(command, false);
 	}
 
 	/**
@@ -469,7 +461,7 @@ public class Robot
 	 */
 	public void sendCommandAfterMacro( CommandMessage command )
 	{
-        this.macroSettings.sendCommandAfterMacro(command);
+        macroSettings.sendCommandAfterMacro(command);
 	}
 
 	/**
@@ -480,7 +472,7 @@ public class Robot
 	 */
 	public void cancelSendCommandAfterMacro()
 	{
-        this.macroSettings.clearSendingQueue();
+        macroSettings.clearSendingQueue();
 	}
 
 	/**
@@ -491,7 +483,7 @@ public class Robot
 	 */
 	public void sendCommand( CommandMessage command, float delay )
 	{
-        this.sendingTimer.enqueue(command, delay);
+        sendingTimer.enqueue(command, delay);
 	}
 
 	/**
@@ -505,7 +497,7 @@ public class Robot
 	 */
 	public void sendPeriodicCommand( CommandMessage command, float initialDelay, float periodLength )
 	{
-        this.sendingTimer.enqueue(command, false, initialDelay, periodLength);
+        sendingTimer.enqueue(command, false, initialDelay, periodLength);
 	}
 
 	/**
@@ -515,7 +507,7 @@ public class Robot
 	 */
 	private void sendSystemCommand( CommandMessage command )
 	{
-        this.sendingTimer.enqueue(command, true);
+        sendingTimer.enqueue(command, true);
 	}
 
 	/**
@@ -526,7 +518,7 @@ public class Robot
 	 */
 	private void sendSystemCommand( CommandMessage command, float delay )
 	{
-        this.sendingTimer.enqueue(command, delay, true);
+        sendingTimer.enqueue(command, delay, true);
 	}
 
 	/**
@@ -540,7 +532,7 @@ public class Robot
 	 */
 	private void sendSystemCommand( CommandMessage command, float initialDelay, float periodLength )
 	{
-        this.sendingTimer.enqueue(command, true, initialDelay, periodLength);
+        sendingTimer.enqueue(command, true, initialDelay, periodLength);
 	}
 
 	private boolean receivedFirstDisconnect,
@@ -556,31 +548,31 @@ public class Robot
 	{
 		// Disconnect event, we will disconnect if we are not connected and
 		// we have sent both a roll motorStop command and a front led turn off command
-		if( !this.connected && ( command instanceof FrontLEDCommand || command instanceof RollCommand ) )
+		if( !connected && ( command instanceof FrontLEDCommand || command instanceof RollCommand ) )
 		{
-			if(receivedFirstDisconnect)
+			if(this.receivedFirstDisconnect)
 			{
 				// Stop any active listening thread
-				if(this.listeningThread != null )
-                    this.listeningThread.stopThread();
+				if(listeningThread != null )
+                    listeningThread.stopThread();
 
 				// Stop any active sending timer thread
-				if(this.sendingTimer != null )
-                    this.sendingTimer.stopAll();
+				if(sendingTimer != null )
+                    sendingTimer.stopAll();
 
 				// Stop the bluetooth connection
-				if(this.btc != null )
-                    this.btc.stop();
+				if(btc != null )
+                    btc.stop();
 
 				// Check if we want to notify anyone
-				if(notifyListenersDisconnect)
+				if(this.notifyListenersDisconnect)
 				{
 					// Send disconnect event
-                    this.notifyListenerEvent( EVENT_CODE.DISCONNECTED );
+                    notifyListenerEvent( RobotListener.EVENT_CODE.DISCONNECTED );
 				}
 			}
 			else
-                receivedFirstDisconnect = true;
+                this.receivedFirstDisconnect = true;
 		}
 
 		// Logging.debug( "Updating internal values for " + command );
@@ -595,9 +587,9 @@ public class Robot
 				RollCommand rc = (RollCommand) command;
 
 				// Set new values
-                this.movement.heading = rc.getHeading();
-                this.movement.velocity = rc.getVelocity();
-                this.movement.stop = rc.getStopped();
+                movement.heading = rc.getHeading();
+                movement.velocity = rc.getVelocity();
+                movement.stop = rc.getStopped();
 
 				break;
 
@@ -611,10 +603,10 @@ public class Robot
 
 			case RAW_MOTOR:
 				RawMotorCommand raw = (RawMotorCommand) command;
-                this.rawMovement.leftMotorMode = raw.getLeftMode();
-                this.rawMovement.rightMotorMode = raw.getRightMode();
-                this.rawMovement.leftMotorSpeed = raw.getLeftSpeed();
-                this.rawMovement.rightMotorSpeed = raw.getRightSpeed();
+                rawMovement.leftMotorMode = raw.getLeftMode();
+                rawMovement.rightMotorMode = raw.getRightMode();
+                rawMovement.leftMotorSpeed = raw.getLeftSpeed();
+                rawMovement.rightMotorSpeed = raw.getRightSpeed();
 
 				break;
 
@@ -626,7 +618,7 @@ public class Robot
 			 */
 			case ROTATION_RATE:
 				RotationRateCommand rrc = (RotationRateCommand) command;
-                this.movement.rotationRate = rrc.getRate();
+                movement.rotationRate = rrc.getRate();
 
 				break;
 
@@ -634,7 +626,7 @@ public class Robot
 			case GO_TO_SLEEP:
 				// Graceful disconnect as we will loose the connection when
 				// jumping to the bootloader
-                this.disconnect();
+                disconnect();
 
 				break;
 
@@ -642,15 +634,15 @@ public class Robot
 				RGBLEDCommand rgb = (RGBLEDCommand) command;
 
 				// Update led values
-                this.led.red = rgb.getRed();
-                this.led.green = rgb.getGreen();
-                this.led.blue = rgb.getBlue();
+                led.red = rgb.getRed();
+                led.green = rgb.getGreen();
+                led.blue = rgb.getBlue();
 
 				break;
 
 			case FRONT_LED_OUTPUT:
 				FrontLEDCommand flc = (FrontLEDCommand) command;
-                this.led.brightness = flc.getBrightness();
+                led.brightness = flc.getBrightness();
 
 				break;
 
@@ -659,7 +651,7 @@ public class Robot
 			 */
 			case SET_BLUETOOTH_NAME:
 				// Update the name
-                this.bt.updateName();
+                bt.updateName();
 
 				break;
 		}
@@ -679,7 +671,7 @@ public class Robot
 	 */
 	public void roll( float heading, float speed )
 	{
-        this.sendCommand( new RollCommand( heading, speed, false ) );
+        sendCommand( new RollCommand( heading, speed, false ) );
 	}
 
 	/**
@@ -691,14 +683,14 @@ public class Robot
 	 */
 	public void calibrate( float heading )
 	{
-        this.sendCommand( new RollCommand( heading, 0F, false ) );
-        this.sendCommand( new CalibrateCommand( heading ) );
+        sendCommand( new RollCommand( heading, 0F, false ) );
+        sendCommand( new CalibrateCommand( heading ) );
 
 		// Blink the main led a few times to show calibration
-        this.sendSystemCommand( new FrontLEDCommand(this.getLed().getFrontLEDBrightness() ), 11000 );
-        this.sendSystemCommand( new FrontLEDCommand( 0 ) );
-        this.sendSystemCommand( new FrontLEDCommand( 0 ), 100, 10 );
-        this.sendSystemCommand( new FrontLEDCommand( 1F ), 200, 10 );
+        sendSystemCommand( new FrontLEDCommand(getLed().getFrontLEDBrightness() ), 11000 );
+        sendSystemCommand( new FrontLEDCommand( 0 ) );
+        sendSystemCommand( new FrontLEDCommand( 0 ), 100, 10 );
+        sendSystemCommand( new FrontLEDCommand( 1F ), 200, 10 );
 	}
 
 	/**
@@ -713,7 +705,7 @@ public class Robot
 	 */
 	public void rgbTransition( Color from, Color to, int steps )
 	{
-        this.rgbTransition( from, to, steps, 25 );
+        rgbTransition( from, to, steps, 25 );
 	}
 	
 	/**
@@ -732,7 +724,7 @@ public class Robot
 	 */
 	public void rgbTransition( int fRed, int fGreen, int fBlue, int tRed, int tGreen, int tBlue, int steps )
 	{
-        this.rgbTransition( fRed, fGreen, fBlue, tRed, tGreen, tBlue, steps, 25 );
+        rgbTransition( fRed, fGreen, fBlue, tRed, tGreen, tBlue, steps, 25 );
 	}
 
 	/**
@@ -747,7 +739,7 @@ public class Robot
 	 */
 	public void rgbTransition( Color from, Color to, int steps, int dDelay )
 	{
-        this.rgbTransition( from.getRed(), from.getGreen(), from.getBlue(), to.getRed(), to.getGreen(), to.getBlue(), steps, dDelay );
+        rgbTransition( from.getRed(), from.getGreen(), from.getBlue(), to.getRed(), to.getGreen(), to.getBlue(), steps, dDelay );
 	}
 
 	/**
@@ -808,10 +800,10 @@ public class Robot
 		}
 
 		// Set streaming as we don't know if we can fit all macro commands in one message
-		mo.setMode( MacroObjectMode.CachedStreaming );
+		mo.setMode( MacroObject.MacroObjectMode.CachedStreaming );
 
 		// Send macro to the Sphero device
-        this.sendCommand( mo );
+        sendCommand( mo );
 	}
 	
 	private void createFromToColorMacroObject( MacroObject mo, Color from, Color to, int steps, int dDelay )
@@ -858,14 +850,14 @@ public class Robot
 	public void rgbBreath( Color from, Color to, int steps, int dDelay )
 	{
 		MacroObject mo = new MacroObject();
-        this.createFromToColorMacroObject( mo, from, to, steps/2, dDelay/2 );
-        this.createFromToColorMacroObject( mo, to, from, steps/2, dDelay/2 );
+        createFromToColorMacroObject( mo, from, to, steps/2, dDelay/2 );
+        createFromToColorMacroObject( mo, to, from, steps/2, dDelay/2 );
 
 		// Set streaming as we don't know if we can fit all macro commands in one message
-		mo.setMode( MacroObjectMode.CachedStreaming );
+		mo.setMode( MacroObject.MacroObjectMode.CachedStreaming );
 
 		// Send macro to the Sphero device
-        this.sendCommand( mo );
+        sendCommand( mo );
 	}
 	
 	/**
@@ -875,7 +867,7 @@ public class Robot
 	 */
 	public void rotate( float heading )
 	{
-        this.roll( heading, 0.0F );
+        roll( heading, 0.0F );
 	}
 
 	/**
@@ -886,7 +878,7 @@ public class Robot
 	 */
 	public void jumpToBootloader()
 	{
-        this.sendCommand( new JumpToBootloaderCommand() );
+        sendCommand( new JumpToBootloaderCommand() );
 	}
 
 	/**
@@ -898,7 +890,7 @@ public class Robot
 	 */
 	public void sleep( int time )
 	{
-        this.sendCommand( new SleepCommand( time ) );
+        sendCommand( new SleepCommand( time ) );
 	}
 
 	/**
@@ -908,7 +900,7 @@ public class Robot
 	 */
 	public void setRotationRate( float rotationRate )
 	{
-        this.sendCommand( new RotationRateCommand( rotationRate ) );
+        sendCommand( new RotationRateCommand( rotationRate ) );
 	}
 
 	/**
@@ -920,7 +912,7 @@ public class Robot
 	 */
 	public void setRGBLEDColor( int red, int green, int blue )
 	{
-        this.sendCommand( new RGBLEDCommand( red, green, blue ) );
+        sendCommand( new RGBLEDCommand( red, green, blue ) );
 	}
 
 	/**
@@ -930,7 +922,7 @@ public class Robot
 	 */
 	public void setRGBLedColor( Color c )
 	{
-        this.sendCommand( new RGBLEDCommand( c ) );
+        sendCommand( new RGBLEDCommand( c ) );
 	}
 
 	/**
@@ -942,8 +934,8 @@ public class Robot
 	 */
 	public void resetHeading()
 	{
-        this.sendCommand( new RollCommand( 0.0F, this.movement.getVelocity(), this.movement.getStop() ) );
-        this.sendCommand( new CalibrateCommand( 0.0F ) );
+        sendCommand( new RollCommand( 0.0F, movement.getVelocity(), movement.getStop() ) );
+        sendCommand( new CalibrateCommand( 0.0F ) );
 	}
 
 	/**
@@ -953,7 +945,7 @@ public class Robot
 	 */
 	public void setHeadingOffset( double offset )
 	{
-        this.movement.algorithm.headingOffset = offset;
+        movement.algorithm.headingOffset = offset;
 	}
 
 	/**
@@ -963,7 +955,7 @@ public class Robot
 	 */
 	public void setFrontLEDBrightness( float brightness )
 	{
-        this.sendCommand( new FrontLEDCommand( brightness ) );
+        sendCommand( new FrontLEDCommand( brightness ) );
 	}
 
 	/**
@@ -976,7 +968,7 @@ public class Robot
 	 */
 	public void setRobotName( String name )
 	{
-        this.sendCommand( new SetRobotNameCommand( name ) );
+        sendCommand( new SetRobotNameCommand( name ) );
 	}
 
 	/**
@@ -986,7 +978,7 @@ public class Robot
 	 */
 	public void stabilization( boolean on )
 	{
-        this.sendCommand( new StabilizationCommand( on ) );
+        sendCommand( new StabilizationCommand( on ) );
 	}
 
 	/**
@@ -999,14 +991,14 @@ public class Robot
 	public void drive( double x, double y, double z )
 	{
 		// Convert the values to the correct ones depending on the given algorithm
-        this.movement.algorithm.convert( x, y, z );
-        this.movement.algorithm.adjustHeading();
+        movement.algorithm.convert( x, y, z );
+        movement.algorithm.adjustHeading();
 
 		// Cap the value
-        this.movement.algorithm.adjustedHeading = Value.clamp(this.movement.algorithm.adjustedHeading, 0.0D, 359.0D );
+        movement.algorithm.adjustedHeading = Value.clamp(movement.algorithm.adjustedHeading, 0.0D, 359.0D );
 
 		// Send the command
-        this.roll( (float) this.movement.algorithm.adjustedHeading, (float) this.movement.algorithm.speed );
+        roll( (float) movement.algorithm.adjustedHeading, (float) movement.algorithm.speed );
 	}
 
 	/**
@@ -1017,12 +1009,12 @@ public class Robot
 	public void boost( float timeInterval )
 	{
 		// Create commands to send
-		RollCommand boost = new RollCommand(this.movement.heading, 1F, false );
-		RollCommand resetBoost = new RollCommand(this.movement.heading, this.movement.velocity, this.movement.stop );
+		RollCommand boost = new RollCommand(movement.heading, 1F, false );
+		RollCommand resetBoost = new RollCommand(movement.heading, movement.velocity, movement.stop );
 
 		// Send commands
-        this.sendSystemCommand( boost );
-        this.sendSystemCommand( resetBoost, timeInterval );
+        sendSystemCommand( boost );
+        sendSystemCommand( resetBoost, timeInterval );
 	}
 
 	/**
@@ -1030,7 +1022,7 @@ public class Robot
 	 */
 	public void stopMotors()
 	{
-        this.sendCommand( new RollCommand(this.movement.heading, 0.0F, true ) );
+        sendCommand( new RollCommand(movement.heading, 0.0F, true ) );
 	}
 
 	/**
@@ -1041,7 +1033,7 @@ public class Robot
 	 */
 	public boolean isStopped()
 	{
-		return !this.movement.stop;
+		return !movement.stop;
 	}
 
 	/**
@@ -1051,7 +1043,7 @@ public class Robot
 	 */
 	public void setDriveAlgorithm( DriveAlgorithm algorithm )
 	{
-        this.movement.algorithm = algorithm;
+        movement.algorithm = algorithm;
 	}
 
 	/**
@@ -1062,7 +1054,7 @@ public class Robot
 	 */
 	public DriveAlgorithm getDriveAlgorithm()
 	{
-		return this.movement.algorithm;
+		return movement.algorithm;
 	}
 
 	/*
@@ -1076,7 +1068,7 @@ public class Robot
 	 */
 	public void stopMacro()
 	{
-        this.macroSettings.stopMacro();
+        macroSettings.stopMacro();
 	}
 
 	/**
@@ -1089,7 +1081,7 @@ public class Robot
 	 */
 	public void sendCommand( MacroObject macro )
 	{
-        this.macroSettings.playMacro(macro);
+        macroSettings.playMacro(macro);
 	}
 
 	/*
@@ -1118,7 +1110,7 @@ public class Robot
 	 */
 	public static boolean isValidAddress( String address )
 	{
-		return address.startsWith(ROBOT_ADDRESS_PREFIX);
+		return address.startsWith(Robot.ROBOT_ADDRESS_PREFIX);
 	}
 
 	/**
@@ -1128,7 +1120,7 @@ public class Robot
 	 */
 	public boolean isConnected()
 	{
-		return this.connected;
+		return connected;
 	}
 
 	/**
@@ -1139,7 +1131,7 @@ public class Robot
 	 */
 	public String getConnectionURL()
 	{
-		return this.bt.getConnectionURL();
+		return bt.getConnectionURL();
 	}
 
 	/**
@@ -1152,7 +1144,7 @@ public class Robot
 	 */
 	public static boolean isValidDevice( BluetoothDevice device )
 	{
-		return device.getAddress().startsWith(ROBOT_ADDRESS_PREFIX);
+		return device.getAddress().startsWith(Robot.ROBOT_ADDRESS_PREFIX);
 	}
 
 	/**
@@ -1163,7 +1155,7 @@ public class Robot
 	 */
 	public String getId()
 	{
-		return this.bt.getAddress();// this.bt.getRemoteDevice().getBluetoothAddress();
+		return bt.getAddress();// this.bt.getRemoteDevice().getBluetoothAddress();
 	}
 
 	/**
@@ -1174,7 +1166,7 @@ public class Robot
 	 */
 	public String getAddress()
 	{
-		return this.bt.getAddress();// this.bt.getRemoteDevice().getBluetoothAddress();
+		return bt.getAddress();// this.bt.getRemoteDevice().getBluetoothAddress();
 	}
 
 	/**
@@ -1184,9 +1176,9 @@ public class Robot
 	 */
 	public String getName()
 	{
-		String n = this.bt.getName();
+		String n = bt.getName();
 		if( n == null )
-			return this.name;
+			return name;
 		return n;
 	}
 
@@ -1207,9 +1199,9 @@ public class Robot
 	 * 
 	 * @return The robot led
 	 */
-	public RobotLED getLed()
+	public Robot.RobotLED getLed()
 	{
-		return this.led;
+		return led;
 	}
 
 	/**
@@ -1217,9 +1209,9 @@ public class Robot
 	 * 
 	 * @return The robot movement
 	 */
-	public RobotMovement getRobotMovement()
+	public Robot.RobotMovement getRobotMovement()
 	{
-		return this.movement;
+		return movement;
 	}
 
 	/**
@@ -1227,9 +1219,9 @@ public class Robot
 	 * 
 	 * @return The raw movements of the robot
 	 */
-	public RobotRawMovement getRobotRawMovement()
+	public Robot.RobotRawMovement getRobotRawMovement()
 	{
-		return this.rawMovement;
+		return rawMovement;
 	}
 
 	/*
@@ -1259,7 +1251,7 @@ public class Robot
 		public RobotStreamListener( BluetoothConnection btc )
 		{
 			this.btc = btc;
-            this.waitingForResponse = new LinkedList<>();
+            waitingForResponse = new LinkedList<>();
 		}
 
 		/**
@@ -1270,7 +1262,7 @@ public class Robot
 		 */
 		protected void enqueue( Pair<CommandMessage, Boolean> cmd )
 		{
-            this.waitingForResponse.add(cmd);
+            waitingForResponse.add(cmd);
 		}
 
 		/**
@@ -1278,7 +1270,7 @@ public class Robot
 		 */
 		public void stopThread()
 		{
-            this.stop = true;
+            stop = true;
 		}
 
 		private byte[] linkedToArray( List<Byte> list )
@@ -1307,11 +1299,11 @@ public class Robot
 			LinkedList<Byte> buffer = new LinkedList<>();
 
 			// Run until we manually motorStop the thread
-			while( !this.stop)
+			while( !stop)
 			{
 				try
 				{
-					int read = this.btc.read(data);
+					int read = btc.read(data);
 					if( read == -1 )
 						throw new IOException( "Reached end of stream" );
 
@@ -1328,7 +1320,7 @@ public class Robot
 						// We need to read more of the data input to get a complete
 						// message
 						// Now read once again until we reach the end of the message
-						read = this.btc.read(data); // Store it in the data array as
+						read = btc.read(data); // Store it in the data array as
 														// earlier
 
 						// Append the read data to our data list
@@ -1349,14 +1341,14 @@ public class Robot
 							// These indexes are the same both for information and regular
 							// packets
 							// so it's fine selecting whatever index that we need
-							dataLength = linkedToArray( buffer )[ResponseMessage.PAYLOAD_LENGTH_INDEX];
+							dataLength = this.linkedToArray( buffer )[ResponseMessage.PAYLOAD_LENGTH_INDEX];
 						}
 					}
 
 					// Now we have at least one fine packet
 					// convert the linked list to an array that we can read from (easier
 					// reading)
-					byte[] nData = linkedToArray( buffer );
+					byte[] nData = this.linkedToArray( buffer );
 
 					// Now we have our read data, the next step is to start reading
 					// messages until
@@ -1382,7 +1374,7 @@ public class Robot
 						// The header will select our specific message values such as
 						// response code and type
 						// and also the length of the contained data
-						ResponseHeader drh = new ResponseHeader( nData, pointer );
+						ResponseMessage.ResponseHeader drh = new ResponseMessage.ResponseHeader( nData, pointer );
 
 						// Check the type of the response,
 						// Regular response is messages received after sending a command
@@ -1399,11 +1391,11 @@ public class Robot
 								// on a message
 								// we sent earlier, now check which message that this
 								// response corresponds to
-								Pair<CommandMessage, Boolean> cmd = waitingForResponse.remove();
+								Pair<CommandMessage, Boolean> cmd = this.waitingForResponse.remove();
 
 								// Fetch the type of command that we sent, this is used
 								// for debugging purposes
-								COMMAND_MESSAGE_TYPE cmdType = cmd.getFirst().getCommand();
+								CommandMessage.COMMAND_MESSAGE_TYPE cmdType = cmd.getFirst().getCommand();
 
 								// The command that we sent will act as the decider for
 								// which type of response that
@@ -1430,7 +1422,7 @@ public class Robot
 									case CODE_OK:
 										// Update the internal settings for the robot with
 										// the response stuff that we have received
-                                        updateInternalValues( cmd.getFirst() );
+                                        Robot.this.updateInternalValues( cmd.getFirst() );
 										break;
 									default:
 										Logging.error( "Received response code " + drh.getResponseCode() + " for " + cmdType );
@@ -1456,7 +1448,7 @@ public class Robot
 										case GET_BLUETOOTH_INFO:
 											// Check that the response is OK so that we
 											// can do something with our data
-											if( drh.getResponseCode().equals( RESPONSE_CODE.CODE_OK ) )
+											if( drh.getResponseCode().equals( ResponseMessage.RESPONSE_CODE.CODE_OK ) )
 											{
 												// Update Sphero name
 												GetBluetoothInfoResponse gb = (GetBluetoothInfoResponse) response;
@@ -1466,14 +1458,14 @@ public class Robot
 											}
 											break;
 										case RGB_LED_OUTPUT:
-											if(Robot.this.disconnecting)
+											if(disconnecting)
 											{
-												if( cmd.getFirst().getCommand().equals( COMMAND_MESSAGE_TYPE.RGB_LED_OUTPUT ) )
+												if( cmd.getFirst().getCommand().equals( CommandMessage.COMMAND_MESSAGE_TYPE.RGB_LED_OUTPUT ) )
 												{
 													// Notify
 													// We are disconnecting
-                                                    Robot.this.disconnecting = false;
-                                                    this.stopThread();
+                                                    disconnecting = false;
+                                                    stopThread();
 												}
 											}
 											break;
@@ -1484,7 +1476,7 @@ public class Robot
 								{
 									// The sent command is a user sent command that we
 									// need to notify the user about
-                                    Robot.this.notifyListenersDeviceResponse( response, cmd.getFirst() );
+                                    notifyListenersDeviceResponse( response, cmd.getFirst() );
 								}
 								break;
 
@@ -1510,7 +1502,7 @@ public class Robot
 											/* Data message, contains sensor data */
 											/* Emit macro message */
 												case EMIT:
-													if(Robot.this.macroSettings.macroRunning )
+													if(macroSettings.macroRunning )
 													{
 														// We have a macro running and
 														// received an emit message
@@ -1518,7 +1510,7 @@ public class Robot
 														// any data that is left
 														// for transmission regarding a
 														// macro
-														if(!Robot.this.macroSettings.ballMemory.isEmpty())
+														if(!macroSettings.ballMemory.isEmpty())
 														{
 															// Remove the size of the last
 															// macro that we have
@@ -1527,14 +1519,14 @@ public class Robot
 															// as the robot has a limited
 															// amount of memory for macro
 															// storage
-                                                            Robot.this.macroSettings.ballMemory.remove(Robot.this.macroSettings.ballMemory.toArray()[0]);
+                                                            macroSettings.ballMemory.remove(macroSettings.ballMemory.toArray()[0]);
 														}
 
 														// Transmit any remaining macro
 														// data now that we got more
 														// memory on the device
-                                                        Robot.this.macroSettings.emptyMacroCommandQueue();
-                                                        Robot.this.macroSettings.stopIfFinished();
+                                                        macroSettings.emptyMacroCommandQueue();
+                                                        macroSettings.stopIfFinished();
 													}
 													break;
 
@@ -1545,7 +1537,7 @@ public class Robot
 												case DATA:
 													// Notify listeners about a received
 													// data message
-                                                    Robot.this.notifyListenersInformationResponse( dir );
+                                                    notifyListenersInformationResponse( dir );
 													break;
 
 												/*
@@ -1581,7 +1573,7 @@ public class Robot
 						// our
 						// buffer array, but first check which type of header that we need
 						// to use for calculating the complete packet length
-						int headerLength = drh.getResponseType().equals( RESPONSE_TYPE.INFORMATION ) ? ResponseMessage.INFORMATION_RESPONSE_HEADER_LENGTH : ResponseMessage.RESPONSE_HEADER_LENGTH;
+						int headerLength = drh.getResponseType().equals( ResponseMessage.ResponseHeader.RESPONSE_TYPE.INFORMATION ) ? ResponseMessage.INFORMATION_RESPONSE_HEADER_LENGTH : ResponseMessage.RESPONSE_HEADER_LENGTH;
 
 						// Add the current packet length to the data pointer
 						read2 = pointer += drh.getPayloadLength() + headerLength;
@@ -1607,9 +1599,9 @@ public class Robot
 				}
 				catch( Exception e )
 				{
-					if(connected)
+					if(Robot.this.connected)
 						Logging.fatal( "Listening thread closed down unexpectedly", e );
-                    connectionClosedUnexpected();
+                    Robot.this.connectionClosedUnexpected();
 				}
 			}
 		}
@@ -1654,7 +1646,7 @@ public class Robot
 		private boolean stop, stopAccepting;
 		private final BluetoothConnection btc;
 		// Writer & queue that the writer uses
-		private Writer w;
+		private Robot.RobotSendingQueue.Writer w;
 		private final BlockingQueue<Pair<CommandMessage, Boolean>> sendingQueue;
 
 		/**
@@ -1665,10 +1657,10 @@ public class Robot
 		protected RobotSendingQueue( BluetoothConnection btc )
 		{
 			this.btc = btc;
-            this.sendingQueue = new LinkedBlockingQueue<>();
-            this.w = new Writer();
+            sendingQueue = new LinkedBlockingQueue<>();
+            w = new Robot.RobotSendingQueue.Writer();
 
-            this.startWriter();
+            startWriter();
 		}
 
 		/**
@@ -1678,7 +1670,7 @@ public class Robot
 		 */
 		private void startWriter()
 		{
-            this.w.start();
+            w.start();
 		}
 
 		/**
@@ -1689,7 +1681,7 @@ public class Robot
 		 */
 		public void forceCommand( CommandMessage command )
 		{
-            this.sendingQueue.add(new Pair<>(command, true));
+            sendingQueue.add(new Pair<>(command, true));
 		}
 
 		/**
@@ -1703,12 +1695,12 @@ public class Robot
 		 */
 		public void enqueue( CommandMessage command, boolean systemCommand )
 		{
-			synchronized(sendingQueue)
+			synchronized(this.sendingQueue)
 			{
 				try
 				{
-					if( !this.stop && !this.stopAccepting)
-                        this.sendingQueue.put(new Pair<>(command, systemCommand));
+					if( !stop && !stopAccepting)
+                        sendingQueue.put(new Pair<>(command, systemCommand));
 				}
 				catch( InterruptedException e )
 				{
@@ -1727,7 +1719,7 @@ public class Robot
 		 */
 		public void enqueue( CommandMessage command, float delay )
 		{
-            this.enqueue( command, delay, false );
+            enqueue( command, delay, false );
 		}
 
 //		/**
@@ -1758,8 +1750,8 @@ public class Robot
 		 */
 		public void enqueue( CommandMessage command, boolean systemCommand, float initialDelay, float periodLength )
 		{
-			if( !this.stop && !this.stopAccepting)
-                this.schedule( new CommandTask( new Pair<>( command, systemCommand ) ), (long) initialDelay, (long) periodLength );
+			if( !stop && !stopAccepting)
+                schedule( new Robot.RobotSendingQueue.CommandTask( new Pair<>( command, systemCommand ) ), (long) initialDelay, (long) periodLength );
 		}
 
 		/**
@@ -1770,10 +1762,10 @@ public class Robot
 		 * @param task The task to run after the timer runs
 		 * @param delay The delay before running the task in milliseconds
 		 */
-		private void enqueue( CommandTask task, float delay )
+		private void enqueue( Robot.RobotSendingQueue.CommandTask task, float delay )
 		{
-			if( !this.stop && !this.stopAccepting)
-                this.schedule( task, (long) delay );
+			if( !stop && !stopAccepting)
+                schedule( task, (long) delay );
 		}
 
 		/**
@@ -1786,8 +1778,8 @@ public class Robot
 		 */
 		public void enqueue( CommandMessage command, float delay, boolean systemCommand )
 		{
-			if( !this.stop && !this.stopAccepting)
-                this.schedule( new CommandTask( new Pair<>( command, systemCommand ) ), (long) delay );
+			if( !stop && !stopAccepting)
+                schedule( new Robot.RobotSendingQueue.CommandTask( new Pair<>( command, systemCommand ) ), (long) delay );
 		}
 
 		/**
@@ -1797,7 +1789,7 @@ public class Robot
 		@Override
 		public void cancel()
 		{
-            this.stopAccepting = true;
+            stopAccepting = true;
 			super.cancel();
 		}
 
@@ -1806,7 +1798,7 @@ public class Robot
 		 */
 		public void stopAll()
 		{
-            this.stop = true;
+            stop = true;
 		}
 
 		/**
@@ -1849,20 +1841,20 @@ public class Robot
 
 				if( repeat != -1 ) // Infinite command, will be sent until the end of
 									// time!
-                    this.repeating = true;
+                    repeating = true;
 			}
 
 			@Override
 			public void run()
 			{
 				// Enqueue the command directly to the writer
-                enqueue(execute.getFirst(), execute.getSecond() );
+                Robot.RobotSendingQueue.this.enqueue(this.execute.getFirst(), this.execute.getSecond() );
 
 				// Check if we want to repeat the command
-				if(repeating)
+				if(this.repeating)
 				{
-					if(repeat == -1 || --repeat > 0 )
-                        enqueue( this, delay);
+					if(this.repeat == -1 || --this.repeat > 0 )
+                        Robot.RobotSendingQueue.this.enqueue( this, this.delay);
 
 				}
 			}
@@ -1882,36 +1874,36 @@ public class Robot
 
 				// Run until we manually motorStop the thread or
 				// a connection error occurs.
-				while( !stop)
+				while( !Robot.RobotSendingQueue.this.stop)
 				{
 					try
 					{
 						// Fetch a message from the sending queue and append the data of that packet to our
 						// sending buffer. We will then try to add more data to our sending buffer.
-						Pair<CommandMessage, Boolean> p = sendingQueue.take();
+						Pair<CommandMessage, Boolean> p = Robot.RobotSendingQueue.this.sendingQueue.take();
 
 						// Append message to sending buffer
 						sendingBuffer.append( p.getFirst().getPacket(), 0, p.getFirst().getPacketLength() );
 
 						// Add command to listening queue
-                        listeningThread.enqueue(p);
+                        Robot.this.listeningThread.enqueue(p);
 						// sent.add( p );
 
 						Logging.debug( "Queueing " + p.getFirst() );
 
 						// Lock until we have sent our messages in-case someone
 						// else tries to do access our sendingQueue at the same time (enqueue)
-						synchronized(sendingQueue)
+						synchronized(Robot.RobotSendingQueue.this.sendingQueue)
 						{
 							try
 							{
 								// We will try to send as much as we can
-								if( !sendingQueue.isEmpty() )
+								if( !Robot.RobotSendingQueue.this.sendingQueue.isEmpty() )
 								{
 									// Go through all the messages that we can
-									for( int i = 0; i < sendingQueue.size(); i++ )
+									for( int i = 0; i < Robot.RobotSendingQueue.this.sendingQueue.size(); i++ )
 									{
-										Pair<CommandMessage, Boolean> c = sendingQueue.peek();
+										Pair<CommandMessage, Boolean> c = Robot.RobotSendingQueue.this.sendingQueue.peek();
 
 										// Peek at the the rest of the messages
 										int length = c.getFirst().getPacketLength();
@@ -1924,9 +1916,9 @@ public class Robot
 
 										// Enqueue the next command
 										sendingBuffer.append( c.getFirst().getPacket(), 0, c.getFirst().getPacketLength() );
-                                        listeningThread.enqueue(c);
+                                        Robot.this.listeningThread.enqueue(c);
 										// sent.add( c );
-                                        sendingQueue.remove();
+                                        Robot.RobotSendingQueue.this.sendingQueue.remove();
 
 										Logging.debug( "Queueing " + c.getFirst() );
 									}
@@ -1934,8 +1926,8 @@ public class Robot
 
 								// Write to socket
 								Logging.debug( "Sending " + sendingBuffer );
-                                btc.write(sendingBuffer.toByteArray());
-                                btc.flush();
+                                Robot.RobotSendingQueue.this.btc.write(sendingBuffer.toByteArray());
+                                Robot.RobotSendingQueue.this.btc.flush();
 
 								// update( sent );
 							}
@@ -1947,9 +1939,9 @@ public class Robot
 								// listeningThread.removeLast();
 
 								// Close unexpectedly
-								if(connected)
+								if(Robot.this.connected)
 									Logging.fatal( "Writing thread closed down unexpectedly", e );
-                                connectionClosedUnexpected();
+                                Robot.this.connectionClosedUnexpected();
 							}
 							finally
 							{
@@ -1986,11 +1978,11 @@ public class Robot
 		 */
 		private MACRO_SETTINGS()
 		{
-            commands = new ArrayList<>();
-            sendingQueue = new ArrayList<>();
-            ballMemory = new ArrayList<>();
-            macroRunning = false;
-            macroStreamingEnabled = true;
+            this.commands = new ArrayList<>();
+            this.sendingQueue = new ArrayList<>();
+            this.ballMemory = new ArrayList<>();
+            this.macroRunning = false;
+            this.macroStreamingEnabled = true;
 		}
 
 		/**
@@ -1999,14 +1991,14 @@ public class Robot
 		private void stopMacro()
 		{
 			// Abort the current macro
-            sendCommand( new AbortMacroCommand() );
+            Robot.this.sendCommand( new AbortMacroCommand() );
 
 			// Clear the memory
-            this.commands.clear();
-            this.ballMemory.clear();
+            commands.clear();
+            ballMemory.clear();
 
 			// Set motorStop flag
-            this.macroRunning = false;
+            macroRunning = false;
 		}
 
 		/**
@@ -2014,16 +2006,16 @@ public class Robot
 		 */
 		protected void stopIfFinished()
 		{
-            emits = emits > 0 ? emits - 1 : 0;
-			if(this.commands.isEmpty() && this.macroRunning && emits == 0 )
+            this.emits = this.emits > 0 ? this.emits - 1 : 0;
+			if(commands.isEmpty() && macroRunning && this.emits == 0 )
 			{
 //				for( CommandMessage cmd : this.sendingQueue )
 //					sendCommand( cmd );
 //				this.sendingQueue.clear();
-                this.stopMacro();
+                stopMacro();
 
 				// Notify listeners about macro done event
-                Robot.this.notifyListenerEvent( EVENT_CODE.MACRO_DONE );
+                notifyListenerEvent( RobotListener.EVENT_CODE.MACRO_DONE );
 			}
 		}
 
@@ -2034,30 +2026,30 @@ public class Robot
 		 */
 		private void playMacro( MacroObject macro )
 		{
-			if( macro.getMode().equals( MacroObjectMode.Normal ) )
+			if( macro.getMode().equals( MacroObject.MacroObjectMode.Normal ) )
 			{
 				// Normal macro mode
-                Robot.this.sendSystemCommand( new SaveTemporaryMacroCommand( 1, macro.generateMacroData() ) );
-                Robot.this.sendSystemCommand( new RunMacroCommand( -1 ) );
+                sendSystemCommand( new SaveTemporaryMacroCommand( 1, macro.generateMacroData() ) );
+                sendSystemCommand( new RunMacroCommand( -1 ) );
 			}
 			else
 			{
-				if( !macroStreamingEnabled)
+				if( !this.macroStreamingEnabled)
 					return;
 
-				if( macro.getMode().equals( MacroObjectMode.CachedStreaming ) )
+				if( macro.getMode().equals( MacroObject.MacroObjectMode.CachedStreaming ) )
 				{
 					// Cached streaming mode
 					if( !macro.getCommands().isEmpty() )
 					{
 						// Get all macro commands localy instead
 						// this.commands.clear();
-                        this.commands.addAll(macro.getCommands());
+                        commands.addAll(macro.getCommands());
 
-                        this.macroRunning = true;
+                        macroRunning = true;
 
 						// Now empty our queue
-                        this.emptyMacroCommandQueue();
+                        emptyMacroCommandQueue();
 
 						// if ( !this.macroRunning )
 						// {
@@ -2077,7 +2069,7 @@ public class Robot
 		 */
 		public void sendCommandAfterMacro( CommandMessage command )
 		{
-            this.sendingQueue.add(command);
+            sendingQueue.add(command);
 		}
 
 		/**
@@ -2086,7 +2078,7 @@ public class Robot
 		 */
 		public void clearSendingQueue()
 		{
-            this.sendingQueue.clear();
+            sendingQueue.clear();
 		}
 
 		/**
@@ -2096,10 +2088,10 @@ public class Robot
 		private synchronized void emptyMacroCommandQueue()
 		{
 			// Calculate number of free bytes that we have
-			int ballSpace = freeBallMemory(), freeBytes = ballSpace > rs.macroMaxSize ? rs.macroMaxSize : ballSpace, chunkSize = 0;
+			int ballSpace = this.freeBallMemory(), freeBytes = ballSpace > Robot.this.rs.macroMaxSize ? Robot.this.rs.macroMaxSize : ballSpace, chunkSize = 0;
 
 			// Check if we need or can create more commands
-			if(this.commands.isEmpty() || ballSpace <= rs.macroMinSpaceSize )
+			if(commands.isEmpty() || ballSpace <= Robot.this.rs.macroMinSpaceSize )
 				return;
 
 			// Create our sending collection (stuff that we want to send)
@@ -2111,11 +2103,11 @@ public class Robot
 			int emitLength = em.getLength();
 
 			// Go through new commands that we want to send
-			for( MacroCommand cmd : this.commands)
+			for( MacroCommand cmd : commands)
 			{
 				// Check if we allow for the new command to be added (that we still got
 				// enough space left to add it)
-				if( freeBytes - ( chunkSize + cmd.getLength() + emitLength ) <= 0 || chunkSize + cmd.getLength() + emitLength > rs.macroMaxSize )
+				if( freeBytes - ( chunkSize + cmd.getLength() + emitLength ) <= 0 || chunkSize + cmd.getLength() + emitLength > Robot.this.rs.macroMaxSize )
 					break;
 
 				// Add the command to the send queue and increase the space we've used
@@ -2124,7 +2116,7 @@ public class Robot
 			}
 
 			// Remove the commands that we can send from the waiting command queue
-            this.commands.removeAll(send);
+            commands.removeAll(send);
 
 			// Add emitter
 			send.add( em );
@@ -2137,20 +2129,20 @@ public class Robot
 			for( MacroCommand cmd : send )
 				sendBuffer.append( cmd.getByteRepresentation() );
 
-			if(commands.isEmpty() )
-				sendBuffer.append( MACRO_COMMAND.MAC_END.getValue() );
+			if(this.commands.isEmpty() )
+				sendBuffer.append( MacroCommand.MACRO_COMMAND.MAC_END.getValue() );
 
-            this.ballMemory.add(chunkSize);
+            ballMemory.add(chunkSize);
 
 			// Send a save macro command to the Sphero with the new data
 			SaveMacroCommand svc = new SaveMacroCommand( SaveMacroCommand.MacroFlagMotorControl, SaveMacroCommand.MACRO_STREAMING_DESTINATION, sendBuffer.toByteArray() );
 
-            emits++;
-            Robot.this.sendSystemCommand( svc );
+            this.emits++;
+            sendSystemCommand( svc );
 
 			// Check if we can continue creating more messages to send
-			if( !this.commands.isEmpty() && freeBallMemory() > rs.macroMinSpaceSize )
-                this.emptyMacroCommandQueue();
+			if( !commands.isEmpty() && this.freeBallMemory() > Robot.this.rs.macroMinSpaceSize )
+                emptyMacroCommandQueue();
 		}
 
 		/**
@@ -2161,9 +2153,9 @@ public class Robot
 		private int freeBallMemory()
 		{
 			int bytesInUse = 0;
-            for (Integer aBallMemory : this.ballMemory) bytesInUse = bytesInUse + aBallMemory;
+            for (Integer aBallMemory : ballMemory) bytesInUse = bytesInUse + aBallMemory;
 
-			return rs.macroRobotStorageSize - bytesInUse;
+			return Robot.this.rs.macroRobotStorageSize - bytesInUse;
 		}
 	}
 
@@ -2188,7 +2180,7 @@ public class Robot
 		 */
 		private RobotMovement()
 		{
-            this.reset();
+            reset();
 		}
 
 		/**
@@ -2198,7 +2190,7 @@ public class Robot
 		 */
 		public float getHeading()
 		{
-			return this.heading;
+			return heading;
 		}
 
 		/**
@@ -2208,7 +2200,7 @@ public class Robot
 		 */
 		public float getVelocity()
 		{
-			return this.velocity;
+			return velocity;
 		}
 
 		/**
@@ -2218,7 +2210,7 @@ public class Robot
 		 */
 		public float getRotationRate()
 		{
-			return this.rotationRate;
+			return rotationRate;
 		}
 
 		/**
@@ -2230,7 +2222,7 @@ public class Robot
 		 */
 		public boolean getStop()
 		{
-			return this.stop;
+			return stop;
 		}
 
 		/**
@@ -2241,7 +2233,7 @@ public class Robot
 		 */
 		public DriveAlgorithm getDriveAlgorithm()
 		{
-			return this.algorithm;
+			return algorithm;
 		}
 
 		/**
@@ -2251,11 +2243,11 @@ public class Robot
 		 */
 		private void reset()
 		{
-            this.heading = rs.motorHeading;
-            this.velocity = rs.motorStartSpeed;
-            this.rotationRate = rs.motorRotationRate;
-            this.stop = rs.motorStop;
-            this.algorithm = new RCDriveAlgorithm();
+            heading = Robot.this.rs.motorHeading;
+            velocity = Robot.this.rs.motorStartSpeed;
+            rotationRate = Robot.this.rs.motorRotationRate;
+            stop = Robot.this.rs.motorStop;
+            algorithm = new RCDriveAlgorithm();
 		}
 	}
 
@@ -2271,14 +2263,14 @@ public class Robot
 	{
 		// Holds motor speed and mode (Forward, Reverse)
 		private int leftMotorSpeed, rightMotorSpeed;
-		private MOTOR_MODE leftMotorMode, rightMotorMode;
+		private RawMotorCommand.MOTOR_MODE leftMotorMode, rightMotorMode;
 
 		/**
 		 * Create a new raw robot movement
 		 */
 		private RobotRawMovement()
 		{
-            this.reset();
+            reset();
 		}
 
 		/**
@@ -2288,7 +2280,7 @@ public class Robot
 		 */
 		public int getLeftMotorSpeed()
 		{
-			return this.leftMotorSpeed;
+			return leftMotorSpeed;
 		}
 
 		/**
@@ -2298,7 +2290,7 @@ public class Robot
 		 */
 		public int getRightMotorSpeed()
 		{
-			return this.rightMotorSpeed;
+			return rightMotorSpeed;
 		}
 
 		/**
@@ -2306,9 +2298,9 @@ public class Robot
 		 * 
 		 * @return The left motor mode (Forward/Reverse)
 		 */
-		public MOTOR_MODE getLeftMotorMode()
+		public RawMotorCommand.MOTOR_MODE getLeftMotorMode()
 		{
-			return this.leftMotorMode;
+			return leftMotorMode;
 		}
 
 		/**
@@ -2316,9 +2308,9 @@ public class Robot
 		 * 
 		 * @return The right motor mode (Forward/Reverse)
 		 */
-		public MOTOR_MODE getRightMotorMode()
+		public RawMotorCommand.MOTOR_MODE getRightMotorMode()
 		{
-			return this.rightMotorMode;
+			return rightMotorMode;
 		}
 
 		/**
@@ -2328,8 +2320,8 @@ public class Robot
 		 */
 		private void reset()
 		{
-            this.leftMotorSpeed = this.rightMotorSpeed = rs.motorStartSpeed;
-            this.leftMotorMode = this.rightMotorMode = rs.motorMode;
+            leftMotorSpeed = rightMotorSpeed = Robot.this.rs.motorStartSpeed;
+            leftMotorMode = rightMotorMode = Robot.this.rs.motorMode;
 		}
 	}
 
@@ -2350,7 +2342,7 @@ public class Robot
 		 */
 		private RobotLED()
 		{
-            this.reset();
+            reset();
 		}
 
 		/**
@@ -2360,7 +2352,7 @@ public class Robot
 		 */
 		public int getRGBRed()
 		{
-			return this.red;
+			return red;
 		}
 
 		/**
@@ -2370,7 +2362,7 @@ public class Robot
 		 */
 		public int getRGBGreen()
 		{
-			return this.green;
+			return green;
 		}
 
 		/**
@@ -2380,7 +2372,7 @@ public class Robot
 		 */
 		public int getRGBBlue()
 		{
-			return this.blue;
+			return blue;
 		}
 
 		/**
@@ -2390,7 +2382,7 @@ public class Robot
 		 */
 		public Color getRGBColor()
 		{
-			return new Color(red, green, blue);
+			return new Color(this.red, this.green, this.blue);
 		}
 
 		/**
@@ -2400,7 +2392,7 @@ public class Robot
 		 */
 		public float getFrontLEDBrightness()
 		{
-			return this.brightness;
+			return brightness;
 		}
 
 		/**
@@ -2409,12 +2401,12 @@ public class Robot
 		private void reset()
 		{
 			// Set white color (default for connected devices)
-            this.red = rs.ledRGB.getRed();
-            this.green = rs.ledRGB.getGreen();
-            this.blue = rs.ledRGB.getBlue();
+            red = Robot.this.rs.ledRGB.getRed();
+            green = Robot.this.rs.ledRGB.getGreen();
+            blue = Robot.this.rs.ledRGB.getBlue();
 
 			// Reset the ledBrightness to 0 (off)
-            this.brightness = rs.ledBrightness;
+            brightness = Robot.this.rs.ledBrightness;
 		}
 	}
 }

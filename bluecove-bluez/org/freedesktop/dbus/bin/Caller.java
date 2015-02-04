@@ -10,23 +10,20 @@
 */
 package org.freedesktop.dbus.bin;
 
+import cx.ath.matthew.debug.Debug;
+import org.freedesktop.dbus.*;
+import org.freedesktop.dbus.Error;
+
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Vector;
-import java.io.File;
-import org.freedesktop.dbus.BusAddress;
-import org.freedesktop.dbus.Error;
-import org.freedesktop.dbus.Marshalling;
-import org.freedesktop.dbus.Message;
-import org.freedesktop.dbus.MethodCall;
-import org.freedesktop.dbus.Transport;
-import cx.ath.matthew.debug.Debug;
 
 public class Caller
 {
    @SuppressWarnings("unchecked")
-   public static void main(String[] args) 
+   public static void main(String... args)
    {
       try { 
          if (Debug.debug) {
@@ -50,7 +47,7 @@ public class Caller
          else {
             Vector<Type> lts = new Vector<>();
             Marshalling.getJavaType(args[4],lts, -1);
-            Type[] ts = lts.toArray(new Type[0]);
+            Type[] ts = lts.toArray(new Type[lts.size()]);
             Object[] os = new Object[args.length-5];
             for (int i = 5; i < args.length; i++) {
                if (ts[i-5] instanceof Class) {

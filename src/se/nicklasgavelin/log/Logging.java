@@ -3,7 +3,6 @@ package se.nicklasgavelin.log;
 import com.intel.bluetooth.DebugLog;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Logger;

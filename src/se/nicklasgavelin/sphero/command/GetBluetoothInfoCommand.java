@@ -1,7 +1,5 @@
 package se.nicklasgavelin.sphero.command;
 
-import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
-
 /**
  * A command to get Bluetooth information from the Sphero
  *

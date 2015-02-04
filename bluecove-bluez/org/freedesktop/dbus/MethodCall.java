@@ -10,14 +10,15 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext.getResource;
-
-import java.util.Vector;
-
-import org.freedesktop.dbus.exceptions.DBusException;
-import org.freedesktop.dbus.exceptions.MessageFormatException;
 import cx.ath.matthew.debug.Debug;
 import cx.ath.matthew.utils.Hexdump;
+import org.freedesktop.dbus.exceptions.DBusException;
+import org.freedesktop.dbus.exceptions.MessageFormatException;
+
+import java.util.Arrays;
+import java.util.Vector;
+
+import static org.freedesktop.dbus.Gettext.getResource;
 
 public class MethodCall extends Message
 {
@@ -72,7 +73,7 @@ public class MethodCall extends Message
       if (null != sig) append(sig, args);
       if (Debug.debug) Debug.print(Debug.DEBUG, "Appended body, type: "+sig+" start: "+c+" end: "+ bytecounter +" size: "+(bytecounter -c));
        marshallint(bytecounter -c, blen, 0, 4);
-      if (Debug.debug) Debug.print("marshalled size ("+blen+"): "+Hexdump.format(blen));
+      if (Debug.debug) Debug.print("marshalled size ("+ Arrays.toString(blen) +"): "+Hexdump.format(blen));
    }
    private static long REPLY_WAIT_TIMEOUT = 20000;
    /**

@@ -135,7 +135,7 @@ public class BluetoothConnection
 	 * 
 	 * @throws IOException
 	 */
-	public int read( byte[] b ) throws IOException
+	public int read( byte... b ) throws IOException
 	{
 		return is.read(b);
 	}
@@ -170,7 +170,7 @@ public class BluetoothConnection
 	 * 
 	 * @throws IOException
 	 */
-	public void readBytes( byte[] b ) throws IOException
+	public void readBytes( byte... b ) throws IOException
 	{
         readBytes( b, 0, b.length );
 	}
@@ -224,7 +224,7 @@ public class BluetoothConnection
 	/**
 	 * @see java.io.DataOutputStream#write(byte[])
 	 */
-	public void write( byte[] data ) throws IOException
+	public void write( byte... data ) throws IOException
 	{
         os.write(data);
 	}

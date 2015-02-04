@@ -2,7 +2,6 @@ package se.nicklasgavelin.sphero.macro;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import se.nicklasgavelin.sphero.macro.MacroCommand.MACRO_COMMAND;
 import se.nicklasgavelin.sphero.macro.command.Emit;

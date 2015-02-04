@@ -24,15 +24,14 @@
  */
 package com.intel.bluetooth.obex;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.intel.bluetooth.DebugLog;
 
 import javax.obex.HeaderSet;
 import javax.obex.Operation;
 import javax.obex.ResponseCodes;
-
-import com.intel.bluetooth.DebugLog;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 abstract class OBEXServerOperation implements Operation, OBEXOperation {
 
@@ -181,12 +180,8 @@ abstract class OBEXServerOperation implements Operation, OBEXOperation {
 	 */
 	public long getLength() {
 		Long len;
-		try {
-			len = (Long) receivedHeaders.getHeader(HeaderSet.LENGTH);
-		} catch (IOException e) {
-			return -1;
-		}
-		if (len == null) {
+        len = (Long) receivedHeaders.getHeader(HeaderSet.LENGTH);
+        if (len == null) {
 			return -1;
 		}
 		return len;
@@ -199,12 +194,8 @@ abstract class OBEXServerOperation implements Operation, OBEXOperation {
 	 * the OBEX Type header or <code>null</code> if the OBEX Type header was not included.
 	 */
 	public String getType() {
-		try {
-			return (String) receivedHeaders.getHeader(HeaderSet.TYPE);
-		} catch (IOException e) {
-			return null;
-		}
-	}
+        return (String) receivedHeaders.getHeader(HeaderSet.TYPE);
+    }
 
 	/*
 	 * (non-Javadoc)

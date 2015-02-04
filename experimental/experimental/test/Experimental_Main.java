@@ -53,11 +53,11 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
      * @throws RobotBluetoothException      If there occurs a Bluetooth
      * exception during connecting
      */
-    public static void main( String[] args ) throws InvalidRobotAddressException, RobotBluetoothException
+    public static void main( String... args ) throws InvalidRobotAddressException, RobotBluetoothException
     {
 //        String data = "2 82 9 -107 -2 1 7 -1 114 0 0 11 0 56 7 -1 116 0 0 11 0 57 7 -1 118 0 0 11 0 58 7 -1 120 0 0 11 0 59 7 -1 122 0 0 11 0 60 7 -1 124 0 0 11 0 61 7 -1 126 0 0 11 0 62 7 -1 -127 0 0 11 0 63 7 -1 -125 0 0 11 0 64 7 -1 -123 0 0 11 0 65 7 -1 -121 0 0 11 0 66 7 -1 -119 0 0 11 0 67 7 -1 -117 0 0 11 0 68 7 -1 -115 0 0 11 0 69 7 -1 -113 0 0 11 0 70 7 -1 -111 0 0 11 0 71 7 -1 -109 0 0 11 0 72 7 -1 -107 0 0 11 0 73 21 1";// -4";
 //        System.out.println( calculateChecksum( data ) );
-        Experimental_Main experimental_Main = new Experimental_Main();
+        /*Experimental_Main experimental_Main = */new Experimental_Main();
     }
     private TouchSensor s;
 
@@ -79,7 +79,7 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
     private int steps = 100;
 
 
-    private Experimental_Main() throws InvalidRobotAddressException, RobotBluetoothException
+    private Experimental_Main() throws RobotBluetoothException
     {
         Logging.debug( "test" );
         String id = "00066644390F" /* x - - */;
@@ -147,16 +147,14 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
     public MacroObject createSwingMotionMacro( int _maxSpeed, int dDelay, int nSteps )
     {
         float maxSpeed = ( float ) _maxSpeed;
-        int n = nSteps;
-        int delay = dDelay;
         double PI = Math.PI;
         double maxValue = 2 * PI + PI / 2;
-        double incVal = maxValue / n;
+        double incVal = maxValue / nSteps;
 
         MOTOR_MODE mm = MOTOR_MODE.FORWARD; // : RawMotorCommand.MOTOR_MODE.REVERSE );
         MacroObject mo = new MacroObject();
 
-        for ( int i = 0; i < n; i++ )
+        for ( int i = 0; i < nSteps; i++ )
         {
             int speed = calcspeed( i * incVal, maxSpeed );
             if ( speed == _maxSpeed )
@@ -173,7 +171,7 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
             }
 
             mo.addCommand( new RawMotor( mm, speed, mm, speed ) );
-            mo.addCommand( new Delay( delay ) );
+            mo.addCommand( new Delay(dDelay) );
         }
 
         mo.addCommand( new RawMotor( MOTOR_MODE.FORWARD, 0, MOTOR_MODE.FORWARD, 0 ) );

@@ -44,8 +44,7 @@ class StructStruct
    public boolean equals(Object o)
    {
       if (!(o instanceof StructStruct)) return false;
-      if (!name.equals(((StructStruct) o).name)) return false;
-      return true;
+       return name.equals(((StructStruct) o).name);
    }
    public String toString()
    {

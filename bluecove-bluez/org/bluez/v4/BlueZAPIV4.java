@@ -48,7 +48,6 @@ import org.freedesktop.dbus.UInt32;
 import org.freedesktop.dbus.Variant;
 import org.freedesktop.dbus.exceptions.DBusException;
 
-import com.intel.bluetooth.BluetoothConsts;
 import com.intel.bluetooth.DebugLog;
 
 /**
@@ -219,7 +218,7 @@ public class BlueZAPIV4 implements BlueZAPI {
      *
      * @see org.bluez.BlueZAPI#setAdapterDiscoverable(int)
      */
-    public boolean setAdapterDiscoverable(int mode) throws DBusException {
+    public boolean setAdapterDiscoverable(int mode) {
         switch (mode) {
         case DiscoveryAgent.NOT_DISCOVERABLE:
             adapter.SetProperty(DBusProperties.getPropertyName(Adapter.Properties.Discoverable), new Variant<>(Boolean.FALSE));
@@ -341,7 +340,7 @@ public class BlueZAPIV4 implements BlueZAPI {
      *
      * @see org.bluez.BlueZAPI#deviceInquiryCancel()
      */
-    public void deviceInquiryCancel() throws DBusException {
+    public void deviceInquiryCancel() {
         adapter.StopDiscovery();
     }
 
@@ -484,7 +483,7 @@ public class BlueZAPIV4 implements BlueZAPI {
      *
      * @see org.bluez.BlueZAPI#removeAuthenticationWithRemoteDevice(java.lang.String)
      */
-    public void removeAuthenticationWithRemoteDevice(String deviceAddress) throws DBusException {
+    public void removeAuthenticationWithRemoteDevice(String deviceAddress) {
         Path devicePath = adapter.FindDevice(deviceAddress);
         adapter.RemoveDevice(devicePath);
     }

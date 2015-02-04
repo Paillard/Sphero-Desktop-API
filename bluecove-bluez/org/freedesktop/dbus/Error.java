@@ -10,17 +10,17 @@
 */
 package org.freedesktop.dbus;
 
-import static org.freedesktop.dbus.Gettext.getResource;
-
-import java.lang.reflect.Constructor;
-import java.util.Vector;
-
+import cx.ath.matthew.debug.Debug;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import org.freedesktop.dbus.exceptions.MessageFormatException;
 import org.freedesktop.dbus.exceptions.NotConnected;
 
-import cx.ath.matthew.debug.Debug;
+import java.lang.reflect.Constructor;
+import java.util.Objects;
+import java.util.Vector;
+
+import static org.freedesktop.dbus.Gettext.getResource;
 
 /**
  * Error messages which can be sent over the bus.
@@ -81,7 +81,7 @@ public class Error extends Message
    @SuppressWarnings("unchecked")
    private static Class<? extends DBusExecutionException> createExceptionClass(String name)
    {
-      if (name == "org.freedesktop.DBus.Local.Disconnected") return NotConnected.class;
+      if (Objects.equals(name, "org.freedesktop.DBus.Local.Disconnected")) return NotConnected.class;
       Class<? extends DBusExecutionException> c = null;
       do {
          try {

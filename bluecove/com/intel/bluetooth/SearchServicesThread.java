@@ -25,6 +25,7 @@ package com.intel.bluetooth;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.bluetooth.BluetoothStateException;
@@ -44,7 +45,7 @@ class SearchServicesThread extends Thread {
 
 	private static int transIDGenerator;
 
-	private static Hashtable threads = new Hashtable();
+	private static final Hashtable threads = new Hashtable();
 
 	private BluetoothStack stack;
 
@@ -70,7 +71,7 @@ class SearchServicesThread extends Thread {
 
 	private boolean terminated;
 
-	private Object serviceSearchStartedEvent = new Object();
+	private final Object serviceSearchStartedEvent = new Object();
 
 	private static synchronized int nextThreadNum() {
 		return ++transIDGenerator;
@@ -129,8 +130,8 @@ class SearchServicesThread extends Thread {
 
 	private static int countRunningSearchServicesThreads(BluetoothStack stack) {
 		int count = 0;
-		for (Enumeration en = threads.elements(); en.hasMoreElements();) {
-			SearchServicesThread t = (SearchServicesThread) en.nextElement();
+		for (Iterator iterator = threads.values().iterator(); iterator.hasNext();) {
+			SearchServicesThread t = (SearchServicesThread) iterator.next();
 			if (t.stack == stack) {
 				count++;
 			}
@@ -149,8 +150,7 @@ class SearchServicesThread extends Thread {
 			respCode = serachRunnable.runSearchServices(this, attrSet, uuidSet, device, listener);
 		} catch (BluetoothStateException e) {
             startException = e;
-			return;
-		} finally {
+        } finally {
             finished = true;
             unregisterThread();
 			synchronized (serviceSearchStartedEvent) {
@@ -221,8 +221,8 @@ class SearchServicesThread extends Thread {
 		// Append unique attributes from attrSet
 		int len = requiredAttrIDs.length + this.attrSet.length;
         for (int anAttrSet1 : this.attrSet) {
-            for (int k = 0; k < requiredAttrIDs.length; k++) {
-                if (requiredAttrIDs[k] == anAttrSet1) {
+            for (int requiredAttrID : requiredAttrIDs) {
+                if (requiredAttrID == anAttrSet1) {
                     len--;
                     break;
                 }
@@ -234,8 +234,8 @@ class SearchServicesThread extends Thread {
 		int appendPosition = requiredAttrIDs.length;
 		nextAttribute:
         for (int anAttrSet : this.attrSet) {
-            for (int k = 0; k < requiredAttrIDs.length; k++) {
-                if (requiredAttrIDs[k] == anAttrSet) {
+            for (int requiredAttrID : requiredAttrIDs) {
+                if (requiredAttrID == anAttrSet) {
                     continue nextAttribute;
                 }
             }

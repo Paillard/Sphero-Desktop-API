@@ -28,18 +28,16 @@
 package cx.ath.matthew.unix;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 
 public class testclient
 {
-   public static void main(String args[]) throws IOException
+   public static void main(String... args) throws IOException
    {
       UnixSocket s = new UnixSocket(new UnixSocketAddress("testsock", true));
       OutputStream os = s.getOutputStream();
-      PrintWriter o = new PrintWriter(os);
       BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
       String l;
       while (null != (l = r.readLine())) {

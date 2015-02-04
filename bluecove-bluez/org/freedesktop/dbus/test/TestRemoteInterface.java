@@ -10,7 +10,6 @@
 */
 package org.freedesktop.dbus.test;
 
-import org.freedesktop.DBus;
 import org.freedesktop.DBus.Description;
 import org.freedesktop.DBus.Method.NoReply;
 import org.freedesktop.dbus.DBusInterface;
@@ -42,15 +41,15 @@ public interface TestRemoteInterface extends DBusInterface
    @Description("Interface-overloaded method")
    int overload();
    @Description("Testing Type Signatures")
-   void sig(Type[] s);
+   void sig(Type... s);
    @Description("Testing object paths as Path objects")
    void newpathtest(Path p);
    @Description("Testing the float type")
-   float testfloat(float[] f);
+   float testfloat(float... f);
    @Description("Testing structs of structs")
    int[][] teststructstruct(TestStruct3 in);
    @Description("Regression test for #13291")
-   void reg13291(byte[] as, byte[] bs);
+   void reg13291(byte[] as, byte... bs);
    /* test lots of things involving Path */
    Path pathrv(Path a);
    List<Path> pathlistrv(List<Path> a);

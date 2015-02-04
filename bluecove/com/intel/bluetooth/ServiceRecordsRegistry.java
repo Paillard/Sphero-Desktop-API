@@ -26,6 +26,7 @@ package com.intel.bluetooth;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.ServiceRegistrationException;
@@ -63,8 +64,8 @@ public abstract class ServiceRecordsRegistry {
 
 	static synchronized int getDeviceServiceClasses() {
 		int deviceServiceClasses = 0;
-		for (Enumeration en = serviceRecordsMap.keys(); en.hasMoreElements();) {
-			ServiceRecordImpl serviceRecord = (ServiceRecordImpl) en.nextElement();
+		for (Iterator iterator = serviceRecordsMap.keySet().iterator(); iterator.hasNext();) {
+			ServiceRecordImpl serviceRecord = (ServiceRecordImpl) iterator.next();
 			deviceServiceClasses |= serviceRecord.deviceServiceClasses;
 		}
 		return deviceServiceClasses;

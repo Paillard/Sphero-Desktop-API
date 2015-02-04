@@ -10,11 +10,9 @@
 */
 package org.freedesktop.dbus.viewer;
 
-import org.freedesktop.dbus.bin.CreateInterface;
 import org.freedesktop.dbus.bin.CreateInterface.PrintStreamFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;

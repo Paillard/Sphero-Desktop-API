@@ -24,14 +24,8 @@
  */
 package com.intel.bluetooth.obex;
 
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
-
 import javax.obex.ResponseCodes;
+import java.io.*;
 
 /**
  * OBEX IO Utils
@@ -39,7 +33,7 @@ import javax.obex.ResponseCodes;
  */
 abstract class OBEXUtils {
 
-	static void readFully(InputStream is, OBEXConnectionParams obexConnectionParams, byte[] b) throws IOException {
+	static void readFully(InputStream is, OBEXConnectionParams obexConnectionParams, byte... b) throws IOException {
         readFully(is, obexConnectionParams, b, 0, b.length);
 	}
 
@@ -52,7 +46,7 @@ abstract class OBEXUtils {
 		while (got < len) {
 			if (obexConnectionParams.timeouts) {
 				long endOfDellay = System.currentTimeMillis() + obexConnectionParams.timeout;
-				int available = 0;
+				int available;
 				do {
 					available = is.available();
 					if (available == 0) {
@@ -75,7 +69,7 @@ abstract class OBEXUtils {
 		}
 	}
 
-	static String newStringUTF16Simple(byte bytes[]) {
+	static String newStringUTF16Simple(byte... bytes) {
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < bytes.length; i += 2) {
 			buf.append((char) bytesToShort(bytes[i], bytes[i + 1]));
@@ -83,7 +77,7 @@ abstract class OBEXUtils {
 		return buf.toString();
 	}
 
-	static String newStringUTF16(byte bytes[]) throws UnsupportedEncodingException {
+	static String newStringUTF16(byte... bytes) {
 		try {
 			return new String(bytes, "UTF-16BE");
 		} catch (IllegalArgumentException e) {
@@ -106,7 +100,7 @@ abstract class OBEXUtils {
 		return buf.toByteArray();
 	}
 
-	static byte[] getUTF16Bytes(String str) throws UnsupportedEncodingException {
+	static byte[] getUTF16Bytes(String str) {
 		try {
 			return str.getBytes("UTF-16BE");
 		} catch (IllegalArgumentException e) {

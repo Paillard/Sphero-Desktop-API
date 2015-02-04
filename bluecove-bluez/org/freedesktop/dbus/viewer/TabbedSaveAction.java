@@ -52,10 +52,9 @@ abstract class TabbedSaveAction extends AbstractAction implements Iterable<TextF
 		
 
 		String fileName = getFileName(index);
-		
 
-		TextFile textFile = new TextFile(fileName, sourceCode);
-		return textFile;
+
+        return new TextFile(fileName, sourceCode);
 	}
 	
 	

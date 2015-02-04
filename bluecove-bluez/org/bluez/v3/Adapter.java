@@ -32,31 +32,13 @@
  */
 package org.bluez.v3;
 
-import java.util.Map;
-
-import org.bluez.Error;
-import org.bluez.Error.AlreadyExists;
-import org.bluez.Error.AuthenticationCanceled;
-import org.bluez.Error.AuthenticationFailed;
-import org.bluez.Error.AuthenticationRejected;
-import org.bluez.Error.AuthenticationTimeout;
-import org.bluez.Error.ConnectionAttemptFailed;
-import org.bluez.Error.DoesNotExist;
-import org.bluez.Error.Failed;
-import org.bluez.Error.InProgress;
-import org.bluez.Error.InvalidArguments;
-import org.bluez.Error.NoSuchAdapter;
-import org.bluez.Error.NotAuthorized;
-import org.bluez.Error.NotAvailable;
-import org.bluez.Error.NotConnected;
-import org.bluez.Error.NotInProgress;
-import org.bluez.Error.NotReady;
-import org.bluez.Error.RequestDeferred;
-import org.bluez.Error.UnsupportedMajorClass;
+import org.bluez.Error.*;
 import org.freedesktop.dbus.DBusInterfaceName;
 import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.UInt32;
 import org.freedesktop.dbus.exceptions.DBusException;
+
+import java.util.Map;
 
 /**
  * The "Adapter" interface provides methods to setup the local adapter(s), search remote
@@ -880,7 +862,7 @@ public interface Adapter extends org.bluez.Adapter {
 
         private final String[] identifiers;
 
-        public RemoteIdentifiersUpdated(String path, String address, String[] identifiers) throws DBusException {
+        public RemoteIdentifiersUpdated(String path, String address, String... identifiers) throws DBusException {
             super(path, address);
             this.address = address;
             this.identifiers = identifiers;

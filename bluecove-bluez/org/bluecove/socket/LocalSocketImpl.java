@@ -94,7 +94,7 @@ class LocalSocketImpl extends SocketImpl {
         throw new UnknownServiceException();
     }
 
-    protected void bind(SocketAddress endpoint) throws IOException {
+    protected void bind(SocketAddress endpoint) {
         if (!(endpoint instanceof LocalSocketAddress)) {
         	throw new IllegalArgumentException("Unsupported address type");
         }
@@ -183,8 +183,7 @@ class LocalSocketImpl extends SocketImpl {
     }
 
     public Object getOption(int optID) throws SocketException {
-        int rc = nativeGetOption(socket, optID);
-        return rc;
+        return nativeGetOption(socket, optID);
     }
 
     public void setOption(int optID, Object value) throws SocketException {
@@ -258,9 +257,9 @@ class LocalSocketImpl extends SocketImpl {
 
     private native void nativeWrite(int socket, byte[] buf, int off, int len) throws IOException;
 
-    private native void nativeReadCredentials(int socket, int[] buf) throws IOException;
+    private native void nativeReadCredentials(int socket, int... buf) throws IOException;
     
-    private static native void nativeReadProcessCredentials(int[] buf);
+    private static native void nativeReadProcessCredentials(int... buf);
     
     private native void nativeSetOption(int socket, int optID, int value) throws SocketException;
     

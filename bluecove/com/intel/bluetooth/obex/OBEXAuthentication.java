@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.obex.Authenticator;
@@ -54,11 +55,11 @@ class OBEXAuthentication {
 
 		byte nonce[];
 
-		Challenge(byte data[]) throws IOException {
-            this.read(data);
+		Challenge(byte... data) throws IOException {
+            read(data);
 		}
 
-		Challenge(String realm, boolean isUserIdRequired, boolean isFullAccess, byte[] nonce) {
+		Challenge(String realm, boolean isUserIdRequired, boolean isFullAccess, byte... nonce) {
 			this.realm = realm;
 			this.isUserIdRequired = isUserIdRequired;
 			this.isFullAccess = isFullAccess;
@@ -72,7 +73,7 @@ class OBEXAuthentication {
 			buf.write(0x10); // Len
 			buf.write(nonce, 0, 0x10);
 
-			byte options = (byte) ((isUserIdRequired ? 1 : 0) | (!this.isFullAccess ? 2 : 0));
+			byte options = (byte) ((isUserIdRequired ? 1 : 0) | (!isFullAccess ? 2 : 0));
 			buf.write(0x01); // Tag
 			buf.write(0x01); // Len
 			buf.write(options);
@@ -80,18 +81,9 @@ class OBEXAuthentication {
 			if (realm != null) {
 				byte realmArray[];
 				byte charSetCode;
-				try {
-					realmArray = OBEXUtils.getUTF16Bytes(realm);
-					charSetCode = -1; // 0xFF; Unicode
-				} catch (UnsupportedEncodingException e) {
-					try {
-						realmArray = realm.getBytes("iso-8859-1");
-					} catch (UnsupportedEncodingException e1) {
-						realmArray = new byte[0];
-					}
-					charSetCode = 1; // iso-8859-1
-				}
-				buf.write(0x02); // Tag
+                realmArray = OBEXUtils.getUTF16Bytes(realm);
+                charSetCode = -1; // 0xFF; Unicode
+                buf.write(0x02); // Tag
 				buf.write(realmArray.length + 1); // Len
 				buf.write(charSetCode);
 				buf.write(realmArray, 0, realmArray.length);
@@ -100,7 +92,7 @@ class OBEXAuthentication {
 			return buf.toByteArray();
 		}
 
-		void read(byte data[]) throws IOException {
+		void read(byte... data) throws IOException {
 			DebugLog.debug("authChallenge", data);
 			for (int i = 0; i < data.length;) {
 				int tag = data[i] & 0xFF;
@@ -187,7 +179,7 @@ class OBEXAuthentication {
 			return buf.toByteArray();
 		}
 
-		void read(byte data[]) throws IOException {
+		void read(byte... data) throws IOException {
 			for (int i = 0; i < data.length;) {
 				int tag = data[i] & 0xFF;
 				int len = data[i + 1] & 0xFF;
@@ -235,8 +227,8 @@ class OBEXAuthentication {
 
 			// Verify that we did sent the Challenge that triggered this Responses
 			Challenge challengeSent = null;
-			for (Enumeration challengeIter = authChallengesSent.elements(); challengeIter.hasMoreElements();) {
-				Challenge c = (Challenge) challengeIter.nextElement();
+			for (Iterator iterator = authChallengesSent.iterator(); iterator.hasNext();) {
+				Challenge c = (Challenge) iterator.next();
 				if (equals(c.nonce, dr.nonce)) {
 					challengeSent = c;
 					break;
@@ -308,7 +300,7 @@ class OBEXAuthentication {
 		return md5.digest();
 	}
 
-	static boolean equals(byte[] digest1, byte[] digest2) {
+	static boolean equals(byte[] digest1, byte... digest2) {
 		for (int i = 0; i < 0x10; i++) {
 			if (digest1[i] != digest2[i]) {
 				return false;

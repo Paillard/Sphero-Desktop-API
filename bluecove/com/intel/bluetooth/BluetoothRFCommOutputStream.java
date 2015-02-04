@@ -23,6 +23,8 @@
  */
 package com.intel.bluetooth;
 
+import com.sun.istack.internal.NotNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -73,7 +75,7 @@ class BluetoothRFCommOutputStream extends OutputStream {
 	 * number of bytes to write. Throws: IOException - if an I/O error occurs.
 	 * In particular, an IOException is thrown if the output stream is closed.
 	 */
-	public void write(byte[] b, int off, int len) throws IOException {
+	public void write(@NotNull byte[] b, int off, int len) throws IOException {
 		if (off < 0 || len < 0 || off + len > b.length) {
 			throw new IndexOutOfBoundsException();
 		}

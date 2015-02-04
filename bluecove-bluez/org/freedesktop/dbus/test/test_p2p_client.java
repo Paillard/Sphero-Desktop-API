@@ -14,14 +14,13 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-import org.freedesktop.DBus;
 import org.freedesktop.DBus.Introspectable;
 import org.freedesktop.DBus.Peer;
 import org.freedesktop.dbus.DirectConnection;
 
 public class test_p2p_client
 {
-   public static void main(String[] args) throws Exception
+   public static void main(String... args) throws Exception
    {
       BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream("address")));
       String address = r.readLine();
@@ -29,7 +28,7 @@ public class test_p2p_client
       System.out.println("Connected");
       TestRemoteInterface tri = (TestRemoteInterface) dc.getRemoteObject("/Test");
       System.out.println(tri.getName());
-      System.out.println(tri.testfloat(new float[] { 17.093f, -23f, 0.0f, 31.42f }));
+      System.out.println(tri.testfloat(17.093f, -23f, 0.0f, 31.42f));
       
       try { 
          tri.throwme();

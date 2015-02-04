@@ -37,7 +37,7 @@ import java.io.IOException;
  */
 class IBMJ9Helper {
 	
-	static synchronized void loadLibrary(String libname) throws IOException {
+	static synchronized void loadLibrary(String libname) {
 		VM.loadLibrary(libname);
 	}
 	

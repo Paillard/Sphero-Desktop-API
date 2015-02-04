@@ -33,13 +33,12 @@ public class SpinLeftCommand extends CommandMessage
     @Override
     protected byte[] getPacketData()
     {
-        byte[] data = {
+
+        return new byte[]{
         		( byte ) MOTOR_MODE.FORWARD.getValue(),
         		( byte ) this.speed,
         		( byte ) MOTOR_MODE.REVERSE.getValue(),
         		( byte ) this.speed
 		};
-
-        return data;
     }
 }

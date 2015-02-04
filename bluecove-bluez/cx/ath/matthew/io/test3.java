@@ -31,7 +31,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 class test3
 {
-   public static void main(String[] args) throws Exception
+   public static void main(String... args) throws Exception
    {
       String file = args[0];
       PrintWriter p = new PrintWriter(new TeeOutputStream(System.out, file));

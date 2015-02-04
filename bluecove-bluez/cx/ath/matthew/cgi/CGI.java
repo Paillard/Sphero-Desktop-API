@@ -57,7 +57,7 @@ public abstract class CGI
    /** MUST pass String.class and ALWAYS returns a String[] */
    private native Object[] getfullenv(Class c);
    private native void setenv(String var, String value);
-   {
+   static {
       System.loadLibrary("cgi-java");
    }
 
@@ -144,7 +144,7 @@ public abstract class CGI
     *
     * @see #flush
     */
-   public final void out(byte[] data) throws CGIInvalidContentFormatException
+   public final void out(byte... data) throws CGIInvalidContentFormatException
    {
       if (!this.pagedata.isEmpty()) throw new CGIInvalidContentFormatException();
        rawdata.add(data);
@@ -248,7 +248,7 @@ public abstract class CGI
     *
     * @throws Exception You can throw anything, it will be caught by the error handler.
     */
-   protected abstract void cgi(Map POST, Map GET, Map ENV, Map COOKIES, String[] params) throws Exception;
+   protected abstract void cgi(Map POST, Map GET, Map ENV, Map COOKIES, String... params) throws Exception;
 
    /**
     * Reads variables from a String like a=b&amp;c=d to a Map {a =&gt; b, c =&gt; d}.
@@ -271,7 +271,7 @@ public abstract class CGI
             if (null != temp) temp = temp.trim();
             if (values) {
                if (variable == null) {variable = temp; temp = "";}
-               else variable.trim();
+               else variable = variable.trim();
                if (!variable.equals("")) {
                   Object o = vars.get(variable);
                   if (o == null)
@@ -520,9 +520,9 @@ public abstract class CGI
    /**
     * This method sets up all the CGI variables and calls the cgi() method, then writes out the page data.
     */
-   public final void doCGI(String[] args)
+   public final void doCGI(String... args)
    {
-      CGI cgiclass = null;
+      // CGI cgiclass = null;
       // wrap everything in a try, we need to handle all our own errors.
       try {
          // setup the CGI variables

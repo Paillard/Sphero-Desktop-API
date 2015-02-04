@@ -48,7 +48,7 @@ class SDPOutputStream extends OutputStream {
 		}
 	}
 
-	private void writeBytes(byte[] b) throws IOException {
+	private void writeBytes(byte... b) throws IOException {
         for (byte aB : b) {
             write(aB);
         }

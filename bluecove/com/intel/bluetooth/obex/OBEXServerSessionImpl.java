@@ -24,18 +24,17 @@
  */
 package com.intel.bluetooth.obex;
 
-import java.io.EOFException;
-import java.io.IOException;
+import com.intel.bluetooth.BlueCoveImpl;
+import com.intel.bluetooth.BluetoothServerConnection;
+import com.intel.bluetooth.DebugLog;
+import com.intel.bluetooth.UtilsJavaSE;
 
 import javax.microedition.io.StreamConnection;
 import javax.obex.Authenticator;
 import javax.obex.ResponseCodes;
 import javax.obex.ServerRequestHandler;
-
-import com.intel.bluetooth.BlueCoveImpl;
-import com.intel.bluetooth.BluetoothServerConnection;
-import com.intel.bluetooth.DebugLog;
-import com.intel.bluetooth.UtilsJavaSE;
+import java.io.EOFException;
+import java.io.IOException;
 
 class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, BluetoothServerConnection {
 
@@ -47,7 +46,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 
 	private volatile boolean delayClose;
 
-	private Object canCloseEvent = new Object();
+	private final Object canCloseEvent = new Object();
 
 	private Object stackID;
 
@@ -186,7 +185,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		return true;
 	}
 
-	private void processConnect(byte[] b) throws IOException {
+	private void processConnect(byte... b) throws IOException {
 		DebugLog.debug("Connect operation");
 		if (b[3] != OBEXOperationCodes.OBEX_VERSION) {
 			throw new IOException("Unsupported client OBEX version " + b[3]);
@@ -238,7 +237,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		return false;
 	}
 
-	private void processDisconnect(byte[] b) throws IOException {
+	private void processDisconnect(byte... b) throws IOException {
 		DebugLog.debug("Disconnect operation");
 		if (!validateConnection()) {
 			return;
@@ -260,7 +259,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		DebugLog.debug("Delete operation");
 		OBEXHeaderSetImpl replyHeaders = OBEXSessionBase.createOBEXHeaderSetImpl();
         handleAuthenticationChallenge(requestHeaders, replyHeaders);
-		int rc = ResponseCodes.OBEX_HTTP_OK;
+		int rc;
 		try {
 			rc = handler.onDelete(requestHeaders, replyHeaders);
 		} catch (Throwable e) {
@@ -298,7 +297,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		DebugLog.debug("Put operation");
         operation = new OBEXServerOperationPut(this, requestHeaders, finalPacket);
 		try {
-			int rc = ResponseCodes.OBEX_HTTP_OK;
+			int rc;
 			try {
 				rc = handler.onPut(operation);
 			} catch (Throwable e) {
@@ -336,7 +335,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 		// return;
 		// }
 		try {
-			int rc = ResponseCodes.OBEX_HTTP_OK;
+			int rc;
 			try {
 				rc = handler.onGet(operation);
 			} catch (Throwable e) {
@@ -390,7 +389,7 @@ class OBEXServerSessionImpl extends OBEXSessionBase implements Runnable, Bluetoo
 
 		OBEXHeaderSetImpl replyHeaders = OBEXSessionBase.createOBEXHeaderSetImpl();
         handleAuthenticationChallenge(requestHeaders, replyHeaders);
-		int rc = ResponseCodes.OBEX_HTTP_OK;
+		int rc;
 		try {
 			rc = handler.onSetPath(requestHeaders, replyHeaders, backup, create);
 		} catch (Throwable e) {

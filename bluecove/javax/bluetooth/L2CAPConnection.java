@@ -117,7 +117,7 @@ public interface L2CAPConnection extends Connection {
 	 * @exception NullPointerException if the <code>data</code> is
 	 * <code>null</code>
 	 */
-    void send(byte[] data) throws IOException;
+    void send(byte... data) throws IOException;
 
 	/**
 	 * Reads a packet of data. The amount of data received in
@@ -145,7 +145,7 @@ public interface L2CAPConnection extends Connection {
 	 *
 	 * @exception NullPointerException if <code>inBuf</code> is <code>null</code>
 	 */
-    int receive(byte[] inBuf) throws IOException;
+    int receive(byte... inBuf) throws IOException;
 
 	/**
 	 * Determines if there is a packet that can be read via a call to

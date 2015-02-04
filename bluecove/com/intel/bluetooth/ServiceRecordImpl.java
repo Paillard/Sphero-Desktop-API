@@ -25,18 +25,13 @@ package com.intel.bluetooth;
 
 import com.intel.bluetooth.BluetoothConsts.DeviceClassConsts;
 
+import javax.bluetooth.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import javax.bluetooth.BluetoothStateException;
-import javax.bluetooth.DataElement;
-import javax.bluetooth.LocalDevice;
-import javax.bluetooth.RemoteDevice;
-import javax.bluetooth.ServiceRecord;
-import javax.bluetooth.UUID;
+import java.util.Iterator;
 
 class ServiceRecordImpl implements ServiceRecord {
 
@@ -73,8 +68,8 @@ class ServiceRecordImpl implements ServiceRecord {
 		if (sort) {
 			int[] sortIDs = new int[attributes.size()];
 			int k = 0;
-			for (Enumeration e = attributes.keys(); e.hasMoreElements();) {
-				Integer key = (Integer) e.nextElement();
+			for (Iterator iterator = attributes.keySet().iterator(); iterator.hasNext();) {
+				Integer key = (Integer) iterator.next();
 				sortIDs[k] = key;
 				k++;
 			}
@@ -95,8 +90,8 @@ class ServiceRecordImpl implements ServiceRecord {
                 rootSeq.addElement(getAttributeValue(attrID));
             }
 		} else {
-			for (Enumeration e = attributes.keys(); e.hasMoreElements();) {
-				Integer key = (Integer) e.nextElement();
+			for (Iterator iterator = attributes.keySet().iterator(); iterator.hasNext();) {
+				Integer key = (Integer) iterator.next();
 				rootSeq.addElement(new DataElement(DataElement.U_INT_2, key.intValue()));
 				rootSeq.addElement((DataElement) attributes.get(key));
 			}
@@ -107,7 +102,7 @@ class ServiceRecordImpl implements ServiceRecord {
 		return out.toByteArray();
 	}
 
-	void loadByteArray(byte data[]) throws IOException {
+	void loadByteArray(byte... data) throws IOException {
 		DataElement element = new SDPInputStream(new ByteArrayInputStream(data)).readElement();
 		if (element.getDataType() != DataElement.DATSEQ) {
 			throw new IOException("DATSEQ expected instead of " + element.getDataType());
@@ -119,7 +114,7 @@ class ServiceRecordImpl implements ServiceRecord {
 				throw new IOException("U_INT_2 expected instead of " + id.getDataType());
 			}
 			DataElement value = (DataElement) en.nextElement();
-            this.populateAttributeValue((int) id.getLong(), value);
+            populateAttributeValue((int) id.getLong(), value);
 		}
 	}
 
@@ -167,8 +162,8 @@ class ServiceRecordImpl implements ServiceRecord {
 
 		int i = 0;
 
-		for (Enumeration e = attributes.keys(); e.hasMoreElements();) {
-			attrIDs[i++] = (Integer) e.nextElement();
+		for (Iterator iterator = attributes.keySet().iterator(); iterator.hasNext();) {
+			attrIDs[i++] = (Integer) iterator.next();
 		}
 
 		return attrIDs;
@@ -206,7 +201,7 @@ class ServiceRecordImpl implements ServiceRecord {
 	 * device rather than a service on a remote device
 	 */
 
-	public boolean populateRecord(int[] attrIDs) throws IOException {
+	public boolean populateRecord(int... attrIDs) throws IOException {
 		/*
 		 * check this is not a local service record
 		 */
@@ -630,8 +625,8 @@ class ServiceRecordImpl implements ServiceRecord {
 
 		StringBuilder buf = new StringBuilder("{\n");
 
-		for (Enumeration e = attributes.keys(); e.hasMoreElements();) {
-			Integer i = (Integer) e.nextElement();
+		for (Iterator iterator = attributes.keySet().iterator(); iterator.hasNext();) {
+			Integer i = (Integer) iterator.next();
 
 			buf.append("0x");
 			buf.append(Integer.toHexString(i));
