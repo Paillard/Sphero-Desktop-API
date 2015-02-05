@@ -2,162 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="90832157-4036-4186-a28c-81d509511001" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/AbstractConnection.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/AbstractConnection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/Adapter.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/Adapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/util/Array.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/util/Array.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/ArrayFrob.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/ArrayFrob.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/javax/obex/Authenticator.java" afterPath="$PROJECT_DIR$/bluecove/javax/obex/Authenticator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BlueCoveImpl.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BlueCoveImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluez/BlueZAPI.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluez/BlueZAPI.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluez/BlueZAPIFactory.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluez/BlueZAPIFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/BlueZAPIV3.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/BlueZAPIV3.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v4/BlueZAPIV4.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v4/BlueZAPIV4.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/paill.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/Bluetooth.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/Bluetooth.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/BluetoothConnection.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/BluetoothConnection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothConnectionNotifierBase.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothConnectionNotifierBase.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/BluetoothDevice.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/BluetoothDevice.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothL2CAPConnection.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothL2CAPConnection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothRFCommInputStream.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothRFCommInputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothRFCommOutputStream.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothRFCommOutputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStack.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStack.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackBlueSoleil.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackBlueSoleil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/com/intel/bluetooth/BluetoothStackBlueZDBus.java" afterPath="$PROJECT_DIR$/bluecove-bluez/com/intel/bluetooth/BluetoothStackBlueZDBus.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackMicrosoft.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackMicrosoft.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackOSX.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackOSX.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackToshiba.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackToshiba.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackWIDCOMM.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackWIDCOMM.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackWIDCOMMSDPInputStream.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackWIDCOMMSDPInputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/util/ByteArrayBuffer.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/util/ByteArrayBuffer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/CGI.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/CGI.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/Caller.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/Caller.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/btl2cap/Connection.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/btl2cap/Connection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Container.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Container.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/CreateInterface.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/CreateInterface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/DBus.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/DBus.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusConnection.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusConnection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/DBusDaemon.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/DBusDaemon.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/DBusEntry.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/DBusEntry.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusMap.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusSerializable.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusSerializable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusSignal.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusSignal.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/DBusViewer.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/DBusViewer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/javax/bluetooth/DataElement.java" afterPath="$PROJECT_DIR$/bluecove/javax/bluetooth/DataElement.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/response/information/DataResponse.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/response/information/DataResponse.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/Database.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/Database.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/debug/Debug.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/debug/Debug.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/DebugLog.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/DebugLog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v4/Device.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v4/Device.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/DeviceInquiryThread.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/DeviceInquiryThread.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DirectConnection.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DirectConnection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/javax/bluetooth/DiscoveryListener.java" afterPath="$PROJECT_DIR$/bluecove/javax/bluetooth/DiscoveryListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/DiscoveryListenerAdapter.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/DiscoveryListenerAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/DropDown.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/DropDown.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/response/information/EmitResponse.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/response/information/EmitResponse.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Error.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Error.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/example/Example_Site_API.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/example/Example_Site_API.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/ExecInputStream.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/ExecInputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/ExecOutputStream.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/ExecOutputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/experimental/experimental/test/Experimental_Main.java" afterPath="$PROJECT_DIR$/experimental/experimental/test/Experimental_Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/GetBluetoothInfoCommand.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/GetBluetoothInfoCommand.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/javax/obex/HeaderSet.java" afterPath="$PROJECT_DIR$/bluecove/javax/obex/HeaderSet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/utils/Hexdump.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/utils/Hexdump.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/IBMJ9Helper.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/IBMJ9Helper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/IntrospectAction.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/IntrospectAction.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/JoyStickDriveAlgorithm.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/JoyStickDriveAlgorithm.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/javax/bluetooth/L2CAPConnection.java" afterPath="$PROJECT_DIR$/bluecove/javax/bluetooth/L2CAPConnection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/ListDBus.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/ListDBus.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalServerSocket.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalServerSocket.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalSocket.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalSocket.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalSocketImpl.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalSocketImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/log/Logging.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/log/Logging.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/MD5DigestWrapper.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/MD5DigestWrapper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/macro/MacroObject.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/macro/MacroObject.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/Manager.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/Manager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v4/Manager.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/bluez/v4/Manager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Marshalling.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Marshalling.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Message.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Message.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/MessageReader.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/MessageReader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/MessageWriter.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/MessageWriter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/MethodCall.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/MethodCall.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/MicroeditionConnector.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/MicroeditionConnector.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/NativeLibLoader.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/NativeLibLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/NativeTestInterfaces.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/NativeTestInterfaces.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/NewTable.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/NewTable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXAuthentication.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXAuthentication.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXClientOperation.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXClientOperation.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXHeaderSetImpl.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXHeaderSetImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXOperationDelivery.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXOperationDelivery.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXOperationInputStream.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXOperationInputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXOperationOutputStream.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXOperationOutputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerOperation.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerOperation.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerOperationGet.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerOperationGet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerOperationPut.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerOperationPut.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerSessionImpl.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerSessionImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXSessionBase.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXSessionBase.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXTCPServiceRecordImpl.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXTCPServiceRecordImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXUtils.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/javax/obex/PasswordAuthentication.java" afterPath="$PROJECT_DIR$/bluecove/javax/obex/PasswordAuthentication.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/Profiler.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/Profiler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/ProfilerInstance.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/ProfilerInstance.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/configuration/ProjectProperties.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/configuration/ProjectProperties.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/RGBLEDCommand.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/RGBLEDCommand.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/macro/command/RawMotor.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/macro/command/RawMotor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/RemoteDeviceHelper.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/RemoteDeviceHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/RemoteObject.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/RemoteObject.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/response/ResponseMessage.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/response/ResponseMessage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/Robot.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/Robot.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/RobotSetting.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/RobotSetting.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/SDPInputStream.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/SDPInputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/SDPOutputStream.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/SDPOutputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/SaveMacroCommand.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/SaveMacroCommand.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/SaveTemporaryMacroCommand.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/SaveTemporaryMacroCommand.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/SearchServicesThread.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/SearchServicesThread.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/SelectServiceHandler.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/SelectServiceHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/javax/obex/ServerRequestHandler.java" afterPath="$PROJECT_DIR$/bluecove/javax/obex/ServerRequestHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/gcf/socket/ServerSocketConnection.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/gcf/socket/ServerSocketConnection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/javax/microedition/io/ServerSocketConnection.java" afterPath="$PROJECT_DIR$/bluecove/javax/microedition/io/ServerSocketConnection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/javax/bluetooth/ServiceRecord.java" afterPath="$PROJECT_DIR$/bluecove/javax/bluetooth/ServiceRecord.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/ServiceRecordImpl.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/ServiceRecordImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/ServiceRecordsRegistry.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/ServiceRecordsRegistry.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/SignalTuple.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/SignalTuple.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/gcf/socket/SocketConnection.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/gcf/socket/SocketConnection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/SpinLeftCommand.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/SpinLeftCommand.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/SpinRightCommand.java" afterPath="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/SpinRightCommand.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/StringStreamFactory.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/StringStreamFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/StructStruct.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/bin/StructStruct.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/TabbedSaveAction.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/TabbedSaveAction.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestException.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestNewInterface.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestNewInterface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestRemoteInterface.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestRemoteInterface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestRemoteInterface2.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestRemoteInterface2.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestSerializable.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestSerializable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestSignalInterface.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestSignalInterface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestSignalInterface2.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestSignalInterface2.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestStruct2.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestStruct2.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestStruct3.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/TestStruct3.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/experimental/experimental/sensor/TouchSensor.java" afterPath="$PROJECT_DIR$/experimental/experimental/sensor/TouchSensor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Transport.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Transport.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/TypeSignature.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/TypeSignature.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/UnixIOException.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/UnixIOException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/UnixSocket.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/UnixSocket.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/Utils.java" afterPath="$PROJECT_DIR$/bluecove/com/intel/bluetooth/Utils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Variant.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Variant.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/cross_test_client.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/cross_test_client.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/cross_test_server.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/cross_test_server.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/profile.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/profile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/test.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/test.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/test2.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/test2.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/test3.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/io/test3.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test_low_level.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test_low_level.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test_p2p_client.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test_p2p_client.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test_p2p_server.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test_p2p_server.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/testcgi.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/testcgi.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/testclient.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/testclient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/testserver.java" afterPath="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/testserver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/two_part_test_client.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/two_part_test_client.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/two_part_test_server.java" afterPath="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/two_part_test_server.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Sphero-Desktop-API.iws" />
@@ -184,102 +35,64 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="DBusMap.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusMap.java">
+      <file leaf-file-name="Example_Site_API.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/example/Example_Site_API.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2016">
-              <caret line="80" column="4" selection-start-line="80" selection-start-column="4" selection-end-line="80" selection-end-column="4" />
-              <folding>
-                <element signature="e#819#820#0" expanded="true" />
-                <element signature="e#848#849#0" expanded="true" />
-                <element signature="e#999#1029#0" expanded="true" />
-                <element signature="e#1060#1061#0" expanded="true" />
-                <element signature="e#1107#1108#0" expanded="true" />
-                <element signature="e#1115#1145#0" expanded="true" />
-                <element signature="e#1178#1179#0" expanded="true" />
-                <element signature="e#1225#1226#0" expanded="true" />
-                <element signature="e#1261#1262#0" expanded="true" />
-                <element signature="e#1315#1316#0" expanded="true" />
-                <element signature="e#1356#1357#0" expanded="true" />
-                <element signature="e#1416#1417#0" expanded="true" />
-                <element signature="e#1460#1461#0" expanded="true" />
-                <element signature="e#1501#1502#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Debug.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/debug/Debug.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="7248" max-vertical-offset="10062">
-              <caret line="456" column="117" selection-start-line="456" selection-start-column="117" selection-end-line="456" selection-end-column="117" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BluetoothStackOSX.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/BluetoothStackOSX.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="7842" max-vertical-offset="15048">
-              <caret line="489" column="107" selection-start-line="489" selection-start-column="107" selection-end-line="489" selection-end-column="107" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BlueZAPIV3.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/BlueZAPIV3.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="10716" max-vertical-offset="11646">
-              <caret line="677" column="56" selection-start-line="677" selection-start-column="56" selection-end-line="677" selection-end-column="56" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="1710" max-vertical-offset="5094">
+              <caret line="110" column="42" selection-start-line="110" selection-start-column="42" selection-end-line="110" selection-end-column="42" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#8689#8690#0" expanded="true" />
+                <element signature="e#8758#8759#0" expanded="true" />
+                <element signature="e#10291#10292#0" expanded="true" />
+                <element signature="e#10362#10363#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="OBEXAuthentication.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXAuthentication.java">
+      <file leaf-file-name="Bluetooth.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/Bluetooth.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="714" max-vertical-offset="5436">
-              <caret line="84" column="50" selection-start-line="84" selection-start-column="50" selection-end-line="84" selection-end-column="50" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BluetoothStackBlueZDBus.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/bluecove-bluez/com/intel/bluetooth/BluetoothStackBlueZDBus.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.54908484" vertical-offset="5700" max-vertical-offset="16524">
-              <caret line="384" column="17" selection-start-line="384" selection-start-column="17" selection-end-line="384" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Adapter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/Adapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="11640" max-vertical-offset="18288">
-              <caret line="703" column="10" selection-start-line="703" selection-start-column="10" selection-end-line="703" selection-end-column="10" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OBEXServerOperation.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerOperation.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2496" max-vertical-offset="3708">
-              <caret line="196" column="66" selection-start-line="196" selection-start-column="66" selection-end-line="196" selection-end-column="66" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="922" max-vertical-offset="9396">
+              <caret line="294" column="18" selection-start-line="294" selection-start-column="18" selection-end-line="294" selection-end-column="18" />
               <folding>
-                <element signature="e#5746#5747#0" expanded="true" />
-                <element signature="e#5819#5820#0" expanded="true" />
+                <element signature="e#11998#11999#0" expanded="true" />
+                <element signature="e#12029#12030#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbortMacroCommand.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/AbortMacroCommand.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="432">
+              <caret line="13" column="28" selection-start-line="13" selection-start-column="11" selection-end-line="13" selection-end-column="28" />
+              <folding>
+                <element signature="e#318#319#0" expanded="true" />
+                <element signature="e#366#367#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CommandMessage.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/CommandMessage.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="4354" max-vertical-offset="4950">
+              <caret line="212" column="12" selection-start-line="212" selection-start-column="12" selection-end-line="212" selection-end-column="12" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Robot.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/Robot.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.17838766" vertical-offset="20956" max-vertical-offset="39834">
+              <caret line="1305" column="37" selection-start-line="1305" selection-start-column="37" selection-end-line="1305" selection-end-column="37" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -292,10 +105,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/CGI.java" />
-        <option value="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusConnection.java" />
-        <option value="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusSignal.java" />
-        <option value="$PROJECT_DIR$/bluecove/com/intel/bluetooth/DebugLog.java" />
         <option value="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DirectConnection.java" />
         <option value="$PROJECT_DIR$/experimental/experimental/test/Experimental_Main.java" />
         <option value="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Marshalling.java" />
@@ -311,7 +120,6 @@
         <option value="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test.java" />
         <option value="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Transport.java" />
         <option value="$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/UnixIOException.java" />
-        <option value="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/example/Example_Site_API.java" />
         <option value="$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalServerSocket.java" />
         <option value="$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalSocket.java" />
         <option value="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/DBusViewer.java" />
@@ -343,6 +151,11 @@
         <option value="$PROJECT_DIR$/bluecove-bluez/com/intel/bluetooth/BluetoothStackBlueZDBus.java" />
         <option value="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/viewer/Entry.java" />
         <option value="$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/DBusMap.java" />
+        <option value="$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/BluetoothDevice.java" />
+        <option value="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/response/ResponseMessage.java" />
+        <option value="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/Robot.java" />
+        <option value="$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/Bluetooth.java" />
+        <option value="$PROJECT_DIR$/src/se/nicklasgavelin/sphero/example/Example_Site_API.java" />
       </list>
     </option>
   </component>
@@ -404,7 +217,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -434,7 +246,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="build" />
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nicklasgavelin" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -448,41 +264,15 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="bluecove-bluez" />
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="org" />
+              <option name="myItemId" value="nicklasgavelin" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="freedesktop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Sphero-Desktop-API" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Sphero-Desktop-API" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bluecove-bluez" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="org" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="freedesktop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dbus" />
+              <option name="myItemId" value="sphero" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -496,23 +286,19 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="bluecove-bluez" />
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="org" />
+              <option name="myItemId" value="nicklasgavelin" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="freedesktop" />
+              <option name="myItemId" value="sphero" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="dbus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="viewer" />
+              <option name="myItemId" value="macro" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -526,11 +312,23 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="bluecove-bluez" />
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="org" />
+              <option name="myItemId" value="nicklasgavelin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sphero" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="macro" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="command" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -544,7 +342,19 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="bluecove-bluez" />
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nicklasgavelin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sphero" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="example" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -558,7 +368,37 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="bluecove-bluez" />
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nicklasgavelin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sphero" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="command" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Sphero-Desktop-API" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Sphero-Desktop-API" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nicklasgavelin" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -568,6 +408,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -586,6 +427,8 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="OverrideImplement.combined" value="true" />
+    <property name="OverrideImplement.overriding.sorted" value="false" />
   </component>
   <component name="RunManager" selected="Application.Example_Site_API">
     <configuration default="false" name="Example_Site_API" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -781,14 +624,18 @@
       <workItem from="1422956413648" duration="217000" />
       <workItem from="1422956725370" duration="10059000" />
       <workItem from="1423038474295" duration="22425000" />
+      <workItem from="1423163213570" duration="1294000" />
+      <workItem from="1423164557323" duration="7127000" />
+      <workItem from="1423171741715" duration="40000" />
+      <workItem from="1423171789674" duration="6461000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="47464000" />
+    <option name="totallyTimeSpent" value="62386000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="24" width="1920" height="1056" extended-state="6" />
+    <frame x="0" y="24" width="1920" height="1056" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -800,22 +647,22 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32916668" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25104168" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32916668" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32916668" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32832617" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32832617" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2497332" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39381003" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32916668" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31866953" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39914164" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25104168" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -838,180 +685,21 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/NativeLibLoader.java</url>
-          <line>218</line>
+          <url>file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/example/Example_Site_API.java</url>
+          <line>206</line>
           <properties />
-          <option name="timeStamp" value="2" />
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="4" />
+      <option name="time" value="6" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/experimental/experimental/test/Experimental_Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="261" max-vertical-offset="4896">
-          <caret line="59" column="10" selection-start-line="59" selection-start-column="10" selection-end-line="59" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Marshalling.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5693" max-vertical-offset="10800">
-          <caret line="260" column="24" selection-start-line="260" selection-start-column="24" selection-end-line="260" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Message.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="9293" max-vertical-offset="20376">
-          <caret line="532" column="39" selection-start-line="532" selection-start-column="39" selection-end-line="532" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#47059#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/MessageReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="815" max-vertical-offset="2772">
-          <caret line="86" column="27" selection-start-line="86" selection-start-column="27" selection-end-line="86" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/MicroeditionConnector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3465" max-vertical-offset="9882">
-          <caret line="158" column="20" selection-start-line="158" selection-start-column="20" selection-end-line="158" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/NativeLibLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="7295" max-vertical-offset="8838">
-          <caret line="450" column="15" selection-start-line="450" selection-start-column="15" selection-end-line="450" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/cgi/NewTable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
-          <caret line="34" column="8" selection-start-line="34" selection-start-column="8" selection-end-line="34" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerSessionImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5989" max-vertical-offset="6678">
-          <caret line="391" column="14" selection-start-line="391" selection-start-column="14" selection-end-line="391" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/profile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4343" max-vertical-offset="7002">
-          <caret line="61" column="26" selection-start-line="61" selection-start-column="26" selection-end-line="61" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#17522#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-            <element signature="e#850#851#0" expanded="true" />
-            <element signature="e#922#923#0" expanded="true" />
-            <element signature="e#2150#2151#0" expanded="true" />
-            <element signature="e#2196#2197#0" expanded="true" />
-            <element signature="e#2234#2235#0" expanded="true" />
-            <element signature="e#2291#2292#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/RemoteDeviceHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="8249" max-vertical-offset="14184">
-          <caret line="509" column="44" selection-start-line="509" selection-start-column="44" selection-end-line="509" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/SDPInputStream.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1841" max-vertical-offset="4068">
-          <caret line="141" column="22" selection-start-line="141" selection-start-column="22" selection-end-line="141" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="9437" max-vertical-offset="16092">
-          <caret line="594" column="102" selection-start-line="594" selection-start-column="102" selection-end-line="594" selection-end-column="102" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/Transport.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="14135" max-vertical-offset="14850">
-          <caret line="752" column="17" selection-start-line="752" selection-start-column="17" selection-end-line="752" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#37490#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-            <element signature="e#3991#3992#0" expanded="true" />
-            <element signature="e#4089#4090#0" expanded="true" />
-            <element signature="e#7719#7720#0" expanded="true" />
-            <element signature="e#7799#7800#0" expanded="true" />
-            <element signature="e#7861#7862#0" expanded="true" />
-            <element signature="e#7930#7931#0" expanded="true" />
-            <element signature="e#19242#19272#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/cx/ath/matthew/unix/UnixIOException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="414">
-          <caret line="39" column="22" selection-start-line="39" selection-start-column="22" selection-end-line="39" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalServerSocket.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1093" max-vertical-offset="1782">
-          <caret line="125" column="43" selection-start-line="125" selection-start-column="43" selection-end-line="125" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/bluecove/socket/LocalSocket.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4783" max-vertical-offset="5472">
-          <caret line="349" column="43" selection-start-line="349" selection-start-column="43" selection-end-line="349" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/freedesktop/dbus/test/two_part_test_server.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.7387518" vertical-offset="139" max-vertical-offset="828">
           <caret line="53" column="6" selection-start-line="53" selection-start-column="6" selection-end-line="53" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/example/Example_Site_API.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3605" max-vertical-offset="5688">
-          <caret line="231" column="41" selection-start-line="231" selection-start-column="41" selection-end-line="231" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1019,7 +707,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2273" max-vertical-offset="4806">
           <caret line="179" column="0" selection-start-line="179" selection-start-column="0" selection-end-line="179" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1027,7 +714,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="13" max-vertical-offset="702">
           <caret line="46" column="7" selection-start-line="46" selection-start-column="7" selection-end-line="46" selection-end-column="7" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1035,7 +721,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1787" max-vertical-offset="2862">
           <caret line="142" column="32" selection-start-line="142" selection-start-column="32" selection-end-line="142" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1043,7 +728,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="5963" max-vertical-offset="8568">
           <caret line="376" column="60" selection-start-line="376" selection-start-column="60" selection-end-line="376" selection-end-column="60" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1051,10 +735,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1031" max-vertical-offset="12420">
           <caret line="43" column="140" selection-start-line="43" selection-start-column="140" selection-end-line="43" selection-end-column="140" />
-          <folding>
-            <element signature="e#0#26714#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1062,7 +742,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="167" max-vertical-offset="5112">
           <caret line="72" column="9" selection-start-line="72" selection-start-column="9" selection-end-line="72" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1070,7 +749,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="828">
           <caret line="29" column="35" selection-start-line="29" selection-start-column="35" selection-end-line="29" selection-end-column="35" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1078,7 +756,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="49" max-vertical-offset="738">
           <caret line="38" column="53" selection-start-line="38" selection-start-column="53" selection-end-line="38" selection-end-column="53" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1086,7 +763,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="12713" max-vertical-offset="18972">
           <caret line="756" column="12" selection-start-line="756" selection-start-column="12" selection-end-line="756" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1094,7 +770,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1381" max-vertical-offset="2070">
           <caret line="90" column="51" selection-start-line="90" selection-start-column="51" selection-end-line="90" selection-end-column="51" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1102,9 +777,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
           <caret line="36" column="41" selection-start-line="36" selection-start-column="41" selection-end-line="36" selection-end-column="41" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1112,7 +784,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="576">
           <caret line="35" column="41" selection-start-line="35" selection-start-column="41" selection-end-line="35" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1120,7 +791,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="342">
           <caret line="33" column="58" selection-start-line="33" selection-start-column="58" selection-end-line="33" selection-end-column="58" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1128,7 +798,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1128" max-vertical-offset="14526">
           <caret line="104" column="37" selection-start-line="104" selection-start-column="37" selection-end-line="104" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1136,7 +805,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2658" max-vertical-offset="4842">
           <caret line="197" column="46" selection-start-line="197" selection-start-column="46" selection-end-line="197" selection-end-column="46" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1144,7 +812,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="156" max-vertical-offset="1242">
           <caret line="31" column="41" selection-start-line="31" selection-start-column="41" selection-end-line="31" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1152,10 +819,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="12850" max-vertical-offset="15228">
           <caret line="746" column="42" selection-start-line="746" selection-start-column="42" selection-end-line="746" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#36278#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1163,7 +826,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="786" max-vertical-offset="3762">
           <caret line="79" column="46" selection-start-line="79" selection-start-column="46" selection-end-line="79" selection-end-column="46" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1171,10 +833,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2820" max-vertical-offset="17946">
           <caret line="198" column="20" selection-start-line="198" selection-start-column="20" selection-end-line="198" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#43345#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1182,10 +840,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="12886" max-vertical-offset="13500">
           <caret line="753" column="28" selection-start-line="753" selection-start-column="28" selection-end-line="753" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#37723#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1193,7 +847,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="7878" max-vertical-offset="9774">
           <caret line="495" column="26" selection-start-line="495" selection-start-column="26" selection-end-line="495" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1201,7 +854,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="8670" max-vertical-offset="17676">
           <caret line="536" column="21" selection-start-line="536" selection-start-column="21" selection-end-line="536" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1209,7 +861,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="7248" max-vertical-offset="10062">
           <caret line="456" column="117" selection-start-line="456" selection-start-column="117" selection-end-line="456" selection-end-column="117" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1217,44 +868,27 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="7842" max-vertical-offset="15048">
           <caret line="489" column="107" selection-start-line="489" selection-start-column="107" selection-end-line="489" selection-end-column="107" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXServerOperation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2496" max-vertical-offset="3708">
+        <state vertical-scroll-proportion="0.4903226" vertical-offset="2496" max-vertical-offset="3708">
           <caret line="196" column="66" selection-start-line="196" selection-start-column="66" selection-end-line="196" selection-end-column="66" />
-          <folding>
-            <element signature="e#5746#5747#0" expanded="true" />
-            <element signature="e#5819#5820#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/Adapter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="11640" max-vertical-offset="18288">
+        <state vertical-scroll-proportion="0.21935484" vertical-offset="11640" max-vertical-offset="18288">
           <caret line="703" column="10" selection-start-line="703" selection-start-column="10" selection-end-line="703" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/BlueZAPIV3.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="10716" max-vertical-offset="11646">
-          <caret line="677" column="56" selection-start-line="677" selection-start-column="56" selection-end-line="677" selection-end-column="56" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/obex/OBEXAuthentication.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="714" max-vertical-offset="5436">
+        <state vertical-scroll-proportion="0.2" vertical-offset="714" max-vertical-offset="5436">
           <caret line="84" column="50" selection-start-line="84" selection-start-column="50" selection-end-line="84" selection-end-column="50" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1262,9 +896,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2412">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#4227#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1272,10 +903,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3029316" vertical-offset="6276" max-vertical-offset="7110">
           <caret line="392" column="63" selection-start-line="392" selection-start-column="63" selection-end-line="392" selection-end-column="63" />
-          <folding>
-            <element signature="e#13016#13017#0" expanded="true" />
-            <element signature="e#13086#13087#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1283,29 +910,186 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2016">
           <caret line="80" column="4" selection-start-line="80" selection-start-column="4" selection-end-line="80" selection-end-column="4" />
-          <folding>
-            <element signature="e#819#820#0" expanded="true" />
-            <element signature="e#848#849#0" expanded="true" />
-            <element signature="e#999#1029#0" expanded="true" />
-            <element signature="e#1060#1061#0" expanded="true" />
-            <element signature="e#1107#1108#0" expanded="true" />
-            <element signature="e#1115#1145#0" expanded="true" />
-            <element signature="e#1178#1179#0" expanded="true" />
-            <element signature="e#1225#1226#0" expanded="true" />
-            <element signature="e#1261#1262#0" expanded="true" />
-            <element signature="e#1315#1316#0" expanded="true" />
-            <element signature="e#1356#1357#0" expanded="true" />
-            <element signature="e#1416#1417#0" expanded="true" />
-            <element signature="e#1460#1461#0" expanded="true" />
-            <element signature="e#1501#1502#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bluecove-bluez/com/intel/bluetooth/BluetoothStackBlueZDBus.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.54908484" vertical-offset="5700" max-vertical-offset="16524">
+        <state vertical-scroll-proportion="0.35986915" vertical-offset="5700" max-vertical-offset="16524">
           <caret line="384" column="17" selection-start-line="384" selection-start-column="17" selection-end-line="384" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bluecove-bluez/org/bluez/v3/BlueZAPIV3.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7589967" vertical-offset="10716" max-vertical-offset="11646">
+          <caret line="677" column="56" selection-start-line="677" selection-start-column="56" selection-end-line="677" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/macro/MacroCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="876" max-vertical-offset="2538">
+          <caret line="69" column="8" selection-start-line="69" selection-start-column="8" selection-end-line="69" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/macro/command/Calibrate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1044">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#1350#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="576">
+          <caret line="26" column="21" selection-start-line="26" selection-start-column="21" selection-end-line="26" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/macro/command/LoopEnd.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="522">
+          <caret line="13" column="13" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/FrontLEDCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="50" max-vertical-offset="990">
+          <caret line="20" column="11" selection-start-line="20" selection-start-column="11" selection-end-line="20" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/macro/command/LoopStart.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="684">
+          <caret line="22" column="32" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#771#772#0" expanded="false" />
+            <element signature="e#846#847#0" expanded="false" />
+            <element signature="e#873#874#0" expanded="false" />
+            <element signature="e#896#897#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/BluetoothDevice.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3881" max-vertical-offset="5868">
+          <caret line="176" column="8" selection-start-line="176" selection-start-column="8" selection-end-line="176" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/PingCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="738">
+          <caret line="12" column="39" selection-start-line="12" selection-start-column="39" selection-end-line="12" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/macro/MacroObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="1998">
+          <caret line="39" column="36" selection-start-line="39" selection-start-column="36" selection-end-line="39" selection-end-column="36" />
+          <folding>
+            <element signature="e#968#969#0" expanded="true" />
+            <element signature="e#995#996#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/response/ResponseMessage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.2580647" vertical-offset="4463" max-vertical-offset="9594">
+          <caret line="292" column="153" selection-start-line="292" selection-start-column="153" selection-end-line="292" selection-end-column="153" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bluecove/com/intel/bluetooth/NativeLibLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33221477" vertical-offset="3888" max-vertical-offset="8838">
+          <caret line="259" column="0" selection-start-line="259" selection-start-column="0" selection-end-line="259" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/CommandMessage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3132" max-vertical-offset="4950">
+          <caret line="212" column="12" selection-start-line="212" selection-start-column="12" selection-end-line="212" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/command/AbortMacroCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="378">
+          <caret line="13" column="28" selection-start-line="13" selection-start-column="11" selection-end-line="13" selection-end-column="28" />
+          <folding>
+            <element signature="e#318#319#0" expanded="true" />
+            <element signature="e#366#367#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/BluetoothDiscoveryListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33207548" vertical-offset="184" max-vertical-offset="864">
+          <caret line="20" column="9" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/lang/Thread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.0754717" vertical-offset="11524" max-vertical-offset="35352">
+          <caret line="695" column="29" selection-start-line="695" selection-start-column="29" selection-end-line="695" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/bluetooth/Bluetooth.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="922" max-vertical-offset="9396">
+          <caret line="294" column="18" selection-start-line="294" selection-start-column="18" selection-end-line="294" selection-end-column="18" />
+          <folding>
+            <element signature="e#11998#11999#0" expanded="true" />
+            <element signature="e#12029#12030#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/example/Example_Site_API.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1710" max-vertical-offset="5094">
+          <caret line="110" column="42" selection-start-line="110" selection-start-column="42" selection-end-line="110" selection-end-column="42" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#8689#8690#0" expanded="true" />
+            <element signature="e#8758#8759#0" expanded="true" />
+            <element signature="e#10291#10292#0" expanded="true" />
+            <element signature="e#10362#10363#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/se/nicklasgavelin/sphero/Robot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17838766" vertical-offset="20956" max-vertical-offset="39834">
+          <caret line="1305" column="37" selection-start-line="1305" selection-start-column="37" selection-end-line="1305" selection-end-column="37" />
           <folding />
         </state>
       </provider>

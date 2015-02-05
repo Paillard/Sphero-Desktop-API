@@ -327,7 +327,7 @@ public class Robot
 
 	/**
 	 * Connects to the robot via Bluetooth. Will return true if the connection
-	 * was successful, throws and exception otherwise.
+	 * was successful, throws an exception otherwise.
 	 * 
 	 * @throws RobotInitializeConnectionFailed If connection failed
 	 * @return True if connection succeeded
@@ -367,10 +367,10 @@ public class Robot
         sendSystemCommand( new RGBLEDCommand(getLed().getRGBColor() ) );
 
 		// Create our pinger
-        sendSystemCommand( new PingCommand( this ), this.PING_INTERVAL, this.PING_INTERVAL);
+        sendSystemCommand( new PingCommand( this ), PING_INTERVAL, PING_INTERVAL);
 
 		// Notify listeners
-        notifyListenerEvent(this.connected ? RobotListener.EVENT_CODE.CONNECTION_ESTABLISHED : RobotListener.EVENT_CODE.CONNECTION_FAILED);
+        notifyListenerEvent(connected ? RobotListener.EVENT_CODE.CONNECTION_ESTABLISHED : RobotListener.EVENT_CODE.CONNECTION_FAILED);
 
 		// Return connection status
 		return connected;
@@ -399,7 +399,7 @@ public class Robot
 		if(connected)
 		{
 			// Set notify status, a bit ugly but hey.. Quick hack!
-            this.notifyListenersDisconnect = notifyListeners;
+            notifyListenersDisconnect = notifyListeners;
 
 			// Close all connection
             closeConnections();
@@ -411,8 +411,7 @@ public class Robot
                 notifyListenerEvent( RobotListener.EVENT_CODE.NO_CONNECTION_EXISTS );
 		}
 
-		// Set our connection flag to false
-		// this.connected = false;
+		// disconnecting = false;
 	}
 
 	/**
@@ -423,6 +422,7 @@ public class Robot
 		// Check if we have something to disconnect from
 		if(connected)
 		{
+            // Set our connection flag to false
             connected = false;
             disconnecting = true;
 
@@ -1144,7 +1144,7 @@ public class Robot
 	 */
 	public static boolean isValidDevice( BluetoothDevice device )
 	{
-		return device.getAddress().startsWith(Robot.ROBOT_ADDRESS_PREFIX);
+		return device.getAddress().startsWith(ROBOT_ADDRESS_PREFIX);
 	}
 
 	/**
@@ -2034,8 +2034,10 @@ public class Robot
 			}
 			else
 			{
-				if( !this.macroStreamingEnabled)
-					return;
+				if( !macroStreamingEnabled) {
+                    System.err.println("macro Streaming disabled");
+                    return;
+                }
 
 				if( macro.getMode().equals( MacroObject.MacroObjectMode.CachedStreaming ) )
 				{
@@ -2056,8 +2058,8 @@ public class Robot
 						// this.macroRunning = true;
 						// // this.sendSystemCommand( new RunMacroCommand( -2 ) );
 						// }
-					}
-				}
+					} else System.err.println("Command is empty");
+                }
 			}
 		}
 

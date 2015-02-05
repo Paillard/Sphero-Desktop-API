@@ -1,9 +1,10 @@
 package se.nicklasgavelin.bluetooth;
 
-import java.io.IOException;
-import javax.bluetooth.*;
 import se.nicklasgavelin.log.Logging;
 import se.nicklasgavelin.sphero.exception.RobotBluetoothException;
+
+import javax.bluetooth.*;
+import java.io.IOException;
 
 /**
  * Manages a single bluetooth device
@@ -62,7 +63,7 @@ public class BluetoothDevice implements DiscoveryListener
 	{
 		this.bt = bt;
 		this.connectionUrl = connectionUrl;
-        this.address = this.connectionUrl.split( "://" )[1].split( ":" )[0];
+        address = this.connectionUrl.split( "://" )[1].split( ":" )[0];
 	}
 
 	/**
@@ -73,13 +74,13 @@ public class BluetoothDevice implements DiscoveryListener
 	 */
 	public String getConnectionURL()
 	{
-		if(this.connectionUrl != null )
-			return this.connectionUrl;
+		if(connectionUrl != null )
+			return connectionUrl;
 		try
 		{
-			return this.service.getConnectionURL();
+			return service.getConnectionURL();
 		}
-		catch( NullPointerException e )
+		catch (NullPointerException e)
 		{
 			return null;
 		}
@@ -102,7 +103,7 @@ public class BluetoothDevice implements DiscoveryListener
 	 */
 	public String getAddress()
 	{
-		return this.address;
+		return address;
 	}
 
 	/**
@@ -114,20 +115,20 @@ public class BluetoothDevice implements DiscoveryListener
 	 */
 	public String getName()
 	{
-		if(this.name == null && this.device != null )
+		if(name == null && device != null )
 		{
 			try
 			{
 				// Try and updat the name
-                this.name = this.device.getFriendlyName(false);
+                name = device.getFriendlyName(false);
 			}
 			catch( IOException e )
 			{
-                this.name = UNKNOWN_NAME;
+                name = UNKNOWN_NAME;
 			}
 		}
 
-		return this.name;
+		return name;
 	}
 
 	/**

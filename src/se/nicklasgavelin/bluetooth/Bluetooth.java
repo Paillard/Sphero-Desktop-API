@@ -102,7 +102,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 		{
 			return this.message;
 		}
-	}
+	}//!class EVENT
 
 	/**
 	 * Create a Bluetooth instance that uses the build in Bluetooth
@@ -241,7 +241,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	/**
 	 * Notify all listeners with the error event
 	 * 
-	 * @param ERROR_CODE The error code
+	 * @param error The error code
 	 */
 	private void notifyListeners( Bluetooth.EVENT error )
 	{
@@ -254,10 +254,10 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 * 
 	 * @param devices The available devices
 	 */
-	private void notifyListeners( Collection<BluetoothDevice> devices )
+	private void notifyListeners(Collection<BluetoothDevice> devices)
 	{
-		for( BluetoothDiscoveryListener l : this.listeners)
-			l.deviceSearchCompleted( devices );
+		for( BluetoothDiscoveryListener l : listeners)
+			l.deviceSearchCompleted(devices);
 	}
 
 	/**
@@ -292,12 +292,13 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 * Searches for devices in the vicinity that we may connect to.
 	 * Results are returned via the BluetoothListener methods.
 	 */
-	public void discover()
+	public Thread discover()
 	{
         log( "Creating discovery thread" );
 
         Thread deviceDiscoveryThread = new Thread(this);
         deviceDiscoveryThread.start();
+        return  deviceDiscoveryThread;
 	}
 
 	/**
@@ -308,7 +309,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 		// TODO: Should this really be an error?
         dAgent.cancelInquiry(this);
         log( "Device discovery canceled" );
-        this.notifyListeners( new Bluetooth.EVENT( "Device discovery canceled by user", EVENT_CODE.ERROR_DISCOVERY_CANCELED ) );
+        notifyListeners(new Bluetooth.EVENT("Device discovery canceled by user", EVENT_CODE.ERROR_DISCOVERY_CANCELED));
 	}
 
 	/**
@@ -332,22 +333,18 @@ public class Bluetooth implements DiscoveryListener, Runnable
         } catch (BluetoothStateException e) {
             e.printStackTrace();
         }
-        synchronized(this.local)
+        synchronized(this.local) // FIXME : synchronize on non final variable -> may have differents threads with different instances of that variable
 		{
 			try
 			{
                 log( "Starting inquiry" );
                 this.dAgent.startInquiry(DiscoveryAgent.GIAC, this);
                 local.wait();
-			}
-			catch( BluetoothStateException e )
-			{
+			} catch(BluetoothStateException e) {
                 error( "Failed to perform discovery, maybe interrupted" );
                 this.notifyListeners( new Bluetooth.EVENT( "Failed to perform discovery due to exception", EVENT_CODE.ERROR_BLUETOOTH_EXCEPTION ) );
 				// throw new RuntimeException( e.getMessage() );
-			}
-			catch( InterruptedException e )
-			{
+			} catch(InterruptedException e) {
 				// Just ignore, we got nothing else to do
 			}
 		}
@@ -368,7 +365,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 		 */
 
 		// Notify observers
-        this.notifyListeners(devices);
+        notifyListeners(devices);
 	}
 
 	/**
@@ -460,7 +457,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
 	 */
 	public void run()
 	{
-        this.performDiscovery();
+        performDiscovery();
 	}
 
 	/**

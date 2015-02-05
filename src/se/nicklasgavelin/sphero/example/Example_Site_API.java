@@ -8,28 +8,24 @@ import se.nicklasgavelin.sphero.Robot;
 import se.nicklasgavelin.sphero.RobotListener;
 import se.nicklasgavelin.sphero.command.CommandMessage;
 import se.nicklasgavelin.sphero.command.FrontLEDCommand;
-import se.nicklasgavelin.sphero.exception.RobotBluetoothException;
+import se.nicklasgavelin.sphero.command.Level1DiagnosticsCommand;
 import se.nicklasgavelin.sphero.response.InformationResponseMessage;
 import se.nicklasgavelin.sphero.response.ResponseMessage;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Scanner;
 
 /**
  * Simple test class to test the Sphero API
  *
  * @author Nicklas Gavelin, nicklas.gavelin@gmail.com, Luleå University of Technology
  */
-public class Example_Site_API extends JFrame
+public class Example_Site_API// extends JFrame TODO : go to javaFX
 {
-    private static final long serialVersionUID = 6998786554264771793L;
-
     // Internal storage
-    private int responses;
-    private ConnectThread ct;
-    private JButton connectButton, disconnectButton;
+    private int responses; // @FIXME : never assigned
 
     /**
      * Main method
@@ -39,67 +35,16 @@ public class Example_Site_API extends JFrame
     @SuppressWarnings( "unused" )
     public static void main( String... args )
     {
-        /*Example_Site_API example_Site_API = */new Example_Site_API();
-        // new Thread( new Example_Site_API() ).start();
+        new Example_Site_API();
     }
 
     /**
      * Our example application
      */
-    public Example_Site_API()
-    {
-        super( "Example API usage" );
-        setLayout( new GridLayout( 2, 1 ) );
-
-        // Connect button
-        connectButton = new JButton( "Connect to available devices" );
-        disconnectButton = new JButton( "Disconnect from all devices" );
-
-        // Bind action to our connect button
-        connectButton.addActionListener(e -> {
-            // Check if we have something previous to stop
-            if (ct != null)
-                ct.stopThread();
-
-            // Create a new thread
-            ct = new ConnectThread();
-            ct.start();
-
-            // Toggle our button
-            connectButton.setEnabled(false);
-            disconnectButton.setEnabled(true);
-        });
-
-        // Bind action to the disconnect button
-        disconnectButton.addActionListener(e -> {
-            // Check if we have something to stop
-            if (ct != null)
-                ct.stopThread();
-
-            // Toggle our buttons
-            connectButton.setEnabled(true);
-            disconnectButton.setEnabled(false);
-        });
-
-        // Add buttons to our GUI
-        this.add(connectButton);
-        this.add(disconnectButton);
-
-        // Set some default stuff
-        this.pack();
-        this.setVisible( true );
-        this.setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
-    }
-
-    /**
-     * Set connect button state (also affects the disconnect button)
-     *
-     * @param enabled True to enable, false otherwise
-     */
-    private void setConnectEnabled( boolean enabled )
-    {
-        this.connectButton.setEnabled(enabled);
-        this.disconnectButton.setEnabled(!enabled);
+    public Example_Site_API() {
+        System.out.println("Going to interact with a Sphero");
+        ConnectThread ct = new ConnectThread();
+        ct.start();
     }
 
     /**
@@ -108,9 +53,7 @@ public class Example_Site_API extends JFrame
      */
     private class ConnectThread extends Thread implements BluetoothDiscoveryListener, RobotListener
     {
-        // Internal storage
         private Bluetooth bt;
-        private boolean stop;
         private Collection<Robot> robots;
 
         /**
@@ -118,7 +61,13 @@ public class Example_Site_API extends JFrame
          */
         public ConnectThread()
         {
-            this.robots = new ArrayList<>();
+            robots = new ArrayList<>();
+            bt = new Bluetooth(this, Bluetooth.SERIAL_COM);
+            try {
+                bt.discover().join();
+            } catch (InterruptedException e) {
+                //e.printStackTrace();
+            }
         }
 
         /**
@@ -127,16 +76,16 @@ public class Example_Site_API extends JFrame
         private void stopThread()
         {
             System.out.println("Stopping Thread");
-            if(bt != null )
+            if(bt != null)
                 bt.cancelDiscovery();
-            this.stop = true;
 
             // Disconnect from all robots and clear the connected list
-            for( Robot r : robots) {
+            for(Robot r : robots) {
                 System.out.println("Disconnecting " + r);
                 r.disconnect();
             }
             robots.clear();
+            System.exit(0);
         }
 
         @Override
@@ -144,58 +93,95 @@ public class Example_Site_API extends JFrame
         {
             try
             {
-                // Will perform a bluetooth discovery before connecting to
-                // any devices
-                bt = new Bluetooth( this, Bluetooth.SERIAL_COM );
-                //bt.discover(); // # COMMENT THIS IF UNCOMMENTING THE BELOW AREA #
+                Robot r = null;
+                Scanner kb = new Scanner(System.in);
 
-                // Uncomment the code below and comment out the bt.discover() line above
-                // to
-                // connect directly to a given Sphero
+                // Start client interface with sphero
+                while (true) {
+                    System.out.println("### What to do? ###");
+                    String cmd = kb.nextLine().toLowerCase().trim();
+                    switch (cmd) {
+                        case "discover":
+                            try {
+                                bt.discover().join();
+                            } catch (InterruptedException e) {
+                                //e.printStackTrace();
+                            }
+                            break;
+                        case "disconnect":
+                            if (r != null && r.isConnected())
+                                r.disconnect();
+                            break;
+                        case "robot":
+                            // connect directly to a given Sphero
+                            System.out.println("### Please enter the address of your sphero ###");
+                            String bluetoothAddress = kb.nextLine().toLowerCase().trim(); // TODO : check address format
+                            BluetoothDevice btd = new BluetoothDevice(bt,
+                                    String.format("btspp://%s:1;authenticate=true;encrypt=false;master=false", bluetoothAddress));
 
-                // ## START UNCOMMENT ##
-                String bluetoothAddress =/* "0006664438B8";*/ "6886E70204FF";
-                BluetoothDevice btd = new BluetoothDevice(bt, "btspp://" +
-                        bluetoothAddress + ":1;authenticate=true;encrypt=false;master=false" );
+                            // Create the robot from the bluetooth device
+                            r = new Robot(btd);
+                            System.out.println("Robot created");
+                        case "connect":
+                            // Try to connect to the robot
+                            if (r != null && r.connect()) {
+                                System.out.println("Connected");
 
-                System.out.println("Bluetooth device created");
-                // Create the robot from the bluetooth device
-                Robot r = new Robot( btd );
-                System.out.println("Robot created");
-
-                // Try to connect to the robot
-                if ( r.connect() )
-                {
-                    System.out.println("Connected");
-
-                    // Add ourselves as listeners
-                    r.addListener( this );
-                    this.robots.add(r);
-                }
-                // ## END UNCOMMENT ##
-
-                // Run forever, euheuheuh!
-                while( !stop)
-                {
-                    try
-                    {
-                        if ( r.isConnected() )
-                        {
-                            System.out.println("Start color transition");
-                            // Send a rgb transition command macro
-                            // r.rgbTransition( 0, 255, 0, 255, 0, 0, 50 );
-
-                            // Send a direct command
-                            r.roll(240f, 1f);
-                            // System.out.println("rbg("+red+", "+blue+", "+green+")");
-                        }
-
-                        Thread.sleep( 5000 );
+                                // Add ourselves as listeners
+                                r.addListener(this);
+                                robots.add(r);
+                            }
+                            else
+                                System.err.println("Failed to connect");
+                            break;
+                        case "exit":
+                            stopThread();
+                            System.exit(0);
+                        case "diagnostic":
+                            if (r != null && r.isConnected())
+                                r.sendCommandAfterMacro(new Level1DiagnosticsCommand());
+                            break;
+                        case "reset":
+                            if (r != null && r.isConnected())
+                                r.resetHeading();
+                            break;
+                        case "calibrate":
+                            if (r != null && r.isConnected())
+                                r.calibrate(0);
+                            break;
+                        case "transition":
+                            if (r != null && r.isConnected())
+                                r.rgbTransition(0, 255, 0, 255, 0, 0, 100);
+                            break;
+                        case "breath":
+                            if (r != null && r.isConnected())
+                                r.rgbBreath(new Color(0, 255, 0), new Color(255, 0, 0), 100, 0);
+                            break;
+                        case "info":
+                            if (r != null && r.isConnected()) {
+                                System.out.println(String.format("address:\t%s\nurl:\t%s\n\nid:\t%s\nname:\t%s\n",
+                                        r.getAddress(), r.getConnectionURL(), r.getId(), r.getName()));
+                                System.out.println(String.format("stopped?:\t%s\nleft motor speed:\t%d\nright motor speed:\t%d\nled:\t%s\n",
+                                        r.isStopped(), r.getRobotRawMovement().getLeftMotorSpeed(), r.getRobotRawMovement().getRightMotorSpeed(), r.getLed().toString()));
+                            }
+                            break;
+                        case "rotate":
+                            if (r != null && r.isConnected())
+                                r.rotate(180);
+                            break;
+                        case "roll":
+                            if (r != null && r.isConnected())
+                                r.roll(0F, 0.2F);
+                            break;
+                        case "frontled":
+                            if (r != null && r.isConnected())
+                                r.sendCommand(new FrontLEDCommand(1));
+                            break;
+                        default:
+                            System.out.println("Existing commands: exit, diagnostic, reset, calibrate, transition, breath, info" +
+                                    "disconnect, start, robot, exit, diagnostic, roll, rotate, frontled");
                     }
-                    catch( InterruptedException e )
-                    {
-                    }
-                }
+                } // !while
             }
             catch( Exception e )
             {
@@ -222,48 +208,7 @@ public class Example_Site_API extends JFrame
 
             // Try and see if we can find any Spheros in the found devices
             // Check if the Bluetooth device is a Sphero device or not
-            // We got a valid device (Sphero device), connect to it and
-            // have some fun with colors.
-            // Create our robot from the Bluetooth device that we got
-            // Add ourselves as listeners for the responses
-            // Check if we can connect
-            // Add robots to our connected robots list
-            // Send direct command
-            devices.stream().filter(Robot::isValidDevice).forEach(d -> {
-                System.out.println("Found robot " + d.getAddress());
-
-                // We got a valid device (Sphero device), connect to it and
-                // have some fun with colors.
-                try {
-                    // Create our robot from the Bluetooth device that we got
-                    Robot r = new Robot(d);
-
-                    // Add ourselves as listeners for the responses
-                    r.addListener(this);
-
-                    // Check if we can connect
-                    if (r.connect()) {
-                        // Add robots to our connected robots list
-                        robots.add(r);
-
-                        System.out.println("Connected to " + d.getName() + " : " + d.getAddress());
-                        r.rgbTransition(255, 0, 0, 0, 255, 255, 50);
-
-                        // Send direct command
-                        r.sendCommand(new FrontLEDCommand(1));
-                    } else
-                        System.err.println("Failed to connect to robot");
-                } catch (RobotBluetoothException ex) {
-                    ex.printStackTrace();
-                }
-            });
-
-            // Disable the thread and set connected button state
-            if(robots.isEmpty() )
-            {
-                stopThread();
-                setConnectEnabled( true );
-            }
+            devices.stream()/*.filter(Robot::isValidDevice)*/.forEach(d -> System.out.println("Found robot " + d.getAddress()));
         }
 
         /**
@@ -283,7 +228,7 @@ public class Example_Site_API extends JFrame
         @Override
         public void deviceSearchFailed( EVENT error )
         {
-            System.err.println( "Failed with device search: " + error );
+            System.err.println("Failed with device search: " + error.getErrorMessage());
         }
 
         /**
@@ -312,7 +257,7 @@ public class Example_Site_API extends JFrame
         @Override
         public void responseReceived( Robot r, ResponseMessage response, CommandMessage dc )
         {
-            System.out.println( "(" + ++Example_Site_API.this.responses + ") Received response: " + response.getResponseCode() + " to message " + dc.getCommand() );
+            System.out.println( "(" +responses + ") Received response: " + response.getResponseCode() + " to message " + dc.getCommand() );
         }
 
         /**
@@ -322,16 +267,14 @@ public class Example_Site_API extends JFrame
          * @param code The event code for the event
          */
         @Override
-        public void event( Robot r, EVENT_CODE code )
-        {
+        public void event( Robot r, EVENT_CODE code ) {
             System.out.println( "Received event: " + code );
         }
 
         @Override
-        public void informationResponseReceived( Robot r, InformationResponseMessage response )
-        {
+        public void informationResponseReceived( Robot r, InformationResponseMessage response ) {
             // Information response (Ex. Sensor data)
-            System.out.println(String.format("%s respond following informaions: %s", r.toString(), response.toString()));
+            System.out.println(String.format("%s respond following informations: %s", r.toString(), response.toString()));
         }
     }
 }

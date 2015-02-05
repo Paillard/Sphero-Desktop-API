@@ -290,7 +290,7 @@ public class ResponseMessage
             this.code = RESPONSE_CODE.valueOf( _data[respCodeIndex + offset], this.type);
             this.payloadLength = _data[packetLengthIndex + offset];
 			int packetLength = payloadLength + respHeaderLength;
-            this.checksum = _data[offset + packetLength - 1];
+            this.checksum = _data[offset + packetLength - 1]; // Fixme : java.lang.ArrayIndexOutOfBoundsException: -28 when asking a robot to diagnostic 1
             this.payloadStart = respHeaderLength;
 			//this.payloadEnd = packetLength - 1;
 
