@@ -81,8 +81,8 @@ public class Robot
 	public static final String ROBOT_ADDRESS_PREFIX = "00066";
 	// Robot controller
 	// private RobotController controller;
-	private static int error_num;
-	private static final String[] invalidAddressResponses = { "The bluetooth address is invalid, the Sphero device bluetooth address must start with " + Robot.ROBOT_ADDRESS_PREFIX, "The address is still invalid, the Sphero bluetooth address must start with " + Robot.ROBOT_ADDRESS_PREFIX, "Check your frigging bluetooth address, it still need to start with " + Robot.ROBOT_ADDRESS_PREFIX, "I give up... You are not taking me seriously. Why would I give a hoot about bluetooth addresses anyway (Still need to start with " + Robot.ROBOT_ADDRESS_PREFIX + ")" };
+	private static int error_num; // FIXME : never used
+	private static final String[] invalidAddressResponses = { "The bluetooth address is invalid, the Sphero device bluetooth address must start with " + ROBOT_ADDRESS_PREFIX, "The address is still invalid, the Sphero bluetooth address must start with " + ROBOT_ADDRESS_PREFIX, "Check your frigging bluetooth address, it still need to start with " + ROBOT_ADDRESS_PREFIX, "I give up... You are not taking me seriously. Why would I give a hoot about bluetooth addresses anyway (Still need to start with " + Robot.ROBOT_ADDRESS_PREFIX + ")" };
 
 	/**
 	 * Create a robot from a Bluetooth device. You need to call Robot.connect
@@ -127,13 +127,10 @@ public class Robot
 			throw new InvalidRobotAddressException( msg );
 		}
 */
-		if( rs == null )
-			this.rs = ProjectProperties.getInstance().getRobotSetting();
-		else
-			this.rs = rs;
+        this.rs = rs == null ? ProjectProperties.getInstance().getRobotSetting() : rs;
 
 		// Set ping interval
-        this.PING_INTERVAL = this.rs.socketPingInterval;
+        PING_INTERVAL = this.rs.socketPingInterval;
 
 		// Initialize the position and LEDs
         movement = new Robot.RobotMovement();
@@ -335,7 +332,7 @@ public class Robot
 	private boolean internalConnect() throws RobotInitializeConnectionFailed, RobotBluetoothException
 	{
 		Logging.debug( "Trying to connect to " + getName() + ":" + getAddress() );
-        btc = this.bt.connect();
+        btc = bt.connect();
 
 		// Check if we could connect to the bluetooth device
 		if(btc == null )

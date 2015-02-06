@@ -1,5 +1,6 @@
 package se.nicklasgavelin.bluetooth;
 
+import com.sun.istack.internal.Nullable;
 import se.nicklasgavelin.log.Logging;
 import se.nicklasgavelin.sphero.exception.RobotBluetoothException;
 
@@ -170,7 +171,7 @@ public class BluetoothDevice implements DiscoveryListener
 	 * @throws RobotBluetoothException If failure to connect
 	 * @return The created Bluetooth connection or null if no connection could be created
 	 */
-	public BluetoothConnection connect() throws RobotBluetoothException
+    @Nullable public BluetoothConnection connect() throws RobotBluetoothException
 	{
 		// Check if we have any active services
 		if(this.connectionUrl != null )

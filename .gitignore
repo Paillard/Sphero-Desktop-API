@@ -6,3 +6,4 @@ dist/
 bin/
 nbproject
 latest.jar
+.idea
