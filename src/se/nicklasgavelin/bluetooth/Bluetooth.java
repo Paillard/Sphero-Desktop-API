@@ -64,8 +64,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
      *            instance
      * @param uuid The UUID for the Bluetooth connections
      */
-    public Bluetooth(BluetoothDiscoveryListener listener, int uuid)
-    {
+    public Bluetooth(BluetoothDiscoveryListener listener, int uuid) {
         this(listener);
         this.uuid = new UUID(uuid);
     }

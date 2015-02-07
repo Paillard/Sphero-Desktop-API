@@ -166,7 +166,7 @@ public class DiscoveryAgent {
      *                <code>PREKNOWN</code>
      */
 	public RemoteDevice[] retrieveDevices(int option) {
-		return RemoteDeviceHelper.implRetrieveDevices(this.bluetoothStack, option);
+		return RemoteDeviceHelper.implRetrieveDevices(bluetoothStack, option);
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class DiscoveryAgent {
 		if (accessCode != LIAC && accessCode != GIAC && (accessCode < 0x9E8B00 || accessCode > 0x9E8B3F)) {
 			throw new IllegalArgumentException("Invalid accessCode " + accessCode);
 		}
-		return this.bluetoothStack.startInquiry(accessCode, listener);
+		return bluetoothStack.startInquiry(accessCode, listener);
 	}
 
 	/**
@@ -242,7 +242,7 @@ public class DiscoveryAgent {
 			throw new NullPointerException("DiscoveryListener is null");
 		}
 		DebugLog.debug("cancelInquiry");
-		return this.bluetoothStack.cancelInquiry(listener);
+		return bluetoothStack.cancelInquiry(listener);
 	}
 
 	/**
@@ -331,7 +331,7 @@ public class DiscoveryAgent {
 				throw new IllegalArgumentException("attrSet[" + i + "] not in range");
 			}
 		}
-		return this.bluetoothStack.searchServices(attrSet, uuidSet, btDev, discListener);
+		return bluetoothStack.searchServices(attrSet, uuidSet, btDev, discListener);
 	}
 
 	/**
@@ -353,7 +353,7 @@ public class DiscoveryAgent {
 	 */
 	public boolean cancelServiceSearch(int transID) {
 		DebugLog.debug("cancelServiceSearch", transID);
-		return this.bluetoothStack.cancelServiceSearch(transID);
+		return bluetoothStack.cancelServiceSearch(transID);
 	}
 
     /**

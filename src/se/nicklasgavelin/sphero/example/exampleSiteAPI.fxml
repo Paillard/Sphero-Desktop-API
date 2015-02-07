@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.nicklasgavelin.sphero.example.ExampleSiteAPIController">
+   <top>
+      <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-border-color: black" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: black">
+               <children>
+                  <Button fx:id="scanButton" mnemonicParsing="false" text="Scan" />
+                  <Button fx:id="connectButton" mnemonicParsing="false" text="Connect"  />
+                  <Button fx:id="disconnectButton" mnemonicParsing="false" text="Disconnect"  />
+               </children></VBox>
+            <ListView fx:id="devicesLV" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black" />
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: black" BorderPane.alignment="CENTER" />
+   </left>
+</BorderPane>
