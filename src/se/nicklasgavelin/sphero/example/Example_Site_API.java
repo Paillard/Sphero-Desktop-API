@@ -139,6 +139,7 @@ public class Example_Site_API// extends JFrame TODO : go to javaFX
                             break;
                         case "exit":
                             run = !stopThread();
+                            break;
                         case "diagnostic":
                             if (r != null && r.isConnected())
                                 r.sendCommandAfterMacro(new Level1DiagnosticsCommand());
@@ -200,6 +201,14 @@ public class Example_Site_API// extends JFrame TODO : go to javaFX
                                 }
                             }
                             break;
+                        case "360":
+                            if (r != null && r.isConnected()) {
+                                for (int i = 0; i < 360; i += 10) {
+                                    r.rotate(i);
+                                    sleep(10);
+                                }
+                            }
+                            break;
                         case "color":
                             if (r != null && r.isConnected()) {
                                 try {
@@ -252,10 +261,12 @@ public class Example_Site_API// extends JFrame TODO : go to javaFX
                             break;
                         default:
                             System.out.println("Existing commands: exit, diagnostic, reset, calibrate, transition, breath, info" +
-                                    "disconnect, start, robot, exit, diagnostic, roll, rotate, frontled, color");
+                                    "disconnect, start, robot, exit, diagnostic, roll, rotate, frontled, color, trip, 360");
+                    }//!switch
+                    if (run) {
+                        System.out.println("### What to do? ###");
+                        cmd = kb.nextLine().toLowerCase().trim();
                     }
-                    System.out.println("### What to do? ###");
-                    cmd = kb.nextLine().toLowerCase().trim();
                 } // !while
             } catch(Exception e) {
                 // Failure in searching for devices for some reason.

@@ -5,12 +5,12 @@
 
 package se.nicklasgavelin.configuration;
 
-import java.awt.Color;
-import java.util.Properties;
-
 import se.nicklasgavelin.log.Logging.Level;
 import se.nicklasgavelin.sphero.RobotSetting;
 import se.nicklasgavelin.sphero.command.RawMotorCommand.MOTOR_MODE;
+
+import java.awt.Color;
+import java.util.Properties;
 
 /**
  * Used for returning current configuration settings
@@ -33,7 +33,7 @@ public class ProjectProperties extends Properties
         try
 		{
 			// Load the property file
-            this.load( ProjectProperties.class.getResourceAsStream( "project.properties" ) );
+            load( ProjectProperties.class.getResourceAsStream( "project.properties" ) );
 		}
 		catch( Exception e )
 		{
@@ -48,7 +48,20 @@ public class ProjectProperties extends Properties
 	 */
 	public RobotSetting getRobotSetting()
 	{
-		return new RobotSetting( new Color( Integer.parseInt(this.getProperty( "sphero.color.rgb.red", "255" ) ), Integer.parseInt(this.getProperty( "sphero.color.rgb.green", "255" ) ), Integer.parseInt(this.getProperty( "sphero.color.rgb.blue", "255" ) ) ), Integer.parseInt(this.getProperty( "sphero.pinginterval", "255" ) ), Float.parseFloat(this.getProperty( "sphero.color.brightness", "1" ) ), Integer.parseInt(this.getProperty( "sphero.motor.heading", "0" ) ), Integer.parseInt(this.getProperty( "sphero.motor.speed", "0" ) ), Integer.parseInt(this.getProperty( "sphero.macro.size", "0" ) ), Integer.parseInt(this.getProperty( "sphero.macro.storage", "0" ) ), Integer.parseInt(this.getProperty( "sphero.macro.minsize", "128" ) ), Boolean.parseBoolean(this.getProperty( "sphero.motor.stop", "true" ) ), Float.parseFloat(this.getProperty( "sphero.macro.rotationrate", "0" ) ), MOTOR_MODE.valueOf(this.getProperty( "sphero.motor.motormode", MOTOR_MODE.FORWARD.toString() ) ) );
+		return new RobotSetting( new Color( Integer.parseInt(getProperty( "sphero.color.rgb.red", "255" ) ),
+                Integer.parseInt(getProperty( "sphero.color.rgb.green", "255" ) ),
+                Integer.parseInt(getProperty( "sphero.color.rgb.blue", "255" ) ) ),
+                Integer.parseInt(getProperty("sphero.pinginterval", "255") ),
+                Float.parseFloat(getProperty("sphero.color.brightness", "1") ),
+                Integer.parseInt(getProperty("sphero.motor.heading", "0") ),
+                Integer.parseInt(getProperty("sphero.motor.speed", "0") ),
+                Integer.parseInt(getProperty("sphero.macro.size", "0") ),
+                Integer.parseInt(getProperty( "sphero.macro.storage", "0" ) ),
+                Integer.parseInt(getProperty( "sphero.macro.minsize", "128" ) ),
+                Boolean.parseBoolean(getProperty("sphero.motor.stop", "true") ),
+                Float.parseFloat(getProperty("sphero.macro.rotationrate", "0") ),
+                MOTOR_MODE.valueOf(getProperty("sphero.motor.motormode",
+                        MOTOR_MODE.FORWARD.toString())));
 	}
 
 	/**
@@ -58,7 +71,7 @@ public class ProjectProperties extends Properties
 	 */
 	public int getBufferSize()
 	{
-		return Integer.parseInt(this.getProperty( "sphero.socket.buffersize", "256" ) );
+		return Integer.parseInt(getProperty("sphero.socket.buffersize", "256") );
 	}
 
 	/**
@@ -68,7 +81,7 @@ public class ProjectProperties extends Properties
 	 */
 	public boolean getDebugEnabled()
 	{
-		return Boolean.parseBoolean(this.getProperty( "debug.enabled", "false" ) );
+		return Boolean.parseBoolean(getProperty( "debug.enabled", "false" ) );
 	}
 
 	/**
@@ -78,7 +91,7 @@ public class ProjectProperties extends Properties
 	 */
 	public void setDebugEnabled( boolean enabled )
 	{
-        this.setProperty( "debug.enabled", Boolean.toString( enabled ) );
+        setProperty( "debug.enabled", Boolean.toString( enabled ) );
 	}
 
 	/**
@@ -88,7 +101,7 @@ public class ProjectProperties extends Properties
 	 */
 	public boolean getBluecoveDebugEnabled()
 	{
-		return Boolean.parseBoolean(this.getProperty( "debug.bluecove.enabled", "false" ) );
+		return Boolean.parseBoolean(getProperty( "debug.bluecove.enabled", "false" ) );
 	}
 
 	/**
@@ -98,7 +111,7 @@ public class ProjectProperties extends Properties
 	 */
 	public void setBluecoveDebugEnabled( boolean enabled )
 	{
-        this.setProperty( "debug.bluecove.enabled", Boolean.toString( enabled ) );
+        setProperty( "debug.bluecove.enabled", Boolean.toString( enabled ) );
 	}
 
 	/**
@@ -108,7 +121,7 @@ public class ProjectProperties extends Properties
 	 */
 	public String getLoggerName()
 	{
-		return this.getProperty( "debug.loggername", "se.nicklasgavelin" );
+		return getProperty( "debug.loggername", "se.nicklasgavelin" );
 	}
 
 	/**
@@ -119,7 +132,7 @@ public class ProjectProperties extends Properties
 	 */
 	public void setLoggerName( String name )
 	{
-        this.setProperty( "debug.loggername", name );
+        setProperty( "debug.loggername", name );
 	}
 
 	/**
@@ -130,7 +143,7 @@ public class ProjectProperties extends Properties
 	 */
 	public Level getDebugLevel()
 	{
-		return Level.valueOf(this.getProperty( "debug.level", Level.FATAL.toString() ) );
+		return Level.valueOf(getProperty( "debug.level", Level.FATAL.toString() ) );
 	}
 
 	/**

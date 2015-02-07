@@ -26,18 +26,10 @@
  */
 package javax.bluetooth;
 
-import java.util.Hashtable;
+import com.intel.bluetooth.*;
 
 import javax.microedition.io.Connection;
-
-import com.intel.bluetooth.BlueCoveImpl;
-import com.intel.bluetooth.BlueCoveLocalDeviceProperties;
-import com.intel.bluetooth.BluetoothConnectionNotifierServiceRecordAccess;
-import com.intel.bluetooth.BluetoothConsts;
-import com.intel.bluetooth.BluetoothStack;
-import com.intel.bluetooth.RemoteDeviceHelper;
-import com.intel.bluetooth.ServiceRecordsRegistry;
-import com.intel.bluetooth.UtilsJavaSE;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The <code>LocalDevice</code> class defines the basic functions of the
@@ -49,7 +41,7 @@ import com.intel.bluetooth.UtilsJavaSE;
  */
 public class LocalDevice {
 
-    private static Hashtable localDevices = new Hashtable();
+    private static ConcurrentHashMap<BluetoothStack, LocalDevice> localDevices = new ConcurrentHashMap<>();
 
     private BluetoothStack bluetoothStack;
 
@@ -66,14 +58,14 @@ public class LocalDevice {
      * @see #getLocalDevice
      */
     private LocalDevice(BluetoothStack stack) throws BluetoothStateException {
-        this.bluetoothStack = stack;
-        discoveryAgent = new DiscoveryAgent(this.bluetoothStack);
-        addressStr = RemoteDeviceHelper.formatBluetoothAddress(this.bluetoothStack.getLocalDeviceBluetoothAddress());
+        bluetoothStack = stack;
+        discoveryAgent = new DiscoveryAgent(bluetoothStack);
+        addressStr = RemoteDeviceHelper.formatBluetoothAddress(bluetoothStack.getLocalDeviceBluetoothAddress());
     }
 
     private static synchronized LocalDevice getLocalDeviceInstance() throws BluetoothStateException {
         BluetoothStack stack = BlueCoveImpl.instance().getBluetoothStack();
-        LocalDevice localDevice = (LocalDevice) localDevices.get(stack);
+        LocalDevice localDevice = localDevices.get(stack);
         if (localDevice == null) {
             localDevice = new LocalDevice(stack);
             localDevices.put(stack, localDevice);
@@ -130,7 +122,7 @@ public class LocalDevice {
      *         not be retrieved
      */
     public String getFriendlyName() {
-        return this.bluetoothStack.getLocalDeviceName();
+        return bluetoothStack.getLocalDeviceName();
     }
 
     /**
@@ -145,7 +137,7 @@ public class LocalDevice {
      * 
      */
     public DeviceClass getDeviceClass() {
-        return this.bluetoothStack.getLocalDeviceClass();
+        return bluetoothStack.getLocalDeviceClass();
     }
 
     /**
@@ -203,7 +195,7 @@ public class LocalDevice {
         if (mode != DiscoveryAgent.GIAC && mode != DiscoveryAgent.LIAC && mode != DiscoveryAgent.NOT_DISCOVERABLE && (mode < 0x9E8B00 || mode > 0x9E8B3F)) {
             throw new IllegalArgumentException("Invalid discoverable mode");
         }
-        return this.bluetoothStack.setLocalDeviceDiscoverable(mode);
+        return bluetoothStack.setLocalDeviceDiscoverable(mode);
     }
 
     /**
@@ -278,24 +270,25 @@ public class LocalDevice {
      */
     public static String getProperty(String property) {
         try {
-            if (BluetoothConsts.PROPERTY_BLUETOOTH_API_VERSION.equals(property)) {
-                return BlueCoveImpl.BLUETOOTH_API_VERSION;
-            } else if (BluetoothConsts.PROPERTY_OBEX_API_VERSION.equals(property)) {
-                return BlueCoveImpl.OBEX_API_VERSION;
-            } else if (BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_BLUECOVE_VERSION.equals(property)) {
-                return BlueCoveImpl.version;
-            } else if (BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_STACK.equals(property)) {
-                return BlueCoveImpl.instance().getBluetoothStack().getStackID();
-            } else if (BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_FEATURE_L2CAP.equals(property)) {
-                return BlueCoveImpl.instance().getLocalDeviceFeature(BluetoothStack.FEATURE_L2CAP);
-            } else if (BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_FEATURE_SERVICE_ATTRIBUTES.equals(property)) {
-                return BlueCoveImpl.instance().getLocalDeviceFeature(BluetoothStack.FEATURE_SERVICE_ATTRIBUTES);
-            } else if (BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_FEATURE_SET_DEVICE_SERVICE_CLASSES.equals(property)) {
-                return BlueCoveImpl.instance().getLocalDeviceFeature(BluetoothStack.FEATURE_SET_DEVICE_SERVICE_CLASSES);
-            } else if (BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_FEATURE_RSSI.equals(property)) {
-                return BlueCoveImpl.instance().getLocalDeviceFeature(BluetoothStack.FEATURE_RSSI);
-            } else if (BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_OPEN_CONNECTIONS.equals(property)) {
-                return String.valueOf(RemoteDeviceHelper.openConnections());
+            switch (property) {
+                case BluetoothConsts.PROPERTY_BLUETOOTH_API_VERSION:
+                    return BlueCoveImpl.BLUETOOTH_API_VERSION;
+                case BluetoothConsts.PROPERTY_OBEX_API_VERSION:
+                    return BlueCoveImpl.OBEX_API_VERSION;
+                case BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_BLUECOVE_VERSION:
+                    return BlueCoveImpl.version;
+                case BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_STACK:
+                    return BlueCoveImpl.instance().getBluetoothStack().getStackID();
+                case BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_FEATURE_L2CAP:
+                    return BlueCoveImpl.instance().getLocalDeviceFeature(BluetoothStack.FEATURE_L2CAP);
+                case BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_FEATURE_SERVICE_ATTRIBUTES:
+                    return BlueCoveImpl.instance().getLocalDeviceFeature(BluetoothStack.FEATURE_SERVICE_ATTRIBUTES);
+                case BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_FEATURE_SET_DEVICE_SERVICE_CLASSES:
+                    return BlueCoveImpl.instance().getLocalDeviceFeature(BluetoothStack.FEATURE_SET_DEVICE_SERVICE_CLASSES);
+                case BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_FEATURE_RSSI:
+                    return BlueCoveImpl.instance().getLocalDeviceFeature(BluetoothStack.FEATURE_RSSI);
+                case BlueCoveLocalDeviceProperties.LOCAL_DEVICE_PROPERTY_OPEN_CONNECTIONS:
+                    return String.valueOf(RemoteDeviceHelper.openConnections());
             }
             return BlueCoveImpl.instance().getBluetoothStack().getLocalDeviceProperty(property);
         } catch (BluetoothStateException e) {
@@ -316,7 +309,7 @@ public class LocalDevice {
      * @return the discoverable mode the device is presently in
      */
     public int getDiscoverable() {
-        return this.bluetoothStack.getLocalDeviceDiscoverable();
+        return bluetoothStack.getLocalDeviceDiscoverable();
     }
 
     /**
