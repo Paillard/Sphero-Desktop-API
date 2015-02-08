@@ -60,9 +60,13 @@ public class BluetoothDevice implements DiscoveryListener
 	public BluetoothDevice(Bluetooth bt, String connectionUrl)
 	{
 		this.bt = bt;
-		this.connectionUrl = connectionUrl;
-        address = this.connectionUrl.split("://")[1].split(":")[0];
+        setConnectionUrl(connectionUrl);
 	}
+
+    public void setConnectionUrl(String connectionUrl) {
+        this.connectionUrl = connectionUrl;
+        address = this.connectionUrl.split("://")[1].split(":")[0];
+    }
 
 	/**
 	 * Returns the connection url for the specific bluetooth device
@@ -328,4 +332,17 @@ public class BluetoothDevice implements DiscoveryListener
 	{
 		Logging.error(msg);
 	}
+
+    @Override
+    public String toString() {
+        return "BluetoothDevice{" +
+ /*               "device=" + device +
+                ", bt=" + bt +
+                ", service=" + service +                                */
+                ", activeSearch=" + activeSearch +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", connectionUrl='" + connectionUrl + '\'' +
+                '}';
+    }
 }

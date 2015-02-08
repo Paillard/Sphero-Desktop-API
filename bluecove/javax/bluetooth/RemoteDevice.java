@@ -26,13 +26,12 @@
  */
 package javax.bluetooth;
 
-import java.io.IOException;
-
-import javax.microedition.io.Connection;
-
 import com.intel.bluetooth.DebugLog;
 import com.intel.bluetooth.RemoteDeviceHelper;
 import com.intel.bluetooth.UtilsJavaSE;
+
+import javax.microedition.io.Connection;
+import java.io.IOException;
 
 /**
  * The <code>RemoteDevice</code> class represents a remote Bluetooth device.
@@ -444,4 +443,11 @@ public class RemoteDevice {
 		return RemoteDeviceHelper.implIsEncrypted(this);
 	}
 
+    @Override
+    public String toString() {
+        return "RemoteDevice{" +
+                "addressStr='" + addressStr + '\'' +
+                ", addressLong=" + addressLong +
+                '}';
+    }
 }

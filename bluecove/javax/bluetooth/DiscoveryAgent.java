@@ -412,4 +412,10 @@ public class DiscoveryAgent {
 		return new SelectServiceHandler(this).selectService(uuid, security, master);
 	}
 
+/*    @Override
+    public String toString() {
+        return "DiscoveryAgent{" +
+                "bluetoothStack=" + bluetoothStack +
+                '}';
+    }*/
 }

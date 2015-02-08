@@ -4,34 +4,19 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import se.nicklasgavelin.bluetooth.Bluetooth;
-import se.nicklasgavelin.bluetooth.BluetoothDevice;
-import se.nicklasgavelin.sphero.Robot;
-import se.nicklasgavelin.sphero.RobotListener;
-import se.nicklasgavelin.sphero.command.CommandMessage;
-import se.nicklasgavelin.sphero.exception.RobotBluetoothException;
-import se.nicklasgavelin.sphero.response.InformationResponseMessage;
-import se.nicklasgavelin.sphero.response.ResponseMessage;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Simple test class to test the Sphero API
  *
  * @author Nicklas Gavelin, nicklas.gavelin@gmail.com, Luleå University of Technology
  */
-public class ExampleSiteAPI extends Application implements RobotListener
+public class ExampleSiteAPI extends Application
 {
     // Internal storage
-    private int responses;
-    private Bluetooth bt;
-    private Map<BluetoothDevice, Robot> robots;
-    private BluetoothDevice selectedBluetoothDevice;
     public Parent root;
+    public Scene scene;
+    public Stage stage;
 
     private static ExampleSiteAPI exampleSiteAPI;
 
@@ -50,70 +35,27 @@ public class ExampleSiteAPI extends Application implements RobotListener
         launch(args);
     }
 
-    /**
-     *
-     * @param bt
-     */
-    public void setBluetooth(Bluetooth bt) {
+/*     public void setBluetooth(Bluetooth bt) {
         this.bt = bt;
-    }
-
-    /**
-     *
-     * @param bluetoothDevice
-     */
-    public void setSelectedBluetoothDevice(BluetoothDevice bluetoothDevice) {
-        selectedBluetoothDevice = bluetoothDevice;
-    }
+    }*/
 
     @Override
     public void start(Stage stage) throws Exception {
         exampleSiteAPI = this;
-        robots = new ConcurrentHashMap<>();
 
         root = FXMLLoader.load(getClass().getResource("exampleSiteAPI.fxml"));
-
-        Scene scene = new Scene(root, 300, 275);
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
-            if (event.getCode().equals(KeyCode.ESCAPE)) {
-                disconnect();
-                stage.close();
-            }
-        });
-        stage.setTitle("Sphero Desktop Control");
-        stage.setScene(scene);
-        stage.show();
+        scene = new Scene(root, 300, 275);
+        this.stage = stage;
+        this.stage.setTitle("Sphero Desktop Control");
+        this.stage.setScene(scene);
+        this.stage.show();
     }
 
-    /**
-     * Stop everything regarding the connection and robots
-     */
-    private void disconnect() {
-        System.out.println("Stopping Thread");
-        if(bt != null)
-            bt.cancelDiscovery();
 
-        // Disconnect from all robots and clear the connected list
-        robots.forEach((bluetoothDevice, robot) -> {
-            robot.disconnect();
-            robot.removeListener(this);
-            bluetoothDevice.cancelDiscovery();
-        });
-        robots.clear();
-    }
 
-    public void disconnectSelected() {
-        assert robots != null && !robots.isEmpty() : "No device to deconnect";
-        assert selectedBluetoothDevice != null : "No bluetooth device selected";
+ /*
 
-        Robot r = robots.get(selectedBluetoothDevice);
-        r.disconnect();
-        r.removeListener(this);
-        robots.remove(selectedBluetoothDevice);
-        selectedBluetoothDevice.cancelDiscovery();
-    }
-
- /*   @Deprecated
+  @Deprecated
     public void terminal() {
         try {
             Robot r = null;
@@ -264,80 +206,9 @@ public class ExampleSiteAPI extends Application implements RobotListener
 		 * ROBOT STUFF
 		 */
 
-    /**
-     * Called when a response is received from a robot
-     *
-     * @param r The robot the event concerns
-     * @param response The response received
-     * @param dc The command the response is concerning
-     */
-    @Override
-    public void responseReceived(Robot r, ResponseMessage response, CommandMessage dc) {
-        System.out.println("(" + ++responses + ") Received response: " + response.getResponseCode() + " to message " + dc.getCommand());
-    }
 
-    /**
-     * Event that may occur for a robot
-     *
-     * @param r The robot the event concerns
-     * @param code The event code for the event
-     */
-    @Override
-    public void event(Robot r, EVENT_CODE code) {
-        System.out.println("Received event: " + code);
-    }
 
-    @Override
-    public void informationResponseReceived(Robot r, InformationResponseMessage response) {
-        // Information response (Ex. Sensor data)
-        System.out.println(String.format("%s respond following informations: %s", r.toString(), response.toString()));
-    }
 
-    /**
-     * Will start a research of all available and visible
-     * bluetooth devices.
-     */
-    public void discover() {
-        assert bt != null : "Bluetooth should have been initialized before calling for search";
 
-        bt.discover();
-    }
 
-    /**
-     * Connect to the selected bluetooth device.
-     */
-    public void connect() {
-        assert selectedBluetoothDevice != null : "Should pick up an address of one device";
-
-        // Create the robot from the bluetooth device
-        try {
-            Robot r = new Robot(selectedBluetoothDevice);
-            if (r.connect()) {
-                System.out.println("Connected");
-
-                // Add ourselves as listeners
-                r.addListener(this);
-                if (!robots.containsKey(selectedBluetoothDevice))
-                    robots.put(selectedBluetoothDevice, r);
-            } else {
-                System.err.println("Failed to connect");
-            }
-        } catch (RobotBluetoothException e) {
-            System.err.println(e);
-        }
-    }
-
-    public BluetoothDevice getSelectedBluetoothDevice() {
-        return selectedBluetoothDevice;
-    }
-
-    public boolean isSelectedBluetoothDeviceConnected() {
-        if (robots != null && !robots.isEmpty()) {
-            if (selectedBluetoothDevice != null) {
-                Robot r = robots.get(selectedBluetoothDevice);
-                if (r != null) return r.isConnected();
-            }
-        }
-        return false;
-    }
 }

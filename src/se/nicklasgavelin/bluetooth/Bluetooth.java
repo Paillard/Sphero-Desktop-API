@@ -547,4 +547,15 @@ public class Bluetooth implements DiscoveryListener, Runnable
             ERROR_BLUETOOTH_EXCEPTION
         }
     }//!class EVENT
+
+    @Override
+    public String toString() {
+        return "Bluetooth{" +
+                "local=" + local +
+                ", dAgent=" + dAgent +
+                ", listeners=" + listeners +
+                ", uuid=" + uuid +
+                ", devices=" + devices +
+                '}';
+    }
 }

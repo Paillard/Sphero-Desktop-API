@@ -24,14 +24,8 @@
  */
 package com.intel.bluetooth;
 
+import javax.bluetooth.*;
 import java.io.IOException;
-
-import javax.bluetooth.BluetoothStateException;
-import javax.bluetooth.DeviceClass;
-import javax.bluetooth.DiscoveryListener;
-import javax.bluetooth.RemoteDevice;
-import javax.bluetooth.ServiceRegistrationException;
-import javax.bluetooth.UUID;
 
 /**
  * New native stack support should ONLY implement this interface. No other classes should
@@ -75,6 +69,15 @@ public interface BluetoothStack {
 
         public static BluetoothStack.LibraryInformation[] library(String libraryName) {
             return new BluetoothStack.LibraryInformation[] { new BluetoothStack.LibraryInformation(libraryName) };
+        }
+
+        @Override
+        public String toString() {
+            return "LibraryInformation{" +
+                    "libraryName='" + libraryName + '\'' +
+                    ", stackClass=" + stackClass +
+                    ", required=" + required +
+                    '}';
         }
     }
 

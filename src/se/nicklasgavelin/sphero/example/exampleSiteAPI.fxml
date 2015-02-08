@@ -11,14 +11,23 @@
             <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: black">
                <children>
                   <Button fx:id="scanButton" mnemonicParsing="false" text="Scan" />
-                  <Button fx:id="connectButton" mnemonicParsing="false" text="Connect"  />
-                  <Button fx:id="disconnectButton" mnemonicParsing="false" text="Disconnect"  />
+                  <Button fx:id="connectButton" mnemonicParsing="false" text="Connect" />
+                  <Button fx:id="disconnectButton" mnemonicParsing="false" text="Disconnect" />
                </children></VBox>
-            <ListView fx:id="devicesLV" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black" />
+            <ListView fx:id="bluetoothDeviceListView" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
    </top>
    <left>
-      <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: black" BorderPane.alignment="CENTER" />
+      <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: black" BorderPane.alignment="CENTER">
+         <children>
+            <ListView fx:id="robotListView" prefHeight="200.0" prefWidth="200.0" />
+            <Label fx:id="addressLabel" text="" />
+            <Label fx:id="idLabel" text="" />
+            <Label fx:id="nameLabel" text="" />
+            <Label fx:id="stoppedLabel" text="" />
+            <Label fx:id="leftMotorSpeedLabel" text="" />
+            <Label fx:id="rightMotorSpeedLabel" text="" />
+         </children></VBox>
    </left>
 </BorderPane>
