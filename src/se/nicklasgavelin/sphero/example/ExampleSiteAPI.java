@@ -44,7 +44,7 @@ public class ExampleSiteAPI extends Application
         exampleSiteAPI = this;
 
         root = FXMLLoader.load(getClass().getResource("exampleSiteAPI.fxml"));
-        scene = new Scene(root, 300, 275);
+        scene = new Scene(root, 1024, 728);
         this.stage = stage;
         this.stage.setTitle("Sphero Desktop Control");
         this.stage.setScene(scene);

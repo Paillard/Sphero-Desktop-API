@@ -1,7 +1,5 @@
 package se.nicklasgavelin.sphero.command;
 
-import se.nicklasgavelin.sphero.command.CommandMessage.COMMAND_MESSAGE_TYPE;
-
 /**
  * Command to steer the direction and speed of the internal motors of the
  * Sphero.
@@ -22,9 +20,9 @@ public class RawMotorCommand extends CommandMessage
 	public enum MOTOR_MODE
 	{
 		FORWARD( 1 ), REVERSE( 2 );
-		private int mode;
+		private Integer mode;
 
-		MOTOR_MODE(int mode)
+		MOTOR_MODE(Integer mode)
 		{
 			this.mode = mode;
 		}
@@ -91,7 +89,7 @@ public class RawMotorCommand extends CommandMessage
 	 */
 	public MOTOR_MODE getLeftMode()
 	{
-		return this.leftMode;
+		return leftMode;
 	}
 
 	/**
@@ -101,7 +99,7 @@ public class RawMotorCommand extends CommandMessage
 	 */
 	public MOTOR_MODE getRightMode()
 	{
-		return this.rightMode;
+		return rightMode;
 	}
 
 	/**
@@ -111,7 +109,7 @@ public class RawMotorCommand extends CommandMessage
 	 */
 	public int getLeftSpeed()
 	{
-		return this.leftSpeed;
+		return leftSpeed;
 	}
 
 	/**
@@ -121,7 +119,7 @@ public class RawMotorCommand extends CommandMessage
 	 */
 	public int getRightSpeed()
 	{
-		return this.rightSpeed;
+		return rightSpeed;
 	}
 
 	@Override
@@ -129,10 +127,10 @@ public class RawMotorCommand extends CommandMessage
 	{
 		byte[] data = new byte[ 4 ];
 
-		data[0] = (byte) this.leftMode.getValue();
-		data[1] = (byte) this.leftSpeed;
-		data[2] = (byte) this.rightMode.getValue();
-		data[3] = (byte) this.rightSpeed;
+		data[0] = (byte) leftMode.getValue();
+		data[1] = (byte) leftSpeed;
+		data[2] = (byte) rightMode.getValue();
+		data[3] = (byte) rightSpeed;
 
 		return data;
 	}

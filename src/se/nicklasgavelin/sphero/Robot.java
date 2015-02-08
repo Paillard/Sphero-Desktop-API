@@ -371,6 +371,7 @@ public class Robot
 	 */
 	public void disconnect()
 	{
+        System.out.println("disconnecting " + getAddress());
         disconnect( true );
 	}
 

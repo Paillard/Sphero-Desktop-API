@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import se.nicklasgavelin.bluetooth.Bluetooth;
 import se.nicklasgavelin.bluetooth.BluetoothDevice;
 import se.nicklasgavelin.bluetooth.BluetoothDiscoveryListener;
@@ -31,12 +32,17 @@ import java.util.ResourceBundle;
 public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Initializable, RobotListener {
 
     @FXML
+    BorderPane root;
+    @FXML
     ListView<BluetoothDevice> bluetoothDeviceListView;
+    @FXML
     ListView<Robot> robotListView;
     @FXML
     Button scanButton, connectButton, disconnectButton;
     @FXML
-    Label addressLabel, connectionURLLabel, idLabel, nameLabel, stoppedLabel, leftMotorSpeedLabel, rightMotorSpeedLabel;
+    Label addressLabel, connectionURLLabel, idLabel, nameLabel,
+            stoppedLabel, leftMotorSpeedLabel, rightMotorSpeedLabel,
+            rightMotorModeLabel, leftMotorModeLabel;
 
     private ObservableList<BluetoothDevice> bluetoothDeviceObservableList;
     private ObservableList<Robot> robotObservableList;
@@ -44,12 +50,6 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
     private BluetoothDevice selectedBluetoothDevice;
     private long responses;
     private Bluetooth bt;
-
-
-    /*System.out.println(String.format("address:\t%s\nurl:\t%s\n\nid:\t%s\nname:\t%s\n",
-                                    r.getAddress(), r.getConnectionURL(), r.getId(), r.getName()));
-                            System.out.println(String.format("stopped?:\t%s\nleft motor speed:\t%d\nright motor speed:\t%d\nled:\t%s\n",
-                                    r.isStopped(), r.getRobotRawMovement().getLeftMotorSpeed(), r.getRobotRawMovement().getRightMotorSpeed(), r.getLed().toString())); */
 
     public void initialize(URL location, ResourceBundle resources) {
         // be sure to initiate here anything controller is controlling
@@ -67,18 +67,46 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
 
         // add listeners to the change in the list of bluetooth devices
         bluetoothDeviceListView.getProperties().addListener((MapChangeListener.Change<?, ?> change) -> setCanConnect());
-        robotListView.getProperties().addListener();
+        robotListView.getProperties().addListener((MapChangeListener<? super Object, ? super Object>) c -> {
+            setCanDisconnect();
+            updateLabels();
+        });
 
-        // configure initial buttons's state
-        connectButton.setDisable(true);
-        disconnectButton.setDisable(true);
-
-        api.scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
+        root.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
                 disconnect();
                 api.stage.close();
             }
         });
+
+        // configure initial buttons's state
+        connectButton.setDisable(true);
+        disconnectButton.setDisable(true);
+    }
+
+    private void updateLabels() {
+        Robot r = robotListView.getFocusModel().getFocusedItem();
+        if (r != null) {
+            nameLabel.setText(r.getName());
+            addressLabel.setText(r.getAddress());
+            idLabel.setText(r.getId());
+            stoppedLabel.setText(Boolean.toString(r.isStopped()));
+            connectionURLLabel.setText(r.getConnectionURL());
+            leftMotorSpeedLabel.setText(Integer.toString(r.getRobotRawMovement().getLeftMotorSpeed()));
+            leftMotorModeLabel.setText(r.getRobotRawMovement().getRightMotorMode().toString());
+            rightMotorSpeedLabel.setText(Integer.toString(r.getRobotRawMovement().getRightMotorSpeed()));
+            rightMotorModeLabel.setText(r.getRobotRawMovement().getRightMotorMode().toString());
+        } else {
+            nameLabel.setText("");
+            addressLabel.setText("");
+            idLabel.setText("");
+            stoppedLabel.setText("");
+            connectionURLLabel.setText("");
+            leftMotorSpeedLabel.setText("");
+            leftMotorModeLabel.setText("");
+            rightMotorSpeedLabel.setText("");
+            rightMotorModeLabel.setText("");
+        }
     }
 
     private void setCanConnect() {
@@ -148,7 +176,7 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
 
                 // Add ourselves as listeners
                 r.addListener(this);
-                if (robotObservableList.filtered(robot -> robot.getAddress().equals(selectedBluetoothDevice.getAddress())) == null)
+                if (robotObservableList.filtered(robot -> robot.getAddress().equals(selectedBluetoothDevice.getAddress())).isEmpty())
                     robotObservableList.add(r);
             } else {
                 System.err.println("Failed to connect");
@@ -158,13 +186,10 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
         }
     }
 
-    public BluetoothDevice getSelectedBluetoothDevice() {
-        return selectedBluetoothDevice;
-    }
-
     public boolean isSelectedBluetoothDeviceConnected() {
         if (robotObservableList != null && !robotObservableList.isEmpty()) {
-            if (selectedBluetoothDevice != null) {
+            Robot selectedRobot = robotListView.getFocusModel().getFocusedItem();
+            if (selectedRobot != null) {
                 FilteredList<Robot> flr = robotObservableList.filtered(robot -> robot.getAddress().equals(selectedBluetoothDevice.getAddress()));
                 Robot r = flr.stream().findFirst().get();
                 if (r != null) return r.isConnected();
@@ -215,8 +240,8 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
      */
     private void disconnect() {
         System.out.println("Stopping Thread");
-        if (bt != null)
-            bt.cancelDiscovery();
+        /*if (bt != null)
+            bt.cancelDiscovery();*/
         // Disconnect from all robots and clear the connected list
         robotObservableList.stream().forEach(Robot::disconnect);
         robotObservableList.stream().forEach(r -> r.removeListener(this));
@@ -224,7 +249,6 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
         bluetoothDeviceObservableList.clear();
     }
 
-    // FIXME : doesn't work // TODO test fix
     public void disconnectSelected() {
         assert robotObservableList != null && !robotObservableList.isEmpty() : "No device to deconnect";
         assert selectedBluetoothDevice != null : "No bluetooth device selected";
@@ -234,6 +258,7 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
         r.removeListener(this);
         robotObservableList.remove(r);
         selectedBluetoothDevice.cancelDiscovery();
+        updateLabels();
     }
     /**
      * Will start a research of all available and visible

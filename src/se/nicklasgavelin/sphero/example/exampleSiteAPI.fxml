@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.nicklasgavelin.sphero.example.ExampleSiteAPIController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.nicklasgavelin.sphero.example.ExampleSiteAPIController">
    <top>
       <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-border-color: black" BorderPane.alignment="CENTER">
          <children>
@@ -18,16 +18,25 @@
          </children>
       </HBox>
    </top>
-   <left>
+   <bottom>
       <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: black" BorderPane.alignment="CENTER">
          <children>
-            <ListView fx:id="robotListView" prefHeight="200.0" prefWidth="200.0" />
             <Label fx:id="addressLabel" text="" />
             <Label fx:id="idLabel" text="" />
             <Label fx:id="nameLabel" text="" />
             <Label fx:id="stoppedLabel" text="" />
             <Label fx:id="leftMotorSpeedLabel" text="" />
+            <Label fx:id="leftMotorModeLabel" text="" />
             <Label fx:id="rightMotorSpeedLabel" text="" />
+            <Label fx:id="rightMotorModeLabel" text="" />
+            <Label fx:id="connectionURLLabel" text="" />
          </children></VBox>
+   </bottom>
+   <left>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <ListView fx:id="robotListView" prefHeight="200.0" prefWidth="200.0" />
+         </children>
+      </VBox>
    </left>
 </BorderPane>
