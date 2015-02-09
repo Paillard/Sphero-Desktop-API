@@ -39,4 +39,23 @@
          </children>
       </VBox>
    </left>
+   <center>
+      <HBox>
+         <children>
+            <VBox>
+               <children>
+                  <ComboBox prefWidth="150.0" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Slider />
+                  <Slider />
+                  <Slider />
+               </children>
+            </VBox>
+            <ColorPicker />
+         </children>
+      </HBox>
+   </center>
 </BorderPane>

@@ -31,6 +31,7 @@ import se.nicklasgavelin.sphero.response.InformationResponseMessage;
 import se.nicklasgavelin.sphero.response.ResponseMessage;
 import se.nicklasgavelin.sphero.response.information.DataResponse;
 
+import javax.bluetooth.BluetoothStateException;
 import java.awt.*;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -85,13 +86,18 @@ public class Experimental_Main implements BluetoothDiscoveryListener, RobotListe
         String id = "00066644390F" /* x - - */;
 //        String id = "000666440DB8" /* - - x */;
 
-        Robot r = new Robot(
-                new BluetoothDevice(
-                new Bluetooth( this, Bluetooth.SERIAL_COM ),
-                "btspp://" + id + ":1;authenticate=true;encrypt=false;master=false" ) );
+        Robot r = null;
+        try {
+            r = new Robot(
+                    new BluetoothDevice(
+                    new Bluetooth( this, Bluetooth.SERIAL_COM ),
+                    "btspp://" + id + ":1;authenticate=true;encrypt=false;master=false" ) );
+        } catch (BluetoothStateException e) {
+            e.printStackTrace();
+        }
 
         Logger.getLogger( Experimental_Main.class.getName() ).log( Level.INFO, "Trying to connect to robot" );
-        if ( r.connect() )
+        if ( r != null && r.connect() )
         {
             r.addListener( this );
             Logger.getLogger( Experimental_Main.class.getName() ).log( Level.INFO, "Connected to robot" );

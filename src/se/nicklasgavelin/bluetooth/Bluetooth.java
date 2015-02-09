@@ -30,7 +30,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
     public static final int SERIAL_COM = 0x1101;
 
     // Bluetooth
-    private LocalDevice local;
+    private final LocalDevice local;
     private DiscoveryAgent dAgent;
 
     // Listeners
@@ -51,8 +51,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
      *            instance
      * @param uuid The UUID for the Bluetooth connections
      */
-    public Bluetooth(BluetoothDiscoveryListener listener, long uuid)
-    {
+    public Bluetooth(BluetoothDiscoveryListener listener, long uuid) throws BluetoothStateException {
         this(listener, Long.toString(uuid));
     }
 
@@ -64,7 +63,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
      *            instance
      * @param uuid The UUID for the Bluetooth connections
      */
-    public Bluetooth(BluetoothDiscoveryListener listener, int uuid) {
+    public Bluetooth(BluetoothDiscoveryListener listener, int uuid) throws BluetoothStateException {
         this(listener);
         this.uuid = new UUID(uuid);
     }
@@ -77,8 +76,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
      *            instance
      * @param uuid The UUID for the Bluetooth connections
      */
-    public Bluetooth(BluetoothDiscoveryListener listener, String uuid)
-    {
+    public Bluetooth(BluetoothDiscoveryListener listener, String uuid) throws BluetoothStateException {
         this(listener);
         this.uuid = new UUID(uuid, false);
     }
@@ -89,8 +87,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
      *
      * @param uuid The UUID for the Bluetooth connections
      */
-    public Bluetooth(int uuid)
-    {
+    public Bluetooth(int uuid) throws BluetoothStateException {
         this(null, uuid);
     }
 
@@ -100,8 +97,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
      *
      * @param uuid The UUID for the Bluetooth connections
      */
-    public Bluetooth(long uuid)
-    {
+    public Bluetooth(long uuid) throws BluetoothStateException {
         this(null, uuid);
     }
 
@@ -111,8 +107,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
      *
      * @param uuid The UUID for the Bluetooth connections
      */
-    public Bluetooth(String uuid)
-    {
+    public Bluetooth(String uuid) throws BluetoothStateException {
         this(null, uuid);
     }
 
@@ -124,14 +119,12 @@ public class Bluetooth implements DiscoveryListener, Runnable
      * @param listener The one that will listen for events on this class
      *            instance
      */
-    private Bluetooth(BluetoothDiscoveryListener listener)
-    {
+    private Bluetooth(BluetoothDiscoveryListener listener) throws BluetoothStateException {
         listeners = new ArrayList<>();
 
         // Add the listener
         if (listener != null)
             listeners.add(listener);
-
         try
         {
             // Try to get everything that we need regarding the local
@@ -139,8 +132,8 @@ public class Bluetooth implements DiscoveryListener, Runnable
             local = LocalDevice.getLocalDevice();
             dAgent = local.getDiscoveryAgent();
         } catch (BluetoothStateException e) {
-            // throw new RuntimeException(e.getMessage());
             notifyListeners(new Bluetooth.EVENT(e.getMessage(), EVENT_CODE.ERROR_BLUETOOTH_EXCEPTION));
+            throw e;
         }
     }
 
@@ -169,10 +162,9 @@ public class Bluetooth implements DiscoveryListener, Runnable
      *
      * @param listener The listener to remove
      */
-    public void removeListener(BluetoothDiscoveryListener listener)
+    public boolean removeListener(BluetoothDiscoveryListener listener)
     {
-        if (listeners.contains(listener))
-            listeners.remove(listener);
+        return listeners.contains(listener) && listeners.remove(listener);
     }
 
     /**
@@ -241,12 +233,13 @@ public class Bluetooth implements DiscoveryListener, Runnable
     /**
      * Cancel an ongoing discovery event
      */
-    public void cancelDiscovery()
+    public boolean cancelDiscovery()
     {
         // TODO: Should this really be an error?
-        dAgent.cancelInquiry(this);
+        boolean res = dAgent.cancelInquiry(this);
         log("Device discovery canceled");
         notifyListeners(new Bluetooth.EVENT("Device discovery canceled by user", EVENT_CODE.ERROR_DISCOVERY_CANCELED));
+        return res;
     }
 
     /**
@@ -255,6 +248,7 @@ public class Bluetooth implements DiscoveryListener, Runnable
      */
     private void performDiscovery()
     {
+        assert local != null : "Local must be initialized before the call of that function";
         log("Starting discovery");
         notifyListenersDiscoveryStarted();
 
@@ -264,18 +258,12 @@ public class Bluetooth implements DiscoveryListener, Runnable
         else
             devices.clear();
 
-        // Start searching for devices
-        if (local == null) try {
-            local = LocalDevice.getLocalDevice();
-        } catch (BluetoothStateException e) {
-            e.printStackTrace();
-        }
-        synchronized(local) // FIXME : synchronize on non final variable -> may have differents threads with different instances of that variable
+        synchronized(local) //  : synchronize on non final variable -> may have differents threads with different instances of that variable
         {
             try
             {
                 log("Starting inquiry");
-                dAgent.startInquiry(DiscoveryAgent.GIAC, this);
+                dAgent.startInquiry(DiscoveryAgent.GIAC, this); // Fixme null pointer exception on dAgent or startInquiry
                 local.wait();
             } catch(BluetoothStateException e) {
                 error("Failed to perform discovery, maybe interrupted");

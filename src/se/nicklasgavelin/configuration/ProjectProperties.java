@@ -29,7 +29,6 @@ public class ProjectProperties extends Properties
 	 */
 	private ProjectProperties()
 	{
-
         try
 		{
 			// Load the property file
@@ -38,7 +37,8 @@ public class ProjectProperties extends Properties
 		catch( Exception e )
 		{
 			// Unable to load property file, sorry :(
-		}
+            System.err.println("Unable to load project properties");
+        }
 	}
 
 	/**

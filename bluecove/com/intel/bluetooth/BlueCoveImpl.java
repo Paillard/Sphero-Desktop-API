@@ -753,8 +753,8 @@ public class BlueCoveImpl {
      * Shutdown all BluetoothStacks interfaces initialized by BlueCove
      */
     public static synchronized void shutdown() {
-        for (Iterator iterator = stacks.values().iterator(); iterator.hasNext();) {
-            BluetoothStackHolder s = (BluetoothStackHolder) iterator.next();
+        for (Object o : stacks.values()) {
+            BluetoothStackHolder s = (BluetoothStackHolder) o;
             s.configProperties.clear();
             if (s.bluetoothStack != null) {
                 BluetoothConnectionNotifierBase.shutdownConnections(s.bluetoothStack);

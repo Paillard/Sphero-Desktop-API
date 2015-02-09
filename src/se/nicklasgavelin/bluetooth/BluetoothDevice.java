@@ -193,7 +193,8 @@ public class BluetoothDevice implements DiscoveryListener
 			return this.service.connect();
 		} catch (IOException e) {
 			// Failure to connect for some reason
-			return null;
+            System.err.println(e);
+            return null;
 		}
 	}
 

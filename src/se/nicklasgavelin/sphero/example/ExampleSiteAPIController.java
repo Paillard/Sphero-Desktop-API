@@ -22,6 +22,7 @@ import se.nicklasgavelin.sphero.exception.RobotBluetoothException;
 import se.nicklasgavelin.sphero.response.InformationResponseMessage;
 import se.nicklasgavelin.sphero.response.ResponseMessage;
 
+import javax.bluetooth.BluetoothStateException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.ResourceBundle;
@@ -49,12 +50,12 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
     private ExampleSiteAPI api;
     private BluetoothDevice selectedBluetoothDevice;
     private long responses;
-    private Bluetooth bt;
+    // private Bluetooth bt;
 
     public void initialize(URL location, ResourceBundle resources) {
         // be sure to initiate here anything controller is controlling
         api = ExampleSiteAPI.getInstance();
-        bt = new Bluetooth(this, Bluetooth.SERIAL_COM);
+//        bt = new Bluetooth(this, Bluetooth.SERIAL_COM);
         bluetoothDeviceObservableList = FXCollections.observableArrayList();
         bluetoothDeviceListView.setItems(bluetoothDeviceObservableList);
         robotObservableList = FXCollections.observableArrayList();
@@ -130,7 +131,8 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
         // Device search is completed
         System.out.println("Completed device discovery");
         for (BluetoothDevice bd: devices) {
-            bluetoothDeviceObservableList.add(bd);
+            if (!bluetoothDeviceObservableList.contains(bd))
+                bluetoothDeviceObservableList.add(bd);
         }
     }
 
@@ -168,22 +170,33 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
     public void connect() {
         assert selectedBluetoothDevice != null : "Bluetooth device is needed to connect";
         // Create the robot from the bluetooth device
+        scanButton.setDisable(true);
+        connectButton.setDisable(true);
         try {
-            selectedBluetoothDevice.setConnectionUrl(String.format("btspp://%s:1;authenticate=true;encrypt=false;master=false", selectedBluetoothDevice.getAddress()));
-            Robot r = new Robot(selectedBluetoothDevice);
+            // FIXME try with a new bluetoothDevice #2
+            // selectedBluetoothDevice.setConnectionUrl(String.format("btspp://%s:1;authenticate=true;encrypt=false;master=false", selectedBluetoothDevice.getAddress()));
+            // BluetoothDevice nbtd = new BluetoothDevice(bt, String.format("btspp://%s:1;authenticate=true;encrypt=false;master=false", selectedBluetoothDevice.getAddress()));
+            // Robot r = new Robot(nbtd); // FIXME seems to come from Robot already using 3 Threads #3
+            Robot r = new Robot(
+                    new BluetoothDevice(
+                            new Bluetooth( this, Bluetooth.SERIAL_COM ),
+                            String.format("btspp://%s:1;authenticate=true;encrypt=false;master=false", selectedBluetoothDevice.getAddress())));
             if (r.connect()) {
                 System.out.println("Connected");
-
                 // Add ourselves as listeners
                 r.addListener(this);
-                if (robotObservableList.filtered(robot -> robot.getAddress().equals(selectedBluetoothDevice.getAddress())).isEmpty())
+                if (robotObservableList.filtered(robot -> robot.getAddress().equals(selectedBluetoothDevice.getAddress())).isEmpty()) {
                     robotObservableList.add(r);
+                    System.out.println("added Robot to list");
+                }
             } else {
                 System.err.println("Failed to connect");
             }
-        } catch (RobotBluetoothException e) {
+        } catch (RobotBluetoothException | BluetoothStateException e) {
             System.err.println(e);
         }
+        scanButton.setDisable(false);
+        connectButton.setDisable(false);
     }
 
     public boolean isSelectedBluetoothDeviceConnected() {
@@ -240,22 +253,30 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
      */
     private void disconnect() {
         System.out.println("Stopping Thread");
-        /*if (bt != null)
-            bt.cancelDiscovery();*/
+        /*if (bt != null) {
+            System.out.println("Stopping bluetooth");
+            System.out.println("remove from listeners: " + bt.removeListener(this));
+            System.out.println("cancel discovery: " + bt.cancelDiscovery());
+            BlueCoveImpl.shutdown();
+            // FIXME work if scan but no connection established
+            // FIXME doesn't work if scan, connection, ESC or disconnect then ESC
+            BlueCoveImpl.shutdownThreadBluetoothStack();
+        }*/
         // Disconnect from all robots and clear the connected list
-        robotObservableList.stream().forEach(Robot::disconnect);
         robotObservableList.stream().forEach(r -> r.removeListener(this));
+        robotObservableList.stream().forEach(Robot::disconnect);
         robotObservableList.clear();
+        bluetoothDeviceObservableList.stream().forEach(BluetoothDevice::cancelDiscovery);
         bluetoothDeviceObservableList.clear();
     }
 
-    public void disconnectSelected() {
+    private void disconnectSelected() {
         assert robotObservableList != null && !robotObservableList.isEmpty() : "No device to deconnect";
         assert selectedBluetoothDevice != null : "No bluetooth device selected";
 
         Robot r = robotObservableList.stream().filter(robot -> robot.getAddress().equals(selectedBluetoothDevice.getAddress())).findFirst().get();
-        r.disconnect();
         r.removeListener(this);
+        r.disconnect();
         robotObservableList.remove(r);
         selectedBluetoothDevice.cancelDiscovery();
         updateLabels();
@@ -265,9 +286,12 @@ public class ExampleSiteAPIController implements BluetoothDiscoveryListener, Ini
      * bluetooth devices.
      */
     public void discover() {
-        assert bt != null : "Bluetooth should have been initialized before calling for search";
-
-        bt.discover();
+        try {
+            Bluetooth bt = new Bluetooth(this, Bluetooth.SERIAL_COM);
+            bt.discover().join(); // FIXME create a new thread from runnable bluetooth then return it
+        } catch (BluetoothStateException | InterruptedException e) {
+            System.err.println(e);
+        }
     }
 
 }

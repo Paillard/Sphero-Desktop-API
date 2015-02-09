@@ -16,13 +16,13 @@ public abstract class DriveAlgorithm
 	 * Number of maximum coordinates
 	 */
 	public static final int MAX_COORDINATES = 3;
-	public double heading;
-	public double headingOffset;
-	public double adjustedHeading;
-	public double speed;
-	public double speedScale;
-	public double[] stopPosition;
-	public double[] deadZoneDelta;
+	protected double heading;
+	protected double headingOffset;
+	protected double adjustedHeading;
+	protected double speed;
+	protected double speedScale;
+	protected double[] stopPosition;
+	protected double[] deadZoneDelta;
 	protected OnConvertListener convertListener;
 
 	/**
@@ -30,10 +30,10 @@ public abstract class DriveAlgorithm
 	 */
 	public DriveAlgorithm()
 	{
-        this.headingOffset = 0.0D;
-        this.speedScale = 1.0D;
-        this.stopPosition = new double[ 3 ];
-        this.deadZoneDelta = new double[ 3 ];
+        headingOffset = 0.0D;
+        speedScale = 1.0D;
+        stopPosition = new double[3];
+        deadZoneDelta = new double[3];
 	}
 
 	/**
@@ -41,9 +41,9 @@ public abstract class DriveAlgorithm
 	 * 
 	 * @param listener The listener
 	 */
-	public void setOnConvertListener( OnConvertListener listener )
+	public void setOnConvertListener( OnConvertListener listener)
 	{
-        this.convertListener = listener;
+        convertListener = listener;
 	}
 
 	/**
@@ -53,16 +53,16 @@ public abstract class DriveAlgorithm
 	 * @param y The y coordinate
 	 * @param z The z coordinate
 	 */
-	public abstract void convert( double x, double y, double z );
+	public abstract void convert( double x, double y, double z);
 
 	/**
 	 * Notify the listener about a conversion success
 	 */
 	protected void postOnConvert()
 	{
-		if(this.convertListener == null )
+		if (convertListener == null)
 			return;
-        this.convertListener.onConvert(this.heading, this.speed, this.speedScale);
+        convertListener.onConvert(heading, speed, speedScale);
 	}
 
 	/**
@@ -70,16 +70,32 @@ public abstract class DriveAlgorithm
 	 */
 	protected void adjustHeading()
 	{
-        this.adjustedHeading = this.heading + this.headingOffset;
-		if(this.adjustedHeading >= 360.0D )
-            this.adjustedHeading %= 360.0D;
+        adjustedHeading = heading + headingOffset;
+		if (adjustedHeading >= 360.0D)
+            adjustedHeading %= 360.0D;
 	}
 
-	/**
+    public double getAdjustedHeading() {
+        return adjustedHeading;
+    }
+
+    public void setAdjustedHeading(double adjustedHeading) {
+        this.adjustedHeading = adjustedHeading;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setHeadingOffset(double headingOffset) {
+        this.headingOffset = headingOffset;
+    }
+
+    /**
 	 * Listener class,
 	 * listens for conversion events
 	 */
-    public abstract static interface OnConvertListener
+    public interface OnConvertListener
 	{
 		/**
 		 * Event called when the conversion of the values are done

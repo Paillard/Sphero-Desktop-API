@@ -32,7 +32,7 @@ public class ExampleSiteAPI extends Application
      * Main method
      */
     public static void main(String... args) {
-        launch(args);
+        launch(args); // FIXME #5 parking for Application
     }
 
 /*     public void setBluetooth(Bluetooth bt) {
@@ -200,15 +200,4 @@ public class ExampleSiteAPI extends Application
         }
         System.out.println("end of run");
     }//!run*/
-
-		/*
-		 * ********************************************
-		 * ROBOT STUFF
-		 */
-
-
-
-
-
-
 }

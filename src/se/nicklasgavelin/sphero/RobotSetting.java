@@ -5,10 +5,10 @@
 
 package se.nicklasgavelin.sphero;
 
-import java.awt.Color;
-
 import se.nicklasgavelin.sphero.command.RawMotorCommand.MOTOR_MODE;
 import se.nicklasgavelin.util.Value;
+
+import java.awt.*;
 
 /**
  * 
@@ -17,12 +17,12 @@ import se.nicklasgavelin.util.Value;
  */
 public class RobotSetting
 {
-	protected Color ledRGB;
-	protected float ledBrightness, motorRotationRate;
-	protected int socketPingInterval, motorHeading, motorStartSpeed,
+	private Color ledRGB;
+	private float ledBrightness, motorRotationRate;
+	private int socketPingInterval, motorHeading, motorStartSpeed,
 			macroMaxSize, macroRobotStorageSize, macroMinSpaceSize;
-	protected boolean motorStop;
-	protected MOTOR_MODE motorMode;
+	private boolean motorStop;
+	private MOTOR_MODE motorMode;
 
 	/**
 	 * Create a robot setting
@@ -53,4 +53,48 @@ public class RobotSetting
         this.motorRotationRate = Value.clamp( motorRotationrate, 0, 1 );
 		this.motorMode = motorMode;
 	}
+
+    public MOTOR_MODE getMotorMode() {
+        return motorMode;
+    }
+
+    public int getMotorStartSpeed() {
+        return motorStartSpeed;
+    }
+
+    public int getMacroMinSpaceSize() {
+        return macroMinSpaceSize;
+    }
+
+    public int getMacroMaxSize() {
+        return macroMaxSize;
+    }
+
+    public int getMacroRobotStorageSize() {
+        return macroRobotStorageSize;
+    }
+
+    public int getMotorHeading() {
+        return motorHeading;
+    }
+
+    public float getMotorRotationRate() {
+        return motorRotationRate;
+    }
+
+    public boolean getMotorStop() {
+        return motorStop;
+    }
+
+    public Color getLedRGB() {
+        return ledRGB;
+    }
+
+    public float getLedBrightness() {
+        return ledBrightness;
+    }
+
+    public int getSocketPingInterval() {
+        return socketPingInterval;
+    }
 }
